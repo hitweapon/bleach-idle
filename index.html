@@ -239,6 +239,38 @@ button{border-radius:7px;background:#1c111a;border-color:#4a2a36}button:hover{bo
  #battleArena #enemyIcon{width:82px!important;max-height:132px!important}
 }
 
+
+/* Safe combat polish: visible cuts and impacts while AFK */
+#battleArena{isolation:isolate;background-color:#061b1a}
+#battleArena:before{content:"";position:absolute;z-index:1;pointer-events:none;inset:0;background:radial-gradient(ellipse at 52% 70%,#1c566044 0%,transparent 42%),linear-gradient(180deg,transparent 52%,#03060bd9 100%);opacity:.8}
+#battleArena .scene-top{z-index:42}
+#battleArena .hero-art{filter:drop-shadow(0 13px 11px #000e) drop-shadow(0 0 22px #ff86185e)!important}
+#battleArena #enemyPack{z-index:32}
+#battleArena #enemyIcon{filter:drop-shadow(0 8px 9px #000e) drop-shadow(0 0 22px #dbd7f099)!important}
+#combatFx:before{content:"";position:absolute;left:28%;top:35%;width:56%;height:2px;opacity:0;transform:rotate(-17deg) scaleX(.05);transform-origin:left center;background:linear-gradient(90deg,transparent,#d5f3ff 22%,#fff 43%,#62c4ff 67%,transparent);box-shadow:0 0 10px #5fcaff,0 0 26px #30a6ff}
+#battleArena.impact-normal #combatFx:before{animation:spiritSlash .38s cubic-bezier(.1,.7,.2,1) forwards}
+#battleArena.impact-skill #combatFx:before{height:8px;box-shadow:0 0 12px #5fcaff,0 0 34px #2f8dff,0 0 52px #2f8dff;animation:spiritSlashSkill .58s cubic-bezier(.1,.7,.2,1) forwards}
+#combatFx:after{content:"";position:absolute;inset:0;opacity:0;pointer-events:none;background:radial-gradient(circle at 67% 48%,#dff7ff55,transparent 34%)}
+#battleArena.impact-skill #combatFx:after{animation:impactBloom .48s ease-out}
+#battleArena.impact-normal #combatFx .combat-pop{filter:drop-shadow(0 0 5px #ff274b)}
+.combat-pop{z-index:3;padding:2px 7px;border-radius:5px;background:#090b14a8;backdrop-filter:blur(2px);font-weight:1000;letter-spacing:.02em}
+.pop-skill{border:1px solid #82dfff9c;background:#05162ccc}
+.pop-defeat{border:1px solid #ffe4a2;background:#21120fcc}
+#battleArena .hero-art.is-attacking{animation:heroStrike .54s cubic-bezier(.1,.8,.2,1) forwards!important}
+#battleArena .hero-art.is-skill{animation:heroSkill .86s ease-in-out forwards!important}
+#battleArena #enemyPack.is-hit #enemyIcon{animation:hollowHit .36s ease-out!important}
+#battleArena #enemyPack.is-defeated #enemyIcon{animation:hollowDefeat .66s ease-in forwards!important}
+@keyframes spiritSlash{0%{opacity:0;transform:rotate(-17deg) scaleX(.04)}18%{opacity:1}75%{opacity:.9;transform:rotate(-17deg) scaleX(1)}100%{opacity:0;transform:rotate(-17deg) translateX(45px) scaleX(.65)}}
+@keyframes spiritSlashSkill{0%{opacity:0;transform:rotate(-21deg) scaleX(.02)}14%{opacity:1}64%{opacity:1;transform:rotate(-21deg) translateX(5px) scaleX(1)}100%{opacity:0;transform:rotate(-21deg) translateX(65px) scaleX(.6)}}
+@keyframes impactBloom{0%{opacity:0}35%{opacity:1}100%{opacity:0}}
+@media(max-width:800px){
+ #battleArena .hero-art{filter:drop-shadow(0 9px 9px #000d) drop-shadow(0 0 16px #ff86185e)!important}
+ #combatFx:before{left:22%;top:36%;width:65%}
+}
+@media(prefers-reduced-motion:reduce){
+ #combatFx:before,#combatFx:after{animation:none!important}
+}
+
 </style>
 </head>
 <body>
@@ -258,7 +290,7 @@ button{border-radius:7px;background:#1c111a;border-color:#4a2a36}button:hover{bo
 <div class="battle-scene" id="battleArena" data-map="ruins">
 <div class="scene-top"><div class="scene-location"><span class="scene-emblem">卍</span><div><small>CAMPO DE BATALHA</small><strong>Ruínas de Karakura</strong><span>Zona 1 · Estágio <b id="stage">1</b></span></div></div><div class="scene-stage"><span>☠</span><div><small>ESTÁGIO ATUAL</small><strong>Ruínas sob a lua</strong><span id="enemyLevel">Nível 1 · inimigo comum</span></div></div></div>
 <div class="scene-moon"></div><div class="scene-gate gate-one"></div><div class="scene-gate gate-two"></div><div class="scene-ground"></div>
-<svg class="hero-art" width="320" height="390" viewBox="0 0 320 390" role="img" aria-label="Shinigami de cabelo laranja com espada gigante"><defs><linearGradient id="heroRobe" x2="1" y2="1"><stop stop-color="#292832"/><stop offset="1" stop-color="#050509"/></linearGradient><linearGradient id="bladeGlow" x2="1" y2="1"><stop stop-color="#f9ffff"/><stop offset="1" stop-color="#7cbaff"/></linearGradient></defs><path d="M110 130 L65 175 L40 330 L125 310 L155 385 L220 385 L240 300 L300 330 L260 170 L205 130Z" fill="url(#heroRobe)" stroke="#66616e" stroke-width="3"/><path d="M113 65 L83 45 L103 42 L91 24 L123 40 L128 10 L148 35 L166 12 L175 42 L205 27 L195 50 L223 53 L204 74 L220 93 L193 94 L178 112 L126 111 L107 92 L88 88Z" fill="#ff8a18" stroke="#a7430b" stroke-width="3"/><path d="M112 73 L195 70 L185 112 L160 137 L132 112Z" fill="#efb38f" stroke="#2b1820" stroke-width="3"/><path d="M122 83 L145 87 M163 87 L185 82" stroke="#16151a" stroke-width="5"/><path d="M143 111 L169 112 L158 123Z" fill="#7b1823"/><path d="M134 137 L160 174 L190 137 L215 285 L85 285Z" fill="url(#heroRobe)" stroke="#aaa" stroke-width="2"/><path d="M145 139 L162 164 L180 138" fill="none" stroke="#f0e9e8" stroke-width="8"/><path d="M193 210 L282 40 L296 44 L222 240Z" fill="url(#bladeGlow)" stroke="#30303b" stroke-width="6"/><path d="M203 205 L280 56" stroke="#fff" stroke-width="5"/><path d="M220 190 Q275 130 303 50" fill="none" stroke="#72baff" stroke-width="15" opacity=".8"/><path d="M218 214 Q266 157 310 66" fill="none" stroke="#c2e9ff" stroke-width="4"/></svg>
+<svg class="hero-art" width="320" height="390" viewBox="0 0 320 390" role="img" aria-label="Shinigami de cabelo laranja com espada gigante"><defs><linearGradient id="heroRobe" x2="1" y2="1"><stop stop-color="#292832"/><stop offset="1" stop-color="#050509"/></linearGradient><linearGradient id="bladeGlow" x2="1" y2="1"><stop stop-color="#f9ffff"/><stop offset="1" stop-color="#7cbaff"/></linearGradient></defs><path d="M110 130 L65 175 L40 330 L125 310 L155 385 L220 385 L240 300 L300 330 L260 170 L205 130Z" fill="url(#heroRobe)" stroke="#66616e" stroke-width="3"/><path d="M113 65 L83 45 L103 42 L91 24 L123 40 L128 10 L148 35 L166 12 L175 42 L205 27 L195 50 L223 53 L204 74 L220 93 L193 94 L178 112 L126 111 L107 92 L88 88Z" fill="#ff8a18" stroke="#a7430b" stroke-width="3"/><path d="M112 73 L195 70 L185 112 L160 137 L132 112Z" fill="#efb38f" stroke="#2b1820" stroke-width="3"/><path d="M122 83 L145 87 M163 87 L185 82" stroke="#16151a" stroke-width="5"/><path d="M143 111 L169 112 L158 123Z" fill="#7b1823"/><path d="M134 137 L160 174 L190 137 L215 285 L85 285Z" fill="url(#heroRobe)" stroke="#aaa" stroke-width="2"/><path d="M145 139 L162 164 L180 138" fill="none" stroke="#f0e9e8" stroke-width="8"/><path d="M193 210 L282 40 L296 44 L222 240Z" fill="url(#bladeGlow)" stroke="#30303b" stroke-width="6"/><path d="M203 205 L280 56" stroke="#fff" stroke-width="5"/><path d="M220 190 Q275 130 303 50" fill="none" stroke="#72baff" stroke-width="15" opacity=".8"/><path d="M218 214 Q266 157 310 66" fill="none" stroke="#c2e9ff" stroke-width="4"/><path d="M120 83 L145 82 L139 89 L125 88Z M163 82 L187 80 L180 88 L167 89Z" fill="#faf3ec" stroke="#15141a" stroke-width="1.7"/><ellipse cx="135" cy="85.5" rx="2.3" ry="3.2" fill="#16131a"/><ellipse cx="176" cy="85" rx="2.3" ry="3.2" fill="#16131a"/><path d="M157 88 L151 103 L159 105" fill="none" stroke="#a96e5a" stroke-width="1.8" stroke-linecap="round"/><path d="M145 114 L174 114 L160 126Z" fill="#7b1424" stroke="#33121b" stroke-width="1.5"/><path d="M131 92 L143 95 M166 95 L182 91" stroke="#6b2c25" stroke-width="1.5" opacity=".65"/><path d="M116 148 Q137 161 149 174 M188 150 Q171 170 158 181 M102 181 L130 204 M205 174 L184 211" fill="none" stroke="#66616e" stroke-width="3" stroke-linecap="round"/><path d="M135 139 L160 172 L187 139" fill="none" stroke="#f5eef0" stroke-width="9"/><path d="M147 148 L159 160 L171 147" fill="none" stroke="#111116" stroke-width="4"/><path d="M119 147 L131 160 L125 166 L114 154 M131 160 L144 174 L137 180 L125 166" fill="#d82037" stroke="#731321" stroke-width="1.5"/><circle cx="123" cy="157" r="2.5" fill="#fa6773"/><circle cx="131" cy="165" r="2.5" fill="#fa6773"/><circle cx="139" cy="173" r="2.5" fill="#fa6773"/><path d="M202 199 L221 206 L222 213 L203 208Z" fill="#14141b" stroke="#83818f" stroke-width="2"/><path d="M201 203 L224 214 M204 197 L227 208" stroke="#b8c6d8" stroke-width="3"/><path d="M220 190 Q264 130 303 50" fill="none" stroke="#ffffff" stroke-width="2" opacity=".8"/><path d="M115 58 L103 48 M130 40 L128 24 M147 40 L158 22 M170 44 L189 35 M191 53 L208 56 M111 72 L101 79" stroke="#ffc05f" stroke-width="2.2" stroke-linecap="round"/><path d="M65 178 L83 191 M244 178 L256 194" stroke="#4b4854" stroke-width="4" stroke-linecap="round"/></svg>
 <div class="slash-effect slash-one"></div><div class="slash-effect slash-two"></div>
 <div class="enemy-pack" id="enemyPack">
 <div class="enemy-card enemy-small"><svg id="enemyLeft" width="120" height="150" viewBox="0 0 120 150" role="img" aria-label="Hollow monstruoso"><path d="M60 145 L42 102 L20 135 L30 85 L5 65 L37 60 L25 22 L54 45 L70 15 L78 49 L111 30 L91 68 L117 84 L84 97 L78 145Z" fill="#18151b" stroke="#9c8e9c" stroke-width="3"/><path d="M36 57 L57 64 L45 72Z M70 64 L91 55 L81 73Z" fill="#ffe75c"/><path d="M43 83 L78 81 L62 103Z" fill="#eee4d9" stroke="#111" stroke-width="3"/><path d="M20 135 L7 148 M101 127 L115 143" stroke="#d3c9d7" stroke-width="6"/></svg><i></i></div>
