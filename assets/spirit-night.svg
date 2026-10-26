@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 420" preserveAspectRatio="xMidYMid slice">
+<defs><linearGradient id="sky" x2="0" y2="1"><stop stop-color="#071329"/><stop offset=".55" stop-color="#233c65"/><stop offset="1" stop-color="#101927"/></linearGradient><linearGradient id="ground" x2="0" y2="1"><stop stop-color="#39465c"/><stop offset="1" stop-color="#101722"/></linearGradient><radialGradient id="moon"><stop stop-color="#fffde8"/><stop offset="1" stop-color="#a9c9ff" stop-opacity="0"/></radialGradient></defs>
+<rect width="1200" height="420" fill="url(#sky)"/><circle cx="930" cy="90" r="90" fill="url(#moon)" opacity=".8"/><circle cx="930" cy="90" r="36" fill="#e6edff"/><g fill="#dbeafe" opacity=".65"><circle cx="120" cy="62" r="1.5"/><circle cx="230" cy="96" r="1"/><circle cx="340" cy="45" r="1.4"/><circle cx="500" cy="85" r="1"/><circle cx="670" cy="38" r="1.4"/><circle cx="800" cy="145" r="1"/><circle cx="1080" cy="45" r="1.2"/></g>
+<path d="M0 240 L90 190 160 225 250 160 330 230 430 175 520 238 630 180 730 235 830 190 930 225 1040 170 1200 235 V420 H0Z" fill="#14233a"/>
+<path d="M0 280 L130 225 215 270 340 210 430 270 560 225 680 280 790 225 920 270 1050 220 1200 270 V420 H0Z" fill="#1d3045"/>
+<g fill="#0a1525"><path d="M70 285 V190 L90 165 110 190 V285Z"/><path d="M55 210 L90 145 125 210Z"/><path d="M150 285 V205 L172 175 194 205 V285Z"/><path d="M135 220 L172 155 210 220Z"/><path d="M1010 285 V185 L1035 155 1060 185 V285Z"/><path d="M990 205 L1035 135 1080 205Z"/><path d="M1110 285 V210 L1130 180 1150 210 V285Z"/><path d="M1095 220 L1130 165 1165 220Z"/></g>
+<g fill="#24384b" stroke="#71849b" stroke-width="2"><path d="M425 310 V230 H455 V310 M415 245 L440 205 465 245"/><path d="M480 310 V250 H500 V310 M472 260 L490 225 508 260"/><path d="M700 310 V225 H730 V310 M690 245 L715 195 740 245"/></g>
+<path d="M0 310 Q200 285 380 320 T760 310 T1200 300 V420 H0Z" fill="url(#ground)"/>
+<g fill="#d7a86e" opacity=".8"><rect x="85" y="294" width="5" height="12"/><rect x="173" y="290" width="5" height="12"/><rect x="1040" y="292" width="5" height="12"/></g>
+<path d="M0 390 Q200 350 400 385 T800 378 T1200 365 V420 H0Z" fill="#0a111b"/>
+</svg>
