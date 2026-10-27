@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900">
+<defs>
+ <linearGradient id="sky" x2="0" y2="1"><stop stop-color="#182e4b"/><stop offset=".34" stop-color="#695270"/><stop offset=".57" stop-color="#f19a73"/><stop offset=".76" stop-color="#d18a54"/><stop offset="1" stop-color="#5b3c42"/></linearGradient>
+ <radialGradient id="sun"><stop stop-color="#fff3be"/><stop offset=".6" stop-color="#ffd18b"/><stop offset="1" stop-color="#ff9c68" stop-opacity="0"/></radialGradient>
+ <linearGradient id="mesa" x2="0" y2="1"><stop stop-color="#ac6c62"/><stop offset="1" stop-color="#563d4b"/></linearGradient>
+ <linearGradient id="sand" x2="0" y2="1"><stop stop-color="#e4b376"/><stop offset=".35" stop-color="#b87958"/><stop offset="1" stop-color="#382a38"/></linearGradient>
+ <linearGradient id="front" x2="0" y2="1"><stop stop-color="#4e3c43"/><stop offset="1" stop-color="#171a29"/></linearGradient>
+ <pattern id="stone" width="180" height="68" patternUnits="userSpaceOnUse"><path d="M0 1H180M60 1V34M0 34H180M130 34V68" fill="none" stroke="#ffe3b5" stroke-opacity=".18" stroke-width="2"/><path d="M28 18l15 6-5 8M150 43l-12 12 9 4" fill="none" stroke="#392b38" stroke-opacity=".45" stroke-width="2"/></pattern>
+ <filter id="soft"><feGaussianBlur stdDeviation="18"/></filter>
+</defs>
+<rect width="1600" height="900" fill="url(#sky)"/>
+<circle cx="1250" cy="350" r="185" fill="url(#sun)"/><circle cx="1250" cy="350" r="53" fill="#ffe7b0" opacity=".94"/>
+<g fill="none" stroke="#ffc09a" stroke-opacity=".14" stroke-width="5"><path d="M0 156Q130 95 260 143T500 130T730 155T980 105T1210 150T1600 98"/><path d="M0 211Q190 151 345 207T650 190T920 210T1180 170T1450 195T1600 180"/></g>
+<path d="M0 485L95 440 145 451 210 354 255 415 322 337 370 433 445 377 500 453 590 365 668 442 742 395 830 465 930 382 1008 450 1090 373 1170 438 1260 335 1340 425 1425 367 1505 437 1600 383V700H0Z" fill="#62475b" opacity=".77"/>
+<path d="M0 546L90 475 155 523 240 434 310 524 390 458 467 536 540 488 630 557 725 474 804 547 900 483 1008 558 1110 468 1195 538 1290 451 1380 523 1485 452 1600 514V720H0Z" fill="url(#mesa)" opacity=".9"/>
+<!-- ruined gate and buried pillars -->
+<g stroke="#332d43" stroke-width="18" fill="none" opacity=".88"><path d="M62 612V392Q62 369 86 369H292Q316 369 316 392V612"/><path d="M30 390H345M47 355H330"/><path d="M81 435H296M81 481H296"/></g>
+<g fill="#bc876d" opacity=".8"><path d="M353 604V471h31v133zM386 513h24v91h-24zM405 555h25v49h-25z"/><path d="M1080 603V492h29v111zM1109 533h29v70h-29z"/></g>
+<!-- temple skyline at right -->
+<g fill="#3b3046" stroke="#2a2739" stroke-width="6">
+<path d="M1300 615V451H1490V615Z"/><path d="M1281 453l109-59 111 59z" fill="#594154"/><path d="M1312 394l78-62 80 62z"/><path d="M1343 335l47-44 49 44z"/><path d="M1376 291v-45h28v45z"/><path d="M1240 504l150-76 151 76z" fill="#755066"/>
+<path d="M1408 615V522h55v93z" fill="#181e32"/><path d="M1421 545h29v70h-29z" fill="#efa66f" opacity=".4"/>
+</g>
+<g fill="#f4b27a" opacity=".7"><rect x="1334" y="474" width="13" height="22"/><rect x="1372" y="474" width="13" height="22"/><rect x="1451" y="474" width="13" height="22"/><rect x="1334" y="522" width="13" height="22"/><rect x="1372" y="522" width="13" height="22"/><rect x="1480" y="521" width="13" height="22"/></g>
+<!-- spirits and dust -->
+<g fill="#b7e8ff"><circle cx="490" cy="380" r="4"/><circle cx="773" cy="429" r="3"/><circle cx="1020" cy="358" r="5"/><circle cx="1190" cy="462" r="3"/><circle cx="548" cy="322" r="3"/></g>
+<g stroke="#a9dfff" stroke-width="3" stroke-linecap="round" opacity=".5"><path d="M482 365v22M471 376h22M1010 341v28M996 355h28M1190 451v18M1181 460h18"/></g>
+<!-- distance haze -->
+<path d="M0 600Q350 540 680 590T1240 572T1600 595V680H0Z" fill="#ffc38b" opacity=".18" filter="url(#soft)"/>
+<!-- broad, playable stone platform -->
+<path d="M0 635Q400 608 800 628T1600 617V796Q1200 821 800 808T0 798Z" fill="url(#sand)"/>
+<path d="M0 645Q400 618 800 638T1600 627" fill="none" stroke="#ffdda3" stroke-width="7" opacity=".78"/>
+<path d="M0 655Q400 628 800 648T1600 637V796Q1200 821 800 808T0 798Z" fill="url(#stone)" opacity=".92"/>
+<g stroke="#45313c" stroke-width="4" fill="none" opacity=".7"><path d="M180 651l-23 43 31 21-8 42M435 642l21 29-14 38 25 35M731 644l-18 41 31 27-16 55M1040 641l-25 36 19 27-8 59M1360 634l20 35-27 39 16 59"/><path d="M300 678l30 14-9 27M875 686l27 13-20 24M1190 677l-23 23 13 22"/></g>
+<path d="M0 795Q400 820 800 807T1600 793V900H0Z" fill="url(#front)"/>
+<path d="M0 798Q400 823 800 810T1600 796" fill="none" stroke="#efbb82" stroke-width="9"/>
+<path d="M0 816Q400 841 800 828T1600 814" fill="none" stroke="#130f20" stroke-width="8" opacity=".8"/>
+<path d="M0 851Q400 871 800 859T1600 849" fill="none" stroke="#ba7e65" stroke-width="3" opacity=".4"/>
+<g stroke="#d79c70" stroke-width="3" opacity=".5"><path d="M120 803l-15 52M430 817l16 40M790 817l-8 45M1170 811l19 46M1480 802l-10 51"/></g>
+<rect width="1600" height="900" fill="#07101e" opacity=".12"/>
+</svg>
