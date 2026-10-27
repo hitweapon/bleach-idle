@@ -951,7 +951,7 @@ button.quick-skill.is-selected:before{content:"ATIVA";position:absolute;top:-7px
 }
 #battleArena svg.hero-art-fallback:not(.asset-hidden){
  transform-origin:48% 88%;
- animation:xbIchigoIdle 3.4s ease-in-out infinite;
+ animation:xbIchigoIdle 3.4s ease-in-out infinite!important;
 }
 #battleArena svg.hero-art-fallback.is-attacking{animation:xbIchigoStrike .66s cubic-bezier(.16,.78,.22,1) both!important}
 #battleArena svg.hero-art-fallback.is-skill{animation:xbIchigoSkill .84s cubic-bezier(.13,.8,.19,1) both!important}
@@ -1309,7 +1309,8 @@ function spawnIchigoSlash(arena,mode){
  svg.setAttribute('aria-hidden','true');svg.classList.add('xb-slash-arc');
  if(mode==='skill')svg.classList.add('is-skill');
  if(mode==='critical')svg.classList.add('is-critical');
- svg.innerHTML='<defs><linearGradient id="xbSlashBlue" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#1767ff" stop-opacity="0"/><stop offset=".24" stop-color="#55baff"/><stop offset=".55" stop-color="#d8f8ff"/><stop offset=".78" stop-color="#55baff"/><stop offset="1" stop-color="#217dff" stop-opacity="0"/></linearGradient><linearGradient id="xbSlashCore" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#9be7ff" stop-opacity="0"/><stop offset=".42" stop-color="#fff"/><stop offset=".7" stop-color="#f7ffff"/><stop offset="1" stop-color="#8bdfff" stop-opacity="0"/></linearGradient></defs><path d="M24 190 C 108 80 270 8 475 17" fill="none" stroke="#176dff" stroke-width="49" stroke-linecap="round" opacity=".5"/><path d="M24 190 C 108 80 270 8 475 17" fill="none" stroke="url(#xbSlashBlue)" stroke-width="28" stroke-linecap="round"/><path d="M30 190 C 122 90 275 20 468 18" fill="none" stroke="url(#xbSlashCore)" stroke-width="8" stroke-linecap="round"/><path d="M50 194 C 142 103 283 41 443 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity=".9"/>';
+ const slashKey='xbSlash'+Date.now().toString(36)+Math.floor(Math.random()*100000).toString(36);
+ svg.innerHTML='<defs><linearGradient id="'+slashKey+'Blue" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#1767ff" stop-opacity="0"/><stop offset=".24" stop-color="#55baff"/><stop offset=".55" stop-color="#d8f8ff"/><stop offset=".78" stop-color="#55baff"/><stop offset="1" stop-color="#217dff" stop-opacity="0"/></linearGradient><linearGradient id="'+slashKey+'Core" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#9be7ff" stop-opacity="0"/><stop offset=".42" stop-color="#fff"/><stop offset=".7" stop-color="#f7ffff"/><stop offset="1" stop-color="#8bdfff" stop-opacity="0"/></linearGradient></defs><path d="M24 190 C 108 80 270 8 475 17" fill="none" stroke="#176dff" stroke-width="49" stroke-linecap="round" opacity=".5"/><path d="M24 190 C 108 80 270 8 475 17" fill="none" stroke="url(#'+slashKey+'Blue)" stroke-width="28" stroke-linecap="round"/><path d="M30 190 C 122 90 275 20 468 18" fill="none" stroke="url(#'+slashKey+'Core)" stroke-width="8" stroke-linecap="round"/><path d="M50 194 C 142 103 283 41 443 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity=".9"/>';
  const target=arena.querySelector('.scene-bottom');
  if(target)arena.insertBefore(svg,target);else arena.appendChild(svg);
  setTimeout(()=>svg.remove(),mode==='skill'?760:mode==='critical'?650:520);
