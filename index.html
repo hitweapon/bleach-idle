@@ -1102,7 +1102,7 @@ function simulateOfflineState(st,elapsedMs){
    const beforeKills=st.kills,waveCount=3,e=enemyAtStage(st.stage),xpGain=e.xp*waveCount,goldGain=e.gold*waveCount;
    st.kills+=waveCount;st.xp+=xpGain;st.gold+=goldGain;st.totalXp+=xpGain;st.totalGold+=goldGain;
    while(st.xp>=xpForLevel(st.level)){st.xp-=xpForLevel(st.level);st.level++;st.gold+=30;st.totalGold+=30}
-   if(Math.floor(st.kills/5)>Math.floor(beforeKills/5)){st.stage++;st.gold+=15;st.totalGold+=15}
+   if(Math.floor(st.kills/6)>Math.floor(beforeKills/6)){st.stage++;st.gold+=15;st.totalGold+=15}
    st.bestStage=Math.max(st.bestStage,st.stage);
    if(st.settings.autoEquip&&st.kills%3===0){
     const item={...LOOT[Math.floor((st.kills/3)%LOOT.length)],id:'offline-'+st.kills};
@@ -1211,7 +1211,7 @@ function defeat(){
   if(state.settings.autoEquip&&isUpgradeForSlot(drop))equipItem(state.inventory.length-1,true);
  }else{
   log('☯ <strong>3 Hollows purificados!</strong> +'+xpGain+' EXP · +'+goldGain+' ouro.');
-  if(Math.floor(state.kills/5)>Math.floor(beforeKills/5)){
+  if(Math.floor(state.kills/6)>Math.floor(beforeKills/6)){
    state.stage++;state.gold+=15;state.totalGold=(state.totalGold||0)+15;
    log('🧭 <strong>NOVO ESTÁGIO '+state.stage+'!</strong> +15 ouro por avanço.');
    showFloatingText('ESTÁGIO '+state.stage+'!','pop-stage');
@@ -1266,6 +1266,7 @@ const ACHIEVEMENTS=[
 {id:'idleVeteran',name:'Veterano AFK',desc:'Derrote 250 inimigos.',icon:'🌘',gold:400,xp:300,check:s=>s.kills>=250}
 ];
 function textOf(id,value){const el=document.getElementById(id);if(el){const next=String(value);if(el.textContent!==next)el.textContent=next}}
+function formatDuration(seconds){const s=Math.max(0,Math.floor(Number(seconds)||0));if(s<60)return s+'s';const m=Math.floor(s/60),r=s%60;if(m<60)return m+'m '+r+'s';return Math.floor(m/60)+'h '+(m%60)+'m'}
 function widthOf(id,value){
  const el=document.getElementById(id);if(!el)return;
  const v=Math.max(0,Math.min(100,Number(value)||0));el.style.width=v+'%';
@@ -1407,7 +1408,7 @@ function render(){
  const e=enemy(),zone=currentZone(),enemyIndex=Math.floor((state.stage-1)/2)%ENEMIES.length,enemyMax=enemyMaxHp(),cls=archetype(),xpPct=Math.min(100,state.xp/maxXp()*100),hpPct=Math.max(0,Math.min(100,state.enemyHp/enemyMax*100));
  ['topGold','statGold'].forEach(id=>textOf(id,state.gold.toLocaleString('pt-BR')));
  textOf('topLevel','Nv. '+state.level);textOf('statLevel',state.level);textOf('statPower',power());textOf('statKills',state.kills);textOf('xpLabel',state.xp+' / '+maxXp()+' EXP');textOf('xpPct',Math.floor(xpPct)+'%');widthOf('xpBar',xpPct);
- textOf('homeEnemyName',e.name);textOf('homeEnemyMeta',(state.bossActive?'CHEFE · ':'Estágio ')+state.stage+' · ameaça '+(state.stage<3?'baixa':state.stage<6?'média':'alta'));
+ textOf('homeEnemyName',e.name);textOf('homeEnemyMeta',(state.bossActive?'CHEFE · ':'Estágio ')+state.stage+' · ameaça '+(state.stage<3?'baixa':state.stage<6?'média':'alta'));const homeImage=document.querySelector('#homeEnemyArt');if(homeImage)homeImage.alt=e.name+' em combate';const mainImage=document.querySelector('#enemyIconArt');if(mainImage)mainImage.alt=e.name;const leftImage=document.querySelector('#enemyLeftArt');if(leftImage)leftImage.alt='Hollow auxiliar da leva';const rightImage=document.querySelector('#enemyRightArt');if(rightImage)rightImage.alt='Hollow de apoio da leva';const bossImage=document.querySelector('#bossArtReal');if(bossImage)bossImage.alt=BOSSES[Math.min(BOSSES.length-1,Math.floor((state.bossKills||0)/3))].name;
  const hs=document.querySelector('#homeEnemy');if(hs)hs.setAttribute('aria-label',e.name);
  textOf('stage',state.stage);textOf('sceneLevel',state.level);textOf('sideLevel',state.level);textOf('currentZoneTitle',zone.name);textOf('currentZoneNumber',zone.id==='ruins'?1:zone.id==='forest'?2:zone.id==='rift'?3:4);textOf('sideGold',state.gold.toLocaleString('pt-BR'));textOf('sidePower',power());textOf('sideForce',power());textOf('sideAgility',Math.round(cls.atk*.7+state.level));textOf('sideSpirit',Math.round(cls.energy*.2+state.level));textOf('sideVitality',maxHp());widthOf('sideXpBar',xpPct);
  const arena=document.querySelector('#battleArena');if(arena){arena.dataset.map=zone.id;arena.dataset.boss=state.bossActive?'true':'false'}
@@ -1521,7 +1522,7 @@ function updateCombatHUD(){
  textOf('xpLabel',state.xp+' / '+maxXp()+' EXP');textOf('xpPct',Math.floor(xpPct)+'%');widthOf('xpBar',xpPct);widthOf('sideXpBar',xpPct);
  textOf('stage',state.stage);textOf('sceneLevel',state.level);textOf('sideLevel',state.level);textOf('currentZoneTitle',zone.name);textOf('currentZoneNumber',zone.id==='ruins'?1:zone.id==='forest'?2:zone.id==='rift'?3:4);
  textOf('sidePower',power());textOf('sideForce',power());textOf('sideAgility',Math.round(cls.atk*.7+state.level));textOf('sideSpirit',Math.round(cls.energy*.2+state.level));textOf('sideVitality',maxHp());
- textOf('homeEnemyName',e.name);textOf('homeEnemyMeta',(state.bossActive?'CHEFE · ':'Estágio ')+state.stage+' · ameaça '+(state.stage<3?'baixa':state.stage<6?'média':'alta'));
+ textOf('homeEnemyName',e.name);textOf('homeEnemyMeta',(state.bossActive?'CHEFE · ':'Estágio ')+state.stage+' · ameaça '+(state.stage<3?'baixa':state.stage<6?'média':'alta'));const homeImage=document.querySelector('#homeEnemyArt');if(homeImage)homeImage.alt=e.name+' em combate';const mainImage=document.querySelector('#enemyIconArt');if(mainImage)mainImage.alt=e.name;const leftImage=document.querySelector('#enemyLeftArt');if(leftImage)leftImage.alt='Hollow auxiliar da leva';const rightImage=document.querySelector('#enemyRightArt');if(rightImage)rightImage.alt='Hollow de apoio da leva';const bossImage=document.querySelector('#bossArtReal');if(bossImage)bossImage.alt=BOSSES[Math.min(BOSSES.length-1,Math.floor((state.bossKills||0)/3))].name;
  textOf('currentZoneTitle',zone.name);textOf('currentZoneNumber',zone.id==='ruins'?1:zone.id==='forest'?2:zone.id==='rift'?3:4);textOf('zoneTitle',state.bossActive?'Desafio de chefe':zone.subtitle);textOf('enemyName',e.name);textOf('enemyLevel',state.bossActive?'CHEFE · Nível '+state.stage+' · ameaça extrema':'Nível '+state.stage+' · '+zone.name+' · '+(state.stage<3?'comum':'elite'));
  textOf('enemyHpText',Math.max(0,Math.ceil(state.enemyHp)).toLocaleString('pt-BR')+' / '+enemyMax.toLocaleString('pt-BR'));
  widthOf('enemyHpBar',hpPct);widthOf('enemyLeftHpFill',hpPct);widthOf('enemyMainHpFill',hpPct);widthOf('enemyRightHpFill',hpPct);
@@ -1535,8 +1536,8 @@ function updateCombatHUD(){
  const claim=document.querySelector('#claimQuest');if(claim){claim.disabled=state.kills<10||!!state.questClaims.purify10;textOf('claimQuest',state.questClaims.purify10?'Recompensa resgatada':'Resgatar recompensa')}
  const sessionDamage=Math.max(0,(state.totalDamage||0)-sessionStartDamage),sessionKills=Math.max(0,state.kills-sessionStartKills);
  textOf('sessionDps',Math.floor(sessionDamage).toLocaleString('pt-BR'));textOf('sessionDpsLabel','DPS estimado: '+Math.floor(sessionDamage/elapsed).toLocaleString('pt-BR'));
- textOf('sessionKills',sessionKills.toLocaleString('pt-BR'));textOf('sessionKillsLabel','em '+Math.floor(elapsed/60)+' min');
- const milestone=Math.ceil((state.kills+1)/5)*5;textOf('nextMilestone',milestone+' derrotas');textOf('nextMilestoneLabel',(milestone-state.kills)+' até o avanço');
+ textOf('sessionKills',sessionKills.toLocaleString('pt-BR'));textOf('sessionKillsLabel','em '+formatDuration(elapsed));
+ const milestone=(Math.floor(state.kills/6)+1)*6;textOf('nextMilestone',milestone+' derrotas');textOf('nextMilestoneLabel',Math.max(0,milestone-state.kills)+' até o avanço de estágio');
  const arena=document.querySelector('#battleArena');if(arena){arena.dataset.map=zone.id;arena.dataset.boss=state.bossActive?'true':'false';arena.classList.toggle('is-respawning',state.pendingRespawnAt>Date.now())}
  const quickMap={crescent:'Q','flash-step':'W','bankai-wave':'E'};
  document.querySelectorAll('[data-skill-quick]').forEach(btn=>{const id=btn.dataset.skillQuick,sk=SKILLS.find(x=>x.id===id),unlocked=!!sk&&state.level>=sk.level;btn.disabled=!unlocked;btn.classList.toggle('is-selected',!!sk&&skill.id===id);btn.setAttribute('aria-pressed',String(!!sk&&skill.id===id));if(sk){btn.title=unlocked?sk.name+' · custo '+sk.cost+' · '+(sk.cooldown/1000)+'s recarga':'Desbloqueia no nível '+sk.level;const small=btn.querySelector('small');if(small)small.textContent=quickMap[id]+' · '+(unlocked?'NV. '+sk.level:'🔒 '+sk.level)}});
