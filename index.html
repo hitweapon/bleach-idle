@@ -1055,6 +1055,22 @@ button.quick-skill.is-selected:before{content:"ATIVA";position:absolute;top:-7px
  #battleArena .xb-hero-echo,#battleArena .xb-slash-arc{display:none!important}
 }
 
+
+/* Premium Ichigo art framing — detailed transparent anime illustration anchored in the arena */
+#battleArena img.hero-art-real.is-loaded{
+ width:min(48%,440px)!important;max-width:48%!important;height:auto!important;max-height:90%!important;
+ left:-2%!important;bottom:1%!important;object-fit:contain!important;object-position:left bottom!important;
+}
+#battleArena img.hero-art-real.is-loaded:not(.is-attacking):not(.is-skill):not(.is-critical){animation:xbIchigoIdle 3.4s cubic-bezier(.42,0,.35,1) infinite!important}
+#battleArena .xb-hero-aura{width:min(51%,470px)!important;left:-3%!important;bottom:0!important}
+@media(max-width:800px){
+ #battleArena img.hero-art-real.is-loaded{width:56%!important;max-width:56%!important;max-height:77%!important;left:-4%!important;bottom:7%!important}
+ #battleArena .xb-hero-aura{width:61%!important;left:-7%!important;bottom:5%!important}
+}
+@media(max-width:480px){
+ #battleArena img.hero-art-real.is-loaded{width:60%!important;max-width:60%!important;max-height:72%!important;left:-6%!important;bottom:9%!important}
+}
+
 </style>
 </head>
 <body>
@@ -1178,7 +1194,7 @@ equipmentSlots:{weapon:null,armor:null,accessory:null,relic:null},
 questClaims:{},achievementsClaimed:{},settings:{speed:1,showDamage:true,reducedMotion:false,compactLog:false,autoEquip:true}
 };
 let offlineSummary=null;
-let state=loadState(),toastTimer;
+let state=loadState(),toastTimer,premiumIchigoUrl='';
 let sessionStartedAt=Date.now(),sessionStartKills=state.kills||0,sessionStartDamage=state.totalDamage||0;
 function safeNumber(value,fallback=0,min=0,max=1e9){const n=Number(value);return Number.isFinite(n)?Math.min(max,Math.max(min,n)):fallback}
 function itemSlot(item){if(item&&['weapon','armor','accessory','relic'].includes(item.slot))return item.slot;const n=String(item?.name||'').toLowerCase();if(n.includes('lâmina'))return 'weapon';if(n.includes('faixa')||n.includes('manto'))return 'armor';if(n.includes('amuleto'))return 'accessory';return 'relic'}
@@ -1475,6 +1491,38 @@ function widthOf(id,value){
  }
 }
 function escapeHTML(value){return String(value??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]))}
+async function loadPremiumIchigoArt(){
+ const img=document.getElementById('heroArtReal');
+ if(!img||premiumIchigoUrl||img.dataset.premiumAttempted==='1')return;
+ img.dataset.premiumAttempted='1';
+ let objectUrl='';
+ try{
+  const parts=await Promise.all(Array.from({length:7},(_,i)=>'/assets/ichigo-combat/part-'+String(i).padStart(2,'0')+'.txt').map(async path=>{
+   const response=await fetch(path,{cache:'force-cache'});
+   if(!response.ok)throw new Error('Arte indisponível: '+path+' ('+response.status+')');
+   const value=(await response.text()).trim();
+   if(!value)throw new Error('Parte vazia da arte: '+path);
+   return value;
+  }));
+  const base64=parts.join('');
+  if(base64.length!==55872)throw new Error('Tamanho inesperado da arte: '+base64.length);
+  const binary=atob(base64);
+  if(binary.length!==54026)throw new Error('Dados incompletos da arte: '+binary.length);
+  const bytes=new Uint8Array(binary.length);
+  for(let i=0;i<binary.length;i++)bytes[i]=binary.charCodeAt(i);
+  objectUrl=URL.createObjectURL(new Blob([bytes],{type:'image/webp'}));
+  const probe=new Image();probe.src=objectUrl;
+  if(probe.decode)await probe.decode();
+  else await new Promise((resolve,reject)=>{probe.onload=resolve;probe.onerror=()=>reject(new Error('A imagem não pôde ser decodificada'))});
+  if(!probe.naturalWidth||!probe.naturalHeight)throw new Error('Imagem sem dimensões válidas');
+  premiumIchigoUrl=objectUrl;
+  render();
+ }catch(error){
+  if(objectUrl)URL.revokeObjectURL(objectUrl);
+  console.warn('XBleach: mantendo o fallback do Ichigo porque a arte premium falhou.',error);
+ }
+}
+
 function syncArtwork(imgId,fallbackId,src){
  const img=document.getElementById(imgId),fallback=fallbackId?document.getElementById(fallbackId):null;if(!img)return;
  if(!img.dataset.artWired){img.dataset.artWired='1';img.dataset.fallbackId=fallbackId||'';img.addEventListener('load',()=>{if(img.naturalWidth>0){img.classList.add('is-loaded');img.style.display='';const fb=document.getElementById(img.dataset.fallbackId);if(fb)fb.classList.add('asset-hidden')}});img.addEventListener('error',()=>{img.classList.remove('is-loaded');img.style.display='none';const fb=document.getElementById(img.dataset.fallbackId);if(fb)fb.classList.remove('asset-hidden')})}
@@ -1620,7 +1668,7 @@ function render(){
  renderSkillLoadout();renderEquipment();renderQuestList();renderAchievements();renderSettingsUI();textOf('weaponLevelLabel','Nv. '+state.weaponLevel);textOf('weaponCost',35+state.weaponLevel*25);widthOf('weaponProgress',Math.min(100,state.weaponLevel*10));
  const bossIndex=Math.min(BOSSES.length-1,Math.floor((state.bossKills||0)/3));textOf('bossName',BOSSES[bossIndex].name);textOf('bossLevelText','Nível '+(state.stage+5)+' · chefe de elite');textOf('bossChallenge',state.bossActive?'Chefe em combate…':'Desafiar chefe');
  const maps=document.querySelectorAll('.map-row'),thresholds=[1,11,21,31];maps.forEach((map,i)=>map.classList.toggle('locked',state.bestStage<thresholds[i]));
- syncArtwork('heroArtReal','heroArtFallback','/assets/ichigo-slash.webp');syncArtwork('enemyLeftArt','enemyLeft',ENEMY_ART[(enemyIndex+2)%ENEMY_ART.length]);syncArtwork('enemyIconArt','enemyIcon',state.bossActive?e.art:ENEMY_ART[enemyIndex]);syncArtwork('enemyRightArt','enemyRight',ENEMY_ART[(enemyIndex+3)%ENEMY_ART.length]);syncArtwork('homeEnemyArt','homeEnemy',state.bossActive?e.art:ENEMY_ART[enemyIndex]);syncArtwork('bossArtReal','bossArtFallback',BOSSES[bossIndex].art);syncArtwork('miniPortraitReal','miniPortraitFallback','/assets/ichigo-portrait.webp');syncArtwork('playerPortraitReal','playerPortraitFallback','/assets/ichigo-portrait.webp');
+ syncArtwork('heroArtReal','heroArtFallback',premiumIchigoUrl||'/assets/ichigo-slash.webp');syncArtwork('enemyLeftArt','enemyLeft',ENEMY_ART[(enemyIndex+2)%ENEMY_ART.length]);syncArtwork('enemyIconArt','enemyIcon',state.bossActive?e.art:ENEMY_ART[enemyIndex]);syncArtwork('enemyRightArt','enemyRight',ENEMY_ART[(enemyIndex+3)%ENEMY_ART.length]);syncArtwork('homeEnemyArt','homeEnemy',state.bossActive?e.art:ENEMY_ART[enemyIndex]);syncArtwork('bossArtReal','bossArtFallback',BOSSES[bossIndex].art);syncArtwork('miniPortraitReal','miniPortraitFallback','/assets/ichigo-portrait.webp');syncArtwork('playerPortraitReal','playerPortraitFallback','/assets/ichigo-portrait.webp');
  renderDailyReward();renderPrestige();renderStarterGuide();updateCombatHUD();
 }
 
@@ -1711,6 +1759,7 @@ document.querySelector('#settingMotion').addEventListener('change',ev=>{state.se
 document.querySelector('#settingCompact').addEventListener('change',ev=>{state.settings.compactLog=!!ev.target.checked;const feed=document.querySelector('#combatLog');if(feed){const limit=state.settings.compactLog?16:48;while(feed.children.length>limit)feed.lastElementChild.remove()}render();save()});
 document.querySelector('#settingAutoEquip').addEventListener('change',ev=>{state.settings.autoEquip=!!ev.target.checked;render();save()});
 render();
+loadPremiumIchigoArt();
 if(offlineSummary){const mins=Math.floor(offlineSummary.seconds/60);toast('Enquanto você esteve fora: '+offlineSummary.kills+' derrotas, +'+offlineSummary.xp+' EXP e +'+offlineSummary.gold+' ouro.');log('🌙 <strong>Resumo da caçada offline:</strong> '+offlineSummary.kills+' derrotas em '+mins+' min · +'+offlineSummary.xp+' EXP · +'+offlineSummary.gold+' ouro.');offlineSummary=null;save()}
 function updateCombatHUD(){
  const e=enemy(),zone=currentZone(),cls=archetype(),enemyMax=enemyMaxHp(),hpPct=Math.max(0,Math.min(100,state.enemyHp/enemyMax*100)),xpPct=Math.min(100,state.xp/maxXp()*100),elapsed=Math.max(1,(Date.now()-sessionStartedAt)/1000);
