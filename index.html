@@ -1071,6 +1071,92 @@ button.quick-skill.is-selected:before{content:"ATIVA";position:absolute;top:-7px
  #battleArena img.hero-art-real.is-loaded{width:60%!important;max-width:60%!important;max-height:72%!important;left:-6%!important;bottom:9%!important}
 }
 
+
+/* XBLEACH SIDE-SCROLL IDLE BATTLE: walk loop + ranged skill callouts, no fake hit-shakes */
+#battleArena{--xb-ground-line:23%}
+#battleArena .scene-location,#battleArena .scene-stage{z-index:8}
+#battleArena .scene-gate{opacity:.48}
+#battleArena .hero-art-real.is-loaded{
+ width:min(29%,250px)!important;max-width:29%!important;max-height:65%!important;
+ left:8%!important;bottom:8%!important;object-fit:contain!important;object-position:center bottom!important;
+ filter:drop-shadow(0 7px 9px #000c) drop-shadow(0 0 10px #ff6a2d33)!important;
+}
+#battleArena .hero-art-real.is-loaded:not(.is-attacking):not(.is-skill):not(.is-critical){animation:xbSideWalk 1.05s steps(2,end) infinite!important;transform-origin:50% 92%!important}
+#battleArena .hero-art-real.is-loaded.is-attacking,#battleArena .hero-art-real.is-loaded.is-skill,#battleArena .hero-art-real.is-loaded.is-critical{
+ animation:xbSideWalk 1.05s steps(2,end) infinite!important;
+ filter:drop-shadow(0 7px 9px #000c) drop-shadow(0 0 14px #4ba6ff77)!important;
+}
+#battleArena .xb-hero-aura{width:31%!important;height:63%!important;left:7%!important;bottom:5%!important;opacity:.42!important}
+#battleArena .hero-art-fallback:not(.asset-hidden){width:29%!important;max-width:29%!important;max-height:65%!important;left:8%!important;bottom:8%!important;animation:xbSideWalk 1.05s steps(2,end) infinite!important}
+#battleArena .enemy-pack{
+ width:42%!important;right:5%!important;bottom:13%!important;height:49%!important;
+ align-items:flex-end!important;justify-content:space-around!important;
+ animation:xbMobAdvance 5.4s ease-in-out infinite!important;
+}
+#battleArena .enemy-card{transform-origin:50% 100%;animation:xbMobStep .72s steps(2,end) infinite}
+#battleArena .enemy-card:nth-child(2){animation-delay:.13s}
+#battleArena .enemy-card:nth-child(3){animation-delay:.26s}
+#battleArena .enemy-art-wrap{width:clamp(48px,6.2vw,78px)!important;height:clamp(72px,11vw,118px)!important}
+#battleArena .enemy-art-wrap.enemy-art-main{width:clamp(68px,8.5vw,108px)!important;height:clamp(90px,14vw,145px)!important}
+#battleArena .enemy-card>svg{width:100%!important;max-height:100%!important}
+#battleArena .enemy-large>svg{width:100%!important}
+#battleArena .enemy-card i{width:48px!important;height:4px!important}
+#battleArena .enemy-large strong{font-size:.66rem!important;padding:3px 5px!important;white-space:nowrap}
+#battleArena .scene-moon{width:65px;height:65px}
+#battleArena .slash-effect{display:none!important}
+#battleArena.impact-normal,#battleArena.impact-skill,#battleArena.impact-critical{animation:none!important}
+#battleArena .enemy-pack.is-hit .enemy-large>svg{animation:xbMobHit .22s ease-out!important}
+#battleArena .enemy-pack.is-hit .enemy-card{animation-play-state:paused}
+#battleArena .enemy-pack.is-defeated{animation:xbMobDefeat .55s ease-in forwards!important}
+#battleArena .xb-skill-callout{
+ position:absolute;z-index:45;left:38%;top:27%;max-width:42%;padding:8px 13px;
+ border:1px solid #8de8ff;border-radius:14px 14px 14px 4px;
+ color:#fff;background:linear-gradient(135deg,#0d2444ed,#172047f2);
+ box-shadow:0 0 12px #43baff99,inset 0 0 15px #4b95ff24;
+ font:900 clamp(10px,1.1vw,14px)/1.2 system-ui,sans-serif;letter-spacing:.045em;
+ text-shadow:0 0 10px #4bbdff;pointer-events:none;white-space:normal;text-align:center;
+ animation:xbCalloutIn .16s ease-out both;
+}
+#battleArena .xb-skill-callout:after{content:"";position:absolute;left:10px;bottom:-7px;width:12px;height:12px;background:#102044;border-right:1px solid #8de8ff;border-bottom:1px solid #8de8ff;transform:skewY(35deg) rotate(30deg)}
+#battleArena .xb-spell-wave{
+ position:absolute;z-index:39;left:27%;top:43%;width:55%;height:24%;pointer-events:none;
+ background:linear-gradient(100deg,transparent 0%,#65d8ff12 13%,#48baffc9 48%,#efffff 54%,#4b91ffb8 63%,transparent 100%);
+ clip-path:polygon(0 46%,37% 35%,73% 0,100% 48%,72% 100%,38% 64%);
+ filter:drop-shadow(0 0 9px #52bfff) drop-shadow(0 0 18px #326aff);
+ transform-origin:left center;animation:xbSpellTravel .42s cubic-bezier(.15,.8,.3,1) both;
+}
+#battleArena .xb-spell-impact{
+ position:absolute;z-index:42;width:clamp(32px,5vw,62px);aspect-ratio:1;border-radius:50%;
+ left:68%;top:43%;pointer-events:none;
+ background:radial-gradient(circle,#fff 0 8%,#b6f4ff 15%,#55baff88 35%,#247cff24 60%,transparent 72%);
+ filter:drop-shadow(0 0 12px #65d8ff);animation:xbSpellImpact .38s ease-out both;
+}
+#battleArena .xb-spell-impact:before,#battleArena .xb-spell-impact:after{content:"";position:absolute;inset:12%;border:3px solid #d9faff;border-radius:50%;transform:rotate(30deg) scaleX(1.7);animation:xbImpactRing .38s ease-out both}
+#battleArena .xb-spell-impact:after{transform:rotate(-35deg) scaleX(1.35);border-color:#62bfff}
+@keyframes xbSideWalk{0%,100%{transform:translate3d(0,0,0) rotate(0) scale(1)}25%{transform:translate3d(0,-2px,0) rotate(-.45deg) scale(1.003)}50%{transform:translate3d(1px,0,0) rotate(0) scale(1)}75%{transform:translate3d(0,-3px,0) rotate(.4deg) scale(1.004)}}
+@keyframes xbMobStep{0%,100%{translate:0 0}50%{translate:-2px -2px}}
+@keyframes xbMobAdvance{0%,100%{transform:translateX(0)}45%,58%{transform:translateX(-8%)}70%{transform:translateX(-4%)}}
+@keyframes xbMobHit{0%{transform:translateX(0);filter:brightness(1)}35%{transform:translateX(-5px);filter:brightness(2.2) drop-shadow(0 0 14px #6bdcff)}100%{transform:translateX(0);filter:brightness(1)}}
+@keyframes xbMobDefeat{0%{transform:translateX(0);opacity:1}100%{transform:translateX(18px) scale(.8);opacity:.12;filter:blur(3px)}}
+@keyframes xbCalloutIn{from{opacity:0;transform:translateY(7px) scale(.88)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes xbSpellTravel{0%{opacity:0;transform:scaleX(.05) skewX(-15deg)}18%{opacity:1}75%{opacity:1;transform:scaleX(1) skewX(0)}100%{opacity:0;transform:translateX(15px) scaleX(1.05)}}
+@keyframes xbSpellImpact{0%{opacity:0;transform:scale(.25)}35%{opacity:1;transform:scale(1.3)}100%{opacity:0;transform:scale(1.9)}}
+@keyframes xbImpactRing{0%{opacity:0;scale:.3}30%{opacity:1}100%{opacity:0;scale:1.6}}
+@media(max-width:650px){
+ #battleArena .hero-art-real.is-loaded,#battleArena .hero-art-fallback:not(.asset-hidden){width:35%!important;max-width:35%!important;max-height:53%!important;left:3%!important;bottom:12%!important}
+ #battleArena .xb-hero-aura{width:37%!important;left:2%!important;bottom:8%!important}
+ #battleArena .enemy-pack{width:47%!important;right:1%!important;bottom:15%!important;height:40%!important}
+ #battleArena .enemy-art-wrap{width:clamp(34px,9vw,52px)!important;height:clamp(52px,13vw,78px)!important}
+ #battleArena .enemy-art-wrap.enemy-art-main{width:clamp(49px,12vw,70px)!important;height:clamp(67px,16vw,96px)!important}
+ #battleArena .enemy-large strong{font-size:8px!important}
+ #battleArena .xb-skill-callout{left:34%;top:33%;max-width:52%;padding:6px 8px}
+ #battleArena .xb-spell-wave{left:24%;width:63%;top:47%}
+ #battleArena .xb-spell-impact{left:72%;top:44%}
+}
+@media(prefers-reduced-motion:reduce){
+ #battleArena .hero-art-real.is-loaded,#battleArena .hero-art-fallback:not(.asset-hidden),#battleArena .enemy-pack,#battleArena .enemy-card{animation:none!important}
+}
+
 </style>
 </head>
 <body>
@@ -1331,22 +1417,27 @@ function spawnIchigoSlash(arena,mode){
  if(target)arena.insertBefore(svg,target);else arena.appendChild(svg);
  setTimeout(()=>svg.remove(),mode==='skill'?760:mode==='critical'?650:520);
 }
+function showXBleachSkillEffect(skillName){
+ const arena=document.getElementById('battleArena');if(!arena)return;
+ arena.querySelectorAll('.xb-skill-callout,.xb-spell-wave,.xb-spell-impact').forEach(el=>el.remove());
+ const bubble=document.createElement('div');bubble.className='xb-skill-callout';bubble.textContent=String(skillName||'TÉCNICA ESPIRITUAL').toUpperCase();bubble.setAttribute('aria-hidden','true');arena.appendChild(bubble);
+ const wave=document.createElement('div');wave.className='xb-spell-wave';wave.setAttribute('aria-hidden','true');arena.appendChild(wave);
+ setTimeout(()=>{if(!arena.isConnected)return;const impact=document.createElement('div');impact.className='xb-spell-impact';impact.setAttribute('aria-hidden','true');arena.appendChild(impact);setTimeout(()=>impact.remove(),460)},230);
+ setTimeout(()=>{bubble.remove();wave.remove()},720);
+}
+
 function combatVisual(kind,amount,critical=false){
  const arena=document.querySelector('#battleArena');
  const hero=arena?.querySelector('.hero-art-real.is-loaded')||arena?.querySelector('.hero-art-fallback:not(.asset-hidden)')||arena?.querySelector('.hero-art');
  const enemyPack=document.querySelector('#enemyPack'),fx=document.querySelector('#combatFx');
  if(hero&&arena){
+  /* Ichigo stays in his forward-walking loop; attacks are shown as travelling energy, not body-shake. */
   hero.classList.remove('is-attacking','is-skill','is-critical');
-  const token=(Number(hero.dataset.xbleachMotion)||0)+1;
-  hero.dataset.xbleachMotion=String(token);
-  void hero.getBoundingClientRect();
-  const mode=kind==='skill'?'skill':critical?'critical':'attack';
-  hero.classList.add(kind==='skill'?'is-skill':'is-attacking');
-  if(critical)hero.classList.add('is-critical');
-  spawnIchigoAfterimages(hero,arena,mode,token);
-  if(kind==='skill'||kind==='defeat'||critical||Math.random()<.86)spawnIchigoSlash(arena,kind==='skill'?'skill':critical?'critical':'normal');
-  const duration=kind==='skill'?880:700;
-  setTimeout(()=>{if(hero.isConnected&&hero.dataset.xbleachMotion===String(token))hero.classList.remove('is-attacking','is-skill','is-critical')},duration);
+  if(kind==='skill')showXBleachSkillEffect(activeSkill().name);
+  else if(kind==='defeat'||critical||Math.random()<.32){
+   const wave=document.createElement('div');wave.className='xb-spell-wave';wave.style.top=(40+Math.random()*12)+'%';wave.style.animationDuration='.34s';arena.appendChild(wave);
+   setTimeout(()=>wave.remove(),380);
+  }
  }
  if(enemyPack){
   const token=(Number(enemyPack.dataset.xbleachImpact)||0)+1;enemyPack.dataset.xbleachImpact=String(token);
@@ -1354,13 +1445,7 @@ function combatVisual(kind,amount,critical=false){
   enemyPack.classList.add(kind==='defeat'?'is-defeated':'is-hit');
   setTimeout(()=>{if(enemyPack.dataset.xbleachImpact===String(token))enemyPack.classList.remove('is-hit','is-defeated')},kind==='defeat'?700:360);
  }
- if(arena){
-  const token=(Number(arena.dataset.xbleachImpact)||0)+1;arena.dataset.xbleachImpact=String(token);
-  arena.classList.remove('impact-normal','impact-skill');void arena.getBoundingClientRect();
-  arena.classList.add(kind==='skill'?'impact-skill':'impact-normal');
-  if(critical)arena.classList.add('impact-critical');else arena.classList.remove('impact-critical');
-  setTimeout(()=>{if(arena.dataset.xbleachImpact===String(token))arena.classList.remove('impact-normal','impact-skill','impact-critical')},kind==='skill'?650:450);
- }
+ /* No arena shake: the travelling effect communicates each hit. */
  if(fx&&state.settings.showDamage){
   showFloatingText((critical?'CRÍTICO! ':'−')+Math.max(0,Math.round(amount)).toLocaleString('pt-BR'),critical?'pop-critical':'pop-damage');
   if(kind==='skill')showFloatingText('✦ '+activeSkill().name,'pop-skill');
