@@ -1502,6 +1502,73 @@ button.quick-skill.is-selected:before{content:"ATIVA";position:absolute;top:-7px
  #battleArena .xb-skill-callout{z-index:15!important}
 }
 
+
+/* XBLEACH DESKTOP POLISH v2 — sprites proportional, stage readable, mobile untouched */
+@media (min-width:801px){
+  #battleArena{
+    min-height:clamp(460px,58vh,560px)!important;
+    background-position:center 56%!important;
+    background-size:cover!important;
+    background-repeat:no-repeat!important;
+  }
+  #battleArena .hero-art-real,
+  #battleArena .hero-art-real.is-loaded{
+    width:clamp(160px,19%,245px)!important;
+    max-width:245px!important;
+    min-width:0!important;
+    max-height:52%!important;
+    height:auto!important;
+    left:8%!important;
+    bottom:13.5%!important;
+    object-fit:contain!important;
+    object-position:center bottom!important;
+  }
+  #battleArena[data-character="blade"] .hero-art-real,
+  #battleArena[data-character="blade"] .hero-art-real.is-loaded{
+    width:clamp(175px,21%,265px)!important;
+    max-width:265px!important;
+    max-height:52%!important;
+    left:7.5%!important;
+    bottom:13.5%!important;
+  }
+  #battleArena[data-character="kido"] .hero-art-real,
+  #battleArena[data-character="kido"] .hero-art-real.is-loaded,
+  #battleArena[data-character="step"] .hero-art-real,
+  #battleArena[data-character="step"] .hero-art-real.is-loaded{
+    width:clamp(150px,17%,215px)!important;
+    max-width:215px!important;
+    max-height:50%!important;
+    left:8.5%!important;
+    bottom:13.5%!important;
+  }
+  #battleArena .hero-art-real.is-loaded + .hero-art-fallback{display:none!important}
+  #battleArena .hero-art-fallback:not(.asset-hidden){width:clamp(160px,19%,245px)!important;max-width:245px!important;max-height:52%!important;min-width:0!important;left:8%!important;bottom:13.5%!important}
+  #battleArena[data-character="blade"] .hero-art-fallback:not(.asset-hidden){width:clamp(175px,21%,265px)!important;max-width:265px!important;max-height:52%!important;left:7.5%!important;bottom:13.5%!important}
+  #battleArena[data-character="kido"] .hero-art-fallback:not(.asset-hidden),
+  #battleArena[data-character="step"] .hero-art-fallback:not(.asset-hidden){width:clamp(150px,17%,215px)!important;max-width:215px!important;max-height:50%!important;left:8.5%!important;bottom:13.5%!important}
+  #battleArena .xb-hero-aura{width:21%!important;max-width:250px!important;height:40%!important;left:5%!important;bottom:11%!important;opacity:.22!important}
+  #battleArena #enemyPack,
+  #battleArena .enemy-pack{
+    width:39%!important;max-width:490px!important;height:43%!important;
+    right:6%!important;bottom:13.5%!important;top:auto!important;
+    align-items:flex-end!important;justify-content:space-evenly!important;
+    gap:clamp(8px,1.5vw,22px)!important;
+  }
+  #battleArena .enemy-art-wrap{width:clamp(48px,5.5vw,76px)!important;height:clamp(66px,10vw,110px)!important}
+  #battleArena .enemy-art-wrap.enemy-art-main{width:clamp(66px,7.5vw,100px)!important;height:clamp(86px,12vw,132px)!important}
+  #battleArena #enemyLeft,#battleArena #enemyRight{width:clamp(54px,6vw,82px)!important;max-height:120px!important}
+  #battleArena #enemyIcon{width:clamp(68px,8vw,108px)!important;max-height:138px!important}
+  #battleArena .enemy-card>img,#battleArena .enemy-card>svg{max-height:138px!important;object-fit:contain!important;object-position:center bottom!important}
+  #battleArena .enemy-large>img,#battleArena .enemy-large>svg{max-height:145px!important}
+  #battleArena .enemy-card i,#battleArena .enemy-card .enemy-health{width:clamp(38px,4.2vw,58px)!important;height:5px!important;margin-top:5px!important}
+  #battleArena .enemy-large strong,#battleArena #enemyName{font-size:clamp(9px,.78vw,12px)!important;max-width:115px!important;padding:5px 8px!important;line-height:1.15!important}
+  #battleArena .scene-ground{display:block!important;z-index:5!important;left:0!important;right:0!important;bottom:0!important;height:14%!important;background:linear-gradient(180deg,#0a0f18 0%,#131a25a8 12%,#060910f2 100%)!important;border-top:1px solid #d9c7a533!important;opacity:.56!important}
+  #battleArena .scene-top{z-index:42!important}
+  #battleArena .scene-bottom{z-index:44!important}
+  #battleArena .xb-spell-wave{max-width:42%!important}
+  #battleArena .xb-spell-impact{max-width:76px!important}
+}
+
 </style>
 </head>
 <body>
