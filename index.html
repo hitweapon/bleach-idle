@@ -874,6 +874,29 @@ button:disabled{filter:saturate(.45);opacity:.43}
 #battleArena .enemy-health>span{will-change:width}
 @media(max-width:800px){#skillBtn:after{left:4px;bottom:3px}}
 
+
+/* Guided first-session onboarding: objective cards with visible progress and a direct route */
+.starter-guide-panel{background:radial-gradient(ellipse at 7% 0%,#ff5a6a15,transparent 55%),linear-gradient(145deg,#15101a,#0b0911);border-color:#493041}
+.starter-guide-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:12px}
+.starter-step{min-width:0;padding:13px;border:1px solid #3b2a40;border-radius:12px;background:linear-gradient(150deg,#19121f,#0b0911);transition:border-color .18s,transform .18s}
+.starter-step:hover{border-color:#75506d;transform:translateY(-2px)}
+.starter-step.is-done{border-color:#315e4b;background:linear-gradient(145deg,#10241b,#0b0d11)}
+.starter-step-top{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:12px}
+.starter-step-icon{display:grid;place-items:center;width:34px;height:34px;border:1px solid #624050;border-radius:9px;background:#2a1320;color:#ffb0bc;font-size:1.1rem;font-weight:1000}
+.starter-step.is-done .starter-step-icon{border-color:#397958;background:#123021;color:#a6f4c6}
+.starter-step-num{font-size:.56rem;font-weight:950;letter-spacing:.1em;color:#a79ab1}
+.starter-step strong{display:block;min-height:2.3em;font-size:.85rem;line-height:1.25}
+.starter-step p{min-height:3.3em;margin:6px 0 12px;font-size:.72rem;color:#a99bb3;line-height:1.5}
+.starter-progress{height:5px;overflow:hidden;border-radius:99px;background:#2e2434}
+.starter-progress span{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#cf3355,#ff9a9a);transition:width .25s}
+.starter-step.is-done .starter-progress span{background:linear-gradient(90deg,#35ac73,#a8f4c7)}
+.starter-step-bottom{display:flex;align-items:center;justify-content:space-between;gap:7px;margin-top:10px}
+.starter-step-bottom small{color:#b8a9c2;font-size:.69rem;font-variant-numeric:tabular-nums}
+.starter-step-bottom button{min-height:34px;padding:6px 8px;font-size:.68rem}
+.starter-step.is-done .starter-step-bottom button{border-color:#3c6a55;background:#102219;color:#9dddb8}
+@media(max-width:800px){.starter-guide-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}.starter-step{padding:10px}.starter-step p{font-size:.68rem}}
+@media(max-width:560px){.starter-guide-grid{grid-template-columns:minmax(0,1fr)}.starter-step{padding:12px}.starter-step p{min-height:0}.starter-step strong{min-height:0}.starter-step-top{margin-bottom:8px}}
+
 </style>
 </head>
 <body>
@@ -885,6 +908,7 @@ button:disabled{filter:saturate(.45);opacity:.43}
 <main class="main" id="main-content" tabindex="-1">
 <section id="page-home" class="page hidden">
 <div class="panel hero"><div class="hero-row"><div><div class="eyebrow">Capítulo 01 · O chamado</div><h2>O equilíbrio está ruindo.</h2><p>Almas perdidas atravessam o véu. Treine, evolua e descubra o que se esconde nas sombras entre os mundos.</p><div style="margin-top:17px"><button class="primary" data-goto="battle">Continuar jornada →</button></div></div><div class="hero-crest">☯</div></div></div>
+<div class="panel starter-guide-panel"><div class="section-title"><div><div class="eyebrow">Primeiros passos</div><h3>Sua jornada começa aqui</h3></div><span class="tag" id="starterGuideProgress">0 / 3</span></div><p class="muted tiny">Três objetivos simples para entrar no ritmo e desbloquear suas primeiras melhorias.</p><div class="starter-guide-grid" id="starterGuide"></div></div>
 <div class="panel daily-reward-panel"><div class="section-title"><div><div class="eyebrow">Recompensa de login</div><h3>Recompensa diária</h3></div><span class="tag" id="dailyStreakLabel">Sequência 0 dias</span></div><div class="daily-reward-content"><div class="daily-reward-icon">🎁</div><div class="daily-reward-copy"><strong id="dailyRewardAmount">+25 ouro · +35 EXP</strong><p id="dailyRewardStatus" class="muted tiny">Resgate de novo amanhã para manter a sequência.</p></div><button id="claimDailyRewardBtn" class="primary">Resgatar hoje</button></div></div>
 <div class="panel"><div class="section-title"><h3>Seu progresso</h3><span class="tiny muted" id="xpLabel">0 / 100 EXP</span></div><div class="stats"><div class="stat"><small>NÍVEL</small><strong id="statLevel">1</strong></div><div class="stat"><small>PODER</small><strong id="statPower">12</strong></div><div class="stat"><small>OURO</small><strong id="statGold">0</strong></div><div class="stat"><small>DERROTAS</small><strong id="statKills">0</strong></div></div><div style="margin-top:16px"><div class="section-title"><h3>Experiência</h3><span class="tiny muted" id="xpPct">0%</span></div><div class="bar xp"><span id="xpBar"></span></div></div></div>
 <div class="grid2"><div class="panel"><div class="section-title"><h3>⚔️ Combate atual</h3><button data-goto="battle">Abrir</button></div><div class="battlebox"><div class="home-enemy-wrap"><img id="homeEnemyArt" class="home-enemy-real" src="/assets/hollow-skull.webp" alt="Hollow do combate atual" decoding="async" draggable="false"><svg class="enemy home-enemy-art" id="homeEnemy" width="160" height="190" viewBox="0 0 160 190" role="img" aria-label="Hollow mascarado"><path d="M80 8 L126 32 L145 79 L121 144 L80 179 L39 144 L15 79 L34 32Z" fill="#e5e0d5" stroke="#25232a" stroke-width="7"/><path d="M32 56 L72 72 L52 89Z M128 56 L88 72 L108 89Z" fill="#15131a"/><ellipse cx="52" cy="77" rx="9" ry="6" fill="#ffeb37"/><ellipse cx="108" cy="77" rx="9" ry="6" fill="#ffeb37"/><path d="M43 117 L117 117 L102 145 L80 155 L58 145Z" fill="#17151b" stroke="#24222a" stroke-width="3"/><path d="M49 120 L61 141 L67 120 L79 143 L88 120 L99 141 L110 120" fill="none" stroke="#f4f0e8" stroke-width="7"/></svg></div><div class="enemy-name" id="homeEnemyName">Espírito Corrompido</div><div class="enemy-meta" id="homeEnemyMeta">Zona 1 · ameaça baixa</div></div><p class="tiny muted">A caçada avança mesmo quando você fecha a página, com até 8 horas de progresso offline neste protótipo. O cálculo ainda é local neste navegador.</p></div><div class="panel"><div class="section-title"><h3>📜 Missão em destaque</h3><span class="tag tiny">Diária</span></div><strong>Primeira purificação</strong><p class="muted tiny">Derrote 10 inimigos para receber ouro e experiência bônus.</p><div class="bar"><span id="questBar" style="width:0%"></span></div><p class="tiny muted" id="questCount">0 / 10 derrotados</p><button id="claimQuest" class="primary" disabled>Resgatar recompensa</button></div></div>
@@ -1332,6 +1356,17 @@ function performPrestige(){
  state.prestige=(state.prestige||0)+1;state.level=1;state.xp=0;state.gold=0;state.stage=1;state.bossActive=false;state.enemyHp=enemyMaxHp();state.energy=archetype().energy;state.skillReadyAt=0;state.lastSeen=Date.now();state.bestStage=Math.max(state.bestStage,1);
  render();save();if(currentUser)saveRemote();toast('Ascensão '+state.prestige+'! Poder permanente +5%.');log('卍 <strong>Ascensão espiritual realizada.</strong> Bônus de poder acumulado: +'+(state.prestige*5)+'%.');
 }
+function renderStarterGuide(){
+ const el=document.querySelector('#starterGuide');if(!el)return;
+ const goals=[
+  {id:'first-kills',icon:'⚔',title:'Purifique 10 Hollows',desc:'Seu primeiro avanço de estágio e uma recompensa.',done:state.kills>=10,current:Math.min(10,state.kills),goal:10,page:'battle',cta:'Ver combate'},
+  {id:'first-gear',icon:'🗡',title:'Equipe sua primeira peça',desc:'Aumente seu poder com o primeiro drop útil.',done:slotItems(state).length>0,current:slotItems(state).length>0?1:0,goal:1,page:'inventory',cta:'Abrir inventário'},
+  {id:'first-skill',icon:'✦',title:'Desbloqueie a 2ª técnica',desc:'Alcance o nível 3 e escolha sua habilidade AFK.',done:state.level>=3,current:Math.min(3,state.level),goal:3,page:'character',cta:'Ver habilidades'}
+ ];
+ const completed=goals.filter(x=>x.done).length;textOf('starterGuideProgress',completed+' / '+goals.length);
+ el.innerHTML=goals.map((g,i)=>'<div class="starter-step '+(g.done?'is-done':'')+'"><div class="starter-step-top"><span class="starter-step-icon">'+(g.done?'✓':g.icon)+'</span><span class="starter-step-num">'+(g.done?'CONCLUÍDO':'PASSO 0'+(i+1))+'</span></div><strong>'+g.title+'</strong><p>'+g.desc+'</p><div class="starter-progress"><span style="width:'+Math.round(g.current/g.goal*100)+'%"></span></div><div class="starter-step-bottom"><small>'+g.current+' / '+g.goal+'</small><button data-goto="'+g.page+'" '+(g.done?'disabled':'')+'>'+(g.done?'Concluído':g.cta)+'</button></div></div>').join('');
+}
+
 function render(){
  const e=enemy(),zone=currentZone(),enemyIndex=Math.floor((state.stage-1)/2)%ENEMIES.length,enemyMax=enemyMaxHp(),cls=archetype(),xpPct=Math.min(100,state.xp/maxXp()*100),hpPct=Math.max(0,Math.min(100,state.enemyHp/enemyMax*100));
  ['topGold','statGold'].forEach(id=>textOf(id,state.gold.toLocaleString('pt-BR')));
@@ -1352,7 +1387,7 @@ function render(){
  const bossIndex=Math.min(BOSSES.length-1,Math.floor((state.bossKills||0)/3));textOf('bossName',BOSSES[bossIndex].name);textOf('bossLevelText','Nível '+(state.stage+5)+' · chefe de elite');textOf('bossChallenge',state.bossActive?'Chefe em combate…':'Desafiar chefe');
  const maps=document.querySelectorAll('.map-row'),thresholds=[1,11,21,31];maps.forEach((map,i)=>map.classList.toggle('locked',state.bestStage<thresholds[i]));
  syncArtwork('heroArtReal','heroArtFallback','/assets/ichigo-slash.webp');syncArtwork('enemyLeftArt','enemyLeft',ENEMY_ART[(enemyIndex+2)%ENEMY_ART.length]);syncArtwork('enemyIconArt','enemyIcon',state.bossActive?e.art:ENEMY_ART[enemyIndex]);syncArtwork('enemyRightArt','enemyRight',ENEMY_ART[(enemyIndex+3)%ENEMY_ART.length]);syncArtwork('homeEnemyArt','homeEnemy',state.bossActive?e.art:ENEMY_ART[enemyIndex]);syncArtwork('bossArtReal','bossArtFallback',BOSSES[bossIndex].art);syncArtwork('miniPortraitReal','miniPortraitFallback','/assets/ichigo-portrait.webp');syncArtwork('playerPortraitReal','playerPortraitFallback','/assets/ichigo-portrait.webp');
- renderDailyReward();renderPrestige();updateCombatHUD();
+ renderDailyReward();renderPrestige();renderStarterGuide();updateCombatHUD();
 }
 
 function goto(page){
@@ -1467,7 +1502,7 @@ function idleTick(){
  const majorChange=before.kills!==state.kills||before.level!==state.level||before.stage!==state.stage||before.gold!==state.gold||before.xp!==state.xp||before.inventory!==state.inventory.length||before.bossKills!==state.bossKills||before.prestige!==state.prestige;
  if(majorChange)render();else updateCombatHUD();
 }
-setInterval(idleTick,750);setInterval(()=>{if(document.querySelector('#skillBtn'))render()},1000);setInterval(save,10000);window.addEventListener('pagehide',save);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')save()});
+setInterval(idleTick,750);setInterval(()=>{if(document.querySelector('#skillBtn'))updateCombatHUD()},1000);setInterval(save,10000);window.addEventListener('pagehide',save);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')save()});
 </script>
 </script>
 </body></html>
