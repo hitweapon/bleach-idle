@@ -1647,25 +1647,47 @@ button.quick-skill.is-selected:before{content:"ATIVA";position:absolute;top:-7px
 }
 
 
-/* XBLEACH TOAST CONTRAST FIX — readable item drops and reward notifications */
+/* XBLEACH TOAST REDESIGN — premium loot/reward notification */
 #toast.toast{
- color:#fff7fc!important;
- background:linear-gradient(135deg,rgba(72,20,52,.98),rgba(24,13,34,.99) 58%,rgba(15,20,39,.99))!important;
- border:1px solid #ff7ca8!important;
- box-shadow:0 14px 42px #000d,0 0 0 1px #ff7ca826,0 0 28px #ff4d8b20!important;
- text-shadow:0 1px 2px #000!important;
- font-size:clamp(14px,.9rem,16px)!important;
- line-height:1.45!important;
- font-weight:850!important;
- opacity:1!important;
- -webkit-text-fill-color:#fff7fc!important;
+ position:fixed!important;left:50%!important;bottom:calc(22px + env(safe-area-inset-bottom))!important;
+ transform:translateX(-50%)!important;z-index:9999!important;
+ display:flex;align-items:center;gap:13px;
+ width:max-content;max-width:min(430px,calc(100vw - 28px))!important;
+ padding:13px 18px 13px 13px!important;
+ color:#fff!important;-webkit-text-fill-color:#fff!important;
+ background:linear-gradient(115deg,rgba(24,18,34,.98),rgba(13,15,27,.985))!important;
+ border:1px solid rgba(255,255,255,.13)!important;border-radius:17px!important;
+ box-shadow:0 18px 55px rgba(0,0,0,.62),inset 0 1px 0 rgba(255,255,255,.07)!important;
+ backdrop-filter:blur(22px) saturate(145%);-webkit-backdrop-filter:blur(22px) saturate(145%);
+ font-size:14px!important;font-weight:650!important;line-height:1.4!important;
+ text-align:left!important;text-shadow:none!important;opacity:1!important;
+ overflow:hidden;isolation:isolate;
 }
-#toast.toast:not(.hidden){animation:toastIn .22s ease-out,toastGlow 2.4s ease-in-out}
-@keyframes toastGlow{0%,100%{box-shadow:0 14px 42px #000d,0 0 0 1px #ff7ca826,0 0 18px #ff4d8b18}50%{box-shadow:0 14px 42px #000d,0 0 0 1px #ff7ca855,0 0 28px #ff4d8b35}}
+#toast.toast::before{content:"";position:absolute;inset:0 auto 0 0;width:3px;background:linear-gradient(180deg,#ffe6a1,#ff5b98 52%,#9d78ff);border-radius:17px 0 0 17px;z-index:-1}
+#toast .toast-icon{
+ flex:0 0 43px;width:43px;height:43px;display:grid;place-items:center;
+ border-radius:13px;background:linear-gradient(145deg,#42243e,#21182f);
+ border:1px solid rgba(255,151,195,.32);font-size:23px;line-height:1;
+ box-shadow:inset 0 1px 0 #ffffff12,0 5px 14px #0004;
+}
+#toast .toast-copy{display:flex;flex-direction:column;gap:2px;min-width:0}
+#toast .toast-kicker{font-size:9px;font-weight:900;letter-spacing:1.8px;text-transform:uppercase;color:#ff9fc3;line-height:1.25}
+#toast .toast-message{color:#fff!important;-webkit-text-fill-color:#fff!important;font-size:14px;font-weight:750;overflow-wrap:anywhere}
+#toast.toast--loot{border-color:#e5bb72!important}
+#toast.toast--loot .toast-icon{background:linear-gradient(145deg,#60421c,#2c2030);border-color:#e8c77a88}
+#toast.toast--loot .toast-kicker{color:#ffd98a}
+#toast.toast--success .toast-icon{background:linear-gradient(145deg,#174b3f,#172b35);border-color:#73e2ba77}
+#toast.toast--success .toast-kicker{color:#82efc5}
+#toast.toast--warning .toast-icon{background:linear-gradient(145deg,#57252f,#302034);border-color:#ff8a9b77}
+#toast:not(.hidden){animation:toastPremiumIn .26s cubic-bezier(.2,.8,.2,1)}
+@keyframes toastPremiumIn{from{opacity:0;transform:translate(-50%,10px) scale(.97)}to{opacity:1;transform:translate(-50%,0) scale(1)}}
 @media(max-width:800px){
- #toast.toast{bottom:calc(18px + env(safe-area-inset-bottom))!important;width:max-content;max-width:calc(100vw - 32px)!important;padding:13px 16px!important;text-align:center!important;border-radius:14px!important}
+ #toast.toast{bottom:calc(18px + env(safe-area-inset-bottom))!important;width:calc(100vw - 30px)!important;max-width:390px!important;padding:12px 14px 12px 12px!important;gap:11px!important;border-radius:16px!important}
+ #toast .toast-icon{flex-basis:40px;width:40px;height:40px;font-size:21px;border-radius:12px}
+ #toast .toast-kicker{font-size:9px;letter-spacing:1.55px}
+ #toast .toast-message{font-size:13px;line-height:1.35}
 }
-@media(prefers-reduced-motion:reduce){#toast.toast:not(.hidden){animation:none!important}}
+@media(prefers-reduced-motion:reduce){#toast:not(.hidden){animation:none!important}}
 
 </style>
 </head>
@@ -2026,7 +2048,21 @@ document.querySelector('#signUpBtn').addEventListener('click',async()=>{if(!supa
 document.querySelector('#signInBtn').addEventListener('click',async()=>{if(!supabaseClient){document.querySelector('#authMessage').textContent='Login indisponível agora; a batalha local continua funcionando.';return}const email=document.querySelector('#authEmail').value.trim(),password=document.querySelector('#authPassword').value;document.querySelector('#authMessage').textContent='Entrando…';const {data,error}=await supabaseClient.auth.signInWithPassword({email,password});if(error){document.querySelector('#authMessage').textContent=error.message;return}currentUser=data.user;setAuthUI();await loadRemote()});
 document.querySelector('#signOutBtn').addEventListener('click',async()=>{await saveRemote();await supabaseClient.auth.signOut();currentUser=null;setAuthUI();save();document.querySelector('#authMessage').textContent='Você saiu da conta.'});
 if(supabaseClient)supabaseClient.auth.getSession().then(async({data})=>{if(data.session){currentUser=data.session.user;setAuthUI();await loadRemote()}else setAuthUI()});else setAuthUI();
-function toast(msg){const el=document.querySelector('#toast');el.textContent=msg;el.classList.remove('hidden');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.add('hidden'),2400)}
+function toast(msg){
+ const el=document.querySelector('#toast');if(!el)return;
+ const message=String(msg??'');
+ const type=/item encontrado|drop|recompensa épica|presente/i.test(message)?'loot':/não foi possível|inválido|falha|faltam .* ouro|exige nível/i.test(message)?'warning':/subiu de nível|desbloqueado|equipado|conquista|sucesso|resgatado|aprimorada/i.test(message)?'success':'info';
+ const config={loot:{icon:'🎁',kicker:'ITEM ADQUIRIDO'},success:{icon:'✦',kicker:'JORNADA AVANÇOU'},warning:{icon:'⚠',kicker:'ATENÇÃO'},info:{icon:'✧',kicker:'XBLEACH'}};
+ const chosen=config[type];
+ el.replaceChildren();
+ const icon=document.createElement('span');icon.className='toast-icon';icon.setAttribute('aria-hidden','true');icon.textContent=chosen.icon;
+ const copy=document.createElement('span');copy.className='toast-copy';
+ const kicker=document.createElement('span');kicker.className='toast-kicker';kicker.textContent=chosen.kicker;
+ const body=document.createElement('span');body.className='toast-message';body.textContent=message;
+ copy.append(kicker,body);el.append(icon,copy);
+ el.classList.remove('toast--loot','toast--success','toast--warning','toast--info','hidden');el.classList.add('toast--'+type);
+ clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.add('hidden'),3200);
+}
 function log(html){
  const feed=document.querySelector('#combatLog');if(!feed)return;
  const entry=document.createElement('div');entry.className='feeditem';entry.innerHTML=html;feed.prepend(entry);
