@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 420" role="img" aria-labelledby="t d">
+<title id="t">Yoruichi Shihōin — Mestra do Shunpo</title><desc id="d">Combatente ágil de pele morena, cabelo violeta preso e energia elétrica roxa.</desc>
+<defs>
+ <linearGradient id="skin" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#b97851"/><stop offset=".45" stop-color="#8b4f39"/><stop offset="1" stop-color="#573128"/></linearGradient>
+ <linearGradient id="suit" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#303041"/><stop offset=".5" stop-color="#151520"/><stop offset="1" stop-color="#090a12"/></linearGradient>
+ <linearGradient id="hair" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#d4baff"/><stop offset=".35" stop-color="#7f56c8"/><stop offset="1" stop-color="#32224f"/></linearGradient>
+ <filter id="glow"><feGaussianBlur stdDeviation="5"/></filter>
+</defs>
+<ellipse cx="145" cy="394" rx="75" ry="10" fill="#090710" opacity=".6"/>
+<!-- lightning -->
+<path d="M218 89 L194 133 L217 132 L183 188 L194 147 L169 154 L198 107 L189 107Z" fill="#ba8cff" opacity=".65" filter="url(#glow)"/>
+<path d="M218 89 L194 133 L217 132 L183 188 L194 147 L169 154 L198 107 L189 107Z" fill="#e3c8ff"/>
+<path d="M76 188 L53 220 L71 221 L46 263" fill="none" stroke="#ad78ff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+<!-- legs in movement -->
+<path d="M112 274 L92 346 L64 378 L82 389 L123 360 L149 302Z" fill="url(#skin)" stroke="#38202a" stroke-width="5"/>
+<path d="M163 273 L183 333 L210 363 L195 383 L158 361 L133 310Z" fill="url(#skin)" stroke="#38202a" stroke-width="5"/>
+<path d="M66 376 L88 382 L94 397 L54 397 L48 389Z M194 371 L213 358 L237 382 L228 395 L199 394Z" fill="#161520" stroke="#6a4b7b" stroke-width="4"/>
+<!-- body suit -->
+<path d="M112 136 L88 160 L66 250 L99 303 L130 271 L155 298 L185 271 L222 292 L231 246 L199 159 L176 136Z" fill="url(#suit)" stroke="#5f526b" stroke-width="5" stroke-linejoin="round"/>
+<path d="M128 146 L150 171 L171 145 L189 250 L152 280 L112 247Z" fill="#22212e" stroke="#856a9f" stroke-width="3"/>
+<path d="M121 165 L152 188 L179 163" fill="none" stroke="#d6b86d" stroke-width="4"/>
+<path d="M111 193 L92 234 L113 251 L133 209Z M183 192 L208 234 L190 251 L172 210Z" fill="#15151f" stroke="#54475f" stroke-width="3"/>
+<!-- forearms -->
+<path d="M94 231 L77 257 L93 271 L112 247Z M204 234 L226 256 L212 276 L193 251Z" fill="url(#skin)" stroke="#38202a" stroke-width="4"/>
+<!-- belt and straps -->
+<path d="M106 252 L198 253 L191 274 L116 274Z" fill="#b98c52" stroke="#4b302b" stroke-width="3"/>
+<path d="M136 253 L160 263 L146 273Z" fill="#f0d493" stroke="#60452b" stroke-width="2"/>
+<!-- neck -->
+<path d="M130 115 L128 151 L151 172 L173 148 L166 111Z" fill="url(#skin)" stroke="#492c2a" stroke-width="3"/>
+<!-- face -->
+<path d="M110 61 L190 61 L184 109 Q171 137 151 141 Q127 130 117 108Z" fill="url(#skin)" stroke="#44262a" stroke-width="4"/>
+<path d="M119 88 L145 92 M160 91 L182 87" stroke="#1b1323" stroke-width="5" stroke-linecap="round"/>
+<path d="M124 86 L145 89 M160 89 L181 85" stroke="#f2c6ab" stroke-width="2" opacity=".8"/>
+<path d="M151 92 L145 109 L154 111" fill="none" stroke="#5e382f" stroke-width="2"/>
+<path d="M137 120 L164 117 L151 126Z" fill="#54232b"/>
+<!-- violet hair and ponytail -->
+<path d="M120 69 Q110 22 67 33 Q87 58 63 84 Q88 82 97 70 Q84 101 63 110 Q105 113 123 86Z" fill="url(#hair)" stroke="#322049" stroke-width="4"/>
+<path d="M181 74 Q216 34 246 58 Q222 72 234 95 Q208 92 198 82 Q208 115 227 128 Q190 130 178 101Z" fill="url(#hair)" stroke="#322049" stroke-width="4"/>
+<path d="M111 71 L91 49 L123 57 L126 30 L143 56 L160 22 L169 58 L195 39 L184 70 L198 83 L176 89 L162 75 L152 94 L136 78 L122 89Z" fill="url(#hair)" stroke="#322049" stroke-width="4" stroke-linejoin="round"/>
+<path d="M96 51 L119 65 M126 39 L140 63 M161 31 L160 60 M187 47 L172 65" stroke="#e2c9ff" stroke-width="3" opacity=".7"/>
+<!-- gold earrings and gauntlet -->
+<circle cx="113" cy="106" r="4" fill="#f2d28a" stroke="#56352c" stroke-width="1.5"/>
+<path d="M192 249 L222 264 L215 286 L186 272Z" fill="#6d50a4" stroke="#d4baff" stroke-width="3"/>
+<path d="M198 255 L212 260 M195 263 L210 268 M191 270 L206 276" stroke="#efdcff" stroke-width="2"/>
+<path d="M78 288 L91 297 L84 307 L71 297Z M214 295 L226 304 L218 314 L208 304Z" fill="#b28cff"/>
+</svg>
