@@ -2,8 +2,8 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#080b14">
-<title>BLEACH: Soul Reaper Idle RPG</title>
-<meta name="description" content="BLEACH Soul Reaper Idle RPG — evolução espiritual e combate automático contra Hollows.">
+<title>XBleach — Soul Reaper Idle RPG</title>
+<meta name="description" content="XBleach — RPG idle de combate automático, habilidades espirituais, evolução, loot e batalhas contra Hollows.">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 64 64%27%3E%3Crect width=%2764%27 height=%2764%27 rx=%2712%27 fill=%27%23100a10%27/%3E%3Cpath d=%27M9 52 34 8 42 13 18 57Z%27 fill=%27%23ff4d5e%27/%3E%3Cpath d=%27M27 56 48 19 55 24 35 60Z%27 fill=%27%23f4f0f2%27/%3E%3C/svg%3E">
 <style>
 :root{color-scheme:dark;--bg:#080b14;--panel:#101827;--panel2:#151f31;--line:#29374d;--text:#f2f6ff;--muted:#98a9c2;--cyan:#67e8f9;--violet:#a78bfa;--gold:#f6ca74;--green:#86efac;--red:#fda4af}
@@ -488,11 +488,37 @@ body.reduce-motion *,body.reduce-motion *:before,body.reduce-motion *:after{anim
 #battleArena .hero-art-real.is-loaded:not(.is-attacking):not(.is-skill){animation:heroIdle 2.5s ease-in-out infinite!important}
 .brand h1{letter-spacing:.035em}
 
+
+/* XBleach combat feedback: live Hollow HP, floating hits, drops and level-ups */
+#battleArena .enemy-card i.enemy-health{position:relative!important;display:block!important;flex:0 0 auto!important;width:clamp(42px,5.3vw,72px)!important;height:7px!important;margin-top:6px!important;overflow:hidden!important;background:#150d14!important;border:1px solid #a74756!important;border-radius:99px!important;box-shadow:0 1px 5px #000c!important}
+#battleArena .enemy-card.enemy-large i.enemy-health{width:clamp(62px,7vw,88px)!important;height:8px!important}
+#battleArena .enemy-card i.enemy-health>span{display:block!important;position:absolute!important;inset:0 auto 0 0!important;width:100%;height:100%;background:linear-gradient(90deg,#a81732,#ff384f 62%,#ff9a9c)!important;border-radius:99px;transition:width .22s cubic-bezier(.2,.8,.2,1);box-shadow:0 0 6px #ff344c66}
+#battleArena .enemy-pack.is-hit .enemy-health>span{filter:brightness(1.8)}
+#battleArena .enemy-pack.is-defeated .enemy-health{opacity:0;transition:opacity .15s}
+#battleArena .enemy-pack.is-defeated .enemy-art-wrap{filter:brightness(1.8) saturate(.4)}
+#battleArena #combatFx .combat-pop{z-index:65!important;position:absolute!important;left:56%;top:35%;font-family:Inter,system-ui,sans-serif;font-weight:1000;letter-spacing:.01em;pointer-events:none;white-space:nowrap;animation:xBleachFloat 1.05s cubic-bezier(.18,.65,.28,1) forwards!important;backdrop-filter:blur(3px);border:1px solid #ffffff24;border-radius:8px;padding:3px 9px;background:#070913d9}
+#battleArena #combatFx .pop-damage{font-size:clamp(1.25rem,3vw,2.15rem);color:#fff;text-shadow:0 2px 3px #000,0 0 14px #ff365b}
+#battleArena #combatFx .pop-critical{font-size:clamp(1.4rem,3.4vw,2.35rem);color:#ffe36e;border-color:#ffe36e99;background:#220916e8;text-shadow:0 2px 4px #000,0 0 17px #ff1738}
+#battleArena #combatFx .pop-skill{top:25%;font-size:clamp(.8rem,1.8vw,1.1rem);color:#9edfff;border-color:#6dbaff88;text-shadow:0 0 12px #168eff}
+#battleArena #combatFx .pop-finisher{top:29%;font-size:clamp(1rem,2.5vw,1.65rem);color:#ffdf91;border-color:#ffbe55aa;text-shadow:0 0 13px #ff5739}
+#battleArena #combatFx .pop-xp{top:56%;font-size:clamp(.85rem,1.6vw,1.1rem);color:#9bffb5;border-color:#53d98b88}
+#battleArena #combatFx .pop-gold{top:63%;font-size:clamp(.85rem,1.6vw,1.1rem);color:#ffd77c;border-color:#dba94288}
+#battleArena #combatFx .pop-loot{top:20%;font-size:clamp(1rem,2vw,1.35rem);color:#dfbdff;border-color:#b274ff99;text-shadow:0 0 15px #7a39ff}
+#battleArena #combatFx .pop-level{left:43%;top:17%;font-size:clamp(1.4rem,3.6vw,2.55rem);color:#fff38a;border-color:#ffe16a;background:#371b08ee;text-shadow:0 0 20px #ff9200}
+#battleArena #combatFx .pop-stage{left:43%;top:20%;font-size:clamp(1.15rem,2.8vw,1.9rem);color:#ffc1c8;border-color:#ff546c99;text-shadow:0 0 18px #ff234e}
+@keyframes xBleachFloat{0%{opacity:0;translate:0 12px;scale:.7}12%{opacity:1;translate:0 0;scale:1.08}28%{scale:1}100%{opacity:0;translate:var(--float-x,12px) -58px;scale:.92}}
+.active-skill-chip{display:flex;align-items:center;gap:8px;min-width:130px;max-width:240px;flex:1;padding:7px 10px;border:1px solid #314d6b;border-radius:9px;background:linear-gradient(125deg,#0e2036,#10101d);box-shadow:inset 0 0 16px #3675ab16}
+.active-skill-chip>span{display:grid;place-items:center;flex:0 0 34px;width:34px;height:34px;border-radius:8px;background:#152a43;font-size:1.45rem;filter:drop-shadow(0 0 6px #52a6ff55)}
+.active-skill-chip strong,.active-skill-chip small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.active-skill-chip strong{font-size:.78rem;color:#d8edff}.active-skill-chip small{font-size:.66rem;color:var(--muted);margin-top:3px}
+@media(max-width:800px){#battleArena .enemy-card i.enemy-health{width:clamp(35px,9vw,52px)!important;height:5px!important}#battleArena .enemy-card.enemy-large i.enemy-health{width:clamp(48px,12vw,68px)!important;height:6px!important}.active-skill-chip{order:3;flex-basis:100%;max-width:none}.skill-dock{row-gap:7px}}
+@media(prefers-reduced-motion:reduce){#battleArena #combatFx .combat-pop{animation:none!important;opacity:1!important}}
+
 </style>
 </head>
 <body>
 <div class="app">
-<header class="top"><div class="brand"><div class="sigil">斬</div><div><h1>BLEACH <span style="color:var(--cyan)">SOUL REAPER IDLE</span></h1><p>JORNADA ESPIRITUAL · COMBATE 100% AFK</p></div></div><div class="topstats"><div class="pill">🪙 <b id="topGold">0</b></div><div class="pill">⚡ <b id="topLevel">Nv. 1</b></div><div class="pill">💾 <span id="saveStatus">Salvo localmente</span></div><button id="accountToggle">Entrar / Criar conta</button></div></header><section id="accountPanel" class="panel hidden"><div class="section-title"><div><h3>Conta do jogador</h3><p class="tiny muted">Entre para salvar sua jornada entre dispositivos.</p></div><button id="accountClose">Fechar</button></div><div id="authForm" class="grid2"><div><label class="tiny muted" for="authEmail">E-mail</label><input id="authEmail" type="email" autocomplete="email" placeholder="voce@email.com" style="width:100%;padding:12px;border-radius:10px;border:1px solid var(--line);background:#080f1b;color:var(--text);margin:6px 0 10px"><label class="tiny muted" for="authPassword">Senha (mínimo 6 caracteres)</label><input id="authPassword" type="password" autocomplete="current-password" placeholder="Sua senha" style="width:100%;padding:12px;border-radius:10px;border:1px solid var(--line);background:#080f1b;color:var(--text);margin:6px 0 10px"><div class="battle-actions" style="justify-content:flex-start"><button id="signInBtn" class="primary">Entrar</button><button id="signUpBtn">Criar conta</button></div></div><div><p id="authMessage" class="notice">Sua conta será criada no Supabase. Use um e-mail que você consiga acessar.</p><div id="signedInBox" class="hidden"><p id="signedInEmail"></p><button id="signOutBtn">Sair da conta</button></div></div></div></section>
+<header class="top"><div class="brand"><div class="sigil">斬</div><div><h1>XBleach <span style="color:var(--cyan)">IDLE RPG</span></h1><p>JORNADA ESPIRITUAL · COMBATE 100% AFK</p></div></div><div class="topstats"><div class="pill">🪙 <b id="topGold">0</b></div><div class="pill">⚡ <b id="topLevel">Nv. 1</b></div><div class="pill">💾 <span id="saveStatus">Salvo localmente</span></div><button id="accountToggle">Entrar / Criar conta</button></div></header><section id="accountPanel" class="panel hidden"><div class="section-title"><div><h3>Conta do jogador</h3><p class="tiny muted">Entre para salvar sua jornada entre dispositivos.</p></div><button id="accountClose">Fechar</button></div><div id="authForm" class="grid2"><div><label class="tiny muted" for="authEmail">E-mail</label><input id="authEmail" type="email" autocomplete="email" placeholder="voce@email.com" style="width:100%;padding:12px;border-radius:10px;border:1px solid var(--line);background:#080f1b;color:var(--text);margin:6px 0 10px"><label class="tiny muted" for="authPassword">Senha (mínimo 6 caracteres)</label><input id="authPassword" type="password" autocomplete="current-password" placeholder="Sua senha" style="width:100%;padding:12px;border-radius:10px;border:1px solid var(--line);background:#080f1b;color:var(--text);margin:6px 0 10px"><div class="battle-actions" style="justify-content:flex-start"><button id="signInBtn" class="primary">Entrar</button><button id="signUpBtn">Criar conta</button></div></div><div><p id="authMessage" class="notice">Sua conta será criada no Supabase. Use um e-mail que você consiga acessar.</p><div id="signedInBox" class="hidden"><p id="signedInEmail"></p><button id="signOutBtn">Sair da conta</button></div></div></div></section>
 <div class="layout">
 <aside class="sidebar"><nav class="nav" aria-label="Menu principal"><button data-page="home">🏯 Base</button><button class="active" data-page="battle">⚔️ Batalha</button><button data-page="character">🧘 Personagem</button><button data-page="inventory">🎒 Inventário</button><button data-page="quests">📜 Missões</button><button data-page="lore">📖 História</button><button data-page="achievements">🏆 Conquistas</button><button data-page="settings">⚙️ Configurações</button></nav><div class="sidefoot"><div class="eyebrow">Próximo objetivo</div><p class="tiny">Derrote 10 espíritos corrompidos e fortaleça sua lâmina.</p><div class="bar"><span id="sideProgress" style="width:10%"></span></div><p class="tiny muted" id="sideKills">0 / 10 derrotados</p></div></aside>
 <main class="main">
@@ -511,13 +537,13 @@ body.reduce-motion *,body.reduce-motion *:before,body.reduce-motion *:after{anim
 <img id="heroArtReal" class="hero-art hero-art-real" src="/assets/ichigo-focus.svg" alt="Ichigo Kurosaki em postura de combate com Zangetsu" decoding="async" draggable="false"><svg id="heroArtFallback" class="hero-art hero-art-fallback" width="320" height="390" viewBox="0 0 320 390" role="img" aria-label="Shinigami de cabelo laranja com espada gigante"><defs><linearGradient id="heroRobe" x2="1" y2="1"><stop stop-color="#292832"/><stop offset="1" stop-color="#050509"/></linearGradient><linearGradient id="bladeGlow" x2="1" y2="1"><stop stop-color="#f9ffff"/><stop offset="1" stop-color="#7cbaff"/></linearGradient></defs><path d="M110 130 L65 175 L40 330 L125 310 L155 385 L220 385 L240 300 L300 330 L260 170 L205 130Z" fill="url(#heroRobe)" stroke="#66616e" stroke-width="3"/><path d="M113 65 L83 45 L103 42 L91 24 L123 40 L128 10 L148 35 L166 12 L175 42 L205 27 L195 50 L223 53 L204 74 L220 93 L193 94 L178 112 L126 111 L107 92 L88 88Z" fill="#ff8a18" stroke="#a7430b" stroke-width="3"/><path d="M112 73 L195 70 L185 112 L160 137 L132 112Z" fill="#efb38f" stroke="#2b1820" stroke-width="3"/><path d="M122 83 L145 87 M163 87 L185 82" stroke="#16151a" stroke-width="5"/><path d="M143 111 L169 112 L158 123Z" fill="#7b1823"/><path d="M134 137 L160 174 L190 137 L215 285 L85 285Z" fill="url(#heroRobe)" stroke="#aaa" stroke-width="2"/><path d="M145 139 L162 164 L180 138" fill="none" stroke="#f0e9e8" stroke-width="8"/><path d="M193 210 L282 40 L296 44 L222 240Z" fill="url(#bladeGlow)" stroke="#30303b" stroke-width="6"/><path d="M203 205 L280 56" stroke="#fff" stroke-width="5"/><path d="M220 190 Q275 130 303 50" fill="none" stroke="#72baff" stroke-width="15" opacity=".8"/><path d="M218 214 Q266 157 310 66" fill="none" stroke="#c2e9ff" stroke-width="4"/><path d="M120 83 L145 82 L139 89 L125 88Z M163 82 L187 80 L180 88 L167 89Z" fill="#faf3ec" stroke="#15141a" stroke-width="1.7"/><ellipse cx="135" cy="85.5" rx="2.3" ry="3.2" fill="#16131a"/><ellipse cx="176" cy="85" rx="2.3" ry="3.2" fill="#16131a"/><path d="M157 88 L151 103 L159 105" fill="none" stroke="#a96e5a" stroke-width="1.8" stroke-linecap="round"/><path d="M145 114 L174 114 L160 126Z" fill="#7b1424" stroke="#33121b" stroke-width="1.5"/><path d="M131 92 L143 95 M166 95 L182 91" stroke="#6b2c25" stroke-width="1.5" opacity=".65"/><path d="M116 148 Q137 161 149 174 M188 150 Q171 170 158 181 M102 181 L130 204 M205 174 L184 211" fill="none" stroke="#66616e" stroke-width="3" stroke-linecap="round"/><path d="M135 139 L160 172 L187 139" fill="none" stroke="#f5eef0" stroke-width="9"/><path d="M147 148 L159 160 L171 147" fill="none" stroke="#111116" stroke-width="4"/><path d="M119 147 L131 160 L125 166 L114 154 M131 160 L144 174 L137 180 L125 166" fill="#d82037" stroke="#731321" stroke-width="1.5"/><circle cx="123" cy="157" r="2.5" fill="#fa6773"/><circle cx="131" cy="165" r="2.5" fill="#fa6773"/><circle cx="139" cy="173" r="2.5" fill="#fa6773"/><path d="M202 199 L221 206 L222 213 L203 208Z" fill="#14141b" stroke="#83818f" stroke-width="2"/><path d="M201 203 L224 214 M204 197 L227 208" stroke="#b8c6d8" stroke-width="3"/><path d="M220 190 Q264 130 303 50" fill="none" stroke="#ffffff" stroke-width="2" opacity=".8"/><path d="M115 58 L103 48 M130 40 L128 24 M147 40 L158 22 M170 44 L189 35 M191 53 L208 56 M111 72 L101 79" stroke="#ffc05f" stroke-width="2.2" stroke-linecap="round"/><path d="M65 178 L83 191 M244 178 L256 194" stroke="#4b4854" stroke-width="4" stroke-linecap="round"/></svg>
 <div class="slash-effect slash-one"></div><div class="slash-effect slash-two"></div>
 <div class="enemy-pack" id="enemyPack">
-<div class="enemy-card enemy-small"><div class="enemy-art-wrap enemy-art-small"><img id="enemyLeftArt" class="enemy-art-real" src="/assets/hollow-beast.webp" alt="Hollow secundário" decoding="async" draggable="false"><svg id="enemyLeft" class="enemy-art-fallback" width="120" height="150" viewBox="0 0 120 150" role="img" aria-label="Hollow monstruoso"><path d="M60 145 L42 102 L20 135 L30 85 L5 65 L37 60 L25 22 L54 45 L70 15 L78 49 L111 30 L91 68 L117 84 L84 97 L78 145Z" fill="#18151b" stroke="#9c8e9c" stroke-width="3"/><path d="M36 57 L57 64 L45 72Z M70 64 L91 55 L81 73Z" fill="#ffe75c"/><path d="M43 83 L78 81 L62 103Z" fill="#eee4d9" stroke="#111" stroke-width="3"/><path d="M20 135 L7 148 M101 127 L115 143" stroke="#d3c9d7" stroke-width="6"/></svg></div><i></i></div>
-<div class="enemy-card enemy-large"><div class="enemy-art-wrap enemy-art-main"><img id="enemyIconArt" class="enemy-art-real" src="/assets/hollow-skull.webp" alt="Hollow em combate" decoding="async" draggable="false"><svg id="enemyIcon" class="enemy-art-fallback" width="160" height="190" viewBox="0 0 160 190" role="img" aria-label="Hollow mascarado"><path d="M80 8 L126 32 L145 79 L121 144 L80 179 L39 144 L15 79 L34 32Z" fill="#e5e0d5" stroke="#25232a" stroke-width="7"/><path d="M32 56 L72 72 L52 89Z M128 56 L88 72 L108 89Z" fill="#15131a"/><ellipse cx="52" cy="77" rx="9" ry="6" fill="#ffeb37"/><ellipse cx="108" cy="77" rx="9" ry="6" fill="#ffeb37"/><path d="M80 84 L69 106 L83 110Z" fill="#777" stroke="#24222a" stroke-width="3"/><path d="M43 117 L117 117 L102 145 L80 155 L58 145Z" fill="#17151b" stroke="#24222a" stroke-width="3"/><path d="M49 120 L61 141 L67 120 L79 143 L88 120 L99 141 L110 120" fill="none" stroke="#f4f0e8" stroke-width="7"/><path d="M40 38 L18 10 L50 25 M120 38 L142 10 L110 25" fill="#d8d3c9" stroke="#24222a" stroke-width="5"/></svg></div><i></i><strong id="enemyName">Espírito Corrompido</strong></div>
-<div class="enemy-card enemy-small enemy-right"><div class="enemy-art-wrap enemy-art-small"><img id="enemyRightArt" class="enemy-art-real" src="/assets/hollow-gold.webp" alt="Hollow de elite" decoding="async" draggable="false"><svg id="enemyRight" class="enemy-art-fallback" width="120" height="160" viewBox="0 0 120 160" role="img" aria-label="Hollow de elite"><path d="M60 12 L75 40 L98 32 L88 61 L112 77 L83 92 L90 135 L66 119 L51 151 L41 114 L13 128 L27 91 L7 72 L34 58 L28 32 L49 42Z" fill="#302b26" stroke="#d2a75a" stroke-width="3"/><path d="M36 65 L56 72 L44 80Z M65 72 L86 64 L77 80Z" fill="#ffe64a"/><path d="M44 91 L78 91 L61 110Z" fill="#f4ead7" stroke="#121116" stroke-width="3"/><path d="M48 26 L60 2 L72 26" fill="none" stroke="#d2a75a" stroke-width="7"/><path d="M44 106 L35 143 M77 111 L91 139" stroke="#17151b" stroke-width="9"/></svg></div><i></i></div>
+<div class="enemy-card enemy-small"><div class="enemy-art-wrap enemy-art-small"><img id="enemyLeftArt" class="enemy-art-real" src="/assets/hollow-beast.webp" alt="Hollow secundário" decoding="async" draggable="false"><svg id="enemyLeft" class="enemy-art-fallback" width="120" height="150" viewBox="0 0 120 150" role="img" aria-label="Hollow monstruoso"><path d="M60 145 L42 102 L20 135 L30 85 L5 65 L37 60 L25 22 L54 45 L70 15 L78 49 L111 30 L91 68 L117 84 L84 97 L78 145Z" fill="#18151b" stroke="#9c8e9c" stroke-width="3"/><path d="M36 57 L57 64 L45 72Z M70 64 L91 55 L81 73Z" fill="#ffe75c"/><path d="M43 83 L78 81 L62 103Z" fill="#eee4d9" stroke="#111" stroke-width="3"/><path d="M20 135 L7 148 M101 127 L115 143" stroke="#d3c9d7" stroke-width="6"/></svg></div><i class="enemy-health"><span id="enemyLeftHpFill"></span></i></div>
+<div class="enemy-card enemy-large"><div class="enemy-art-wrap enemy-art-main"><img id="enemyIconArt" class="enemy-art-real" src="/assets/hollow-skull.webp" alt="Hollow em combate" decoding="async" draggable="false"><svg id="enemyIcon" class="enemy-art-fallback" width="160" height="190" viewBox="0 0 160 190" role="img" aria-label="Hollow mascarado"><path d="M80 8 L126 32 L145 79 L121 144 L80 179 L39 144 L15 79 L34 32Z" fill="#e5e0d5" stroke="#25232a" stroke-width="7"/><path d="M32 56 L72 72 L52 89Z M128 56 L88 72 L108 89Z" fill="#15131a"/><ellipse cx="52" cy="77" rx="9" ry="6" fill="#ffeb37"/><ellipse cx="108" cy="77" rx="9" ry="6" fill="#ffeb37"/><path d="M80 84 L69 106 L83 110Z" fill="#777" stroke="#24222a" stroke-width="3"/><path d="M43 117 L117 117 L102 145 L80 155 L58 145Z" fill="#17151b" stroke="#24222a" stroke-width="3"/><path d="M49 120 L61 141 L67 120 L79 143 L88 120 L99 141 L110 120" fill="none" stroke="#f4f0e8" stroke-width="7"/><path d="M40 38 L18 10 L50 25 M120 38 L142 10 L110 25" fill="#d8d3c9" stroke="#24222a" stroke-width="5"/></svg></div><i class="enemy-health"><span id="enemyMainHpFill"></span></i><strong id="enemyName">Espírito Corrompido</strong></div>
+<div class="enemy-card enemy-small enemy-right"><div class="enemy-art-wrap enemy-art-small"><img id="enemyRightArt" class="enemy-art-real" src="/assets/hollow-gold.webp" alt="Hollow de elite" decoding="async" draggable="false"><svg id="enemyRight" class="enemy-art-fallback" width="120" height="160" viewBox="0 0 120 160" role="img" aria-label="Hollow de elite"><path d="M60 12 L75 40 L98 32 L88 61 L112 77 L83 92 L90 135 L66 119 L51 151 L41 114 L13 128 L27 91 L7 72 L34 58 L28 32 L49 42Z" fill="#302b26" stroke="#d2a75a" stroke-width="3"/><path d="M36 65 L56 72 L44 80Z M65 72 L86 64 L77 80Z" fill="#ffe64a"/><path d="M44 91 L78 91 L61 110Z" fill="#f4ead7" stroke="#121116" stroke-width="3"/><path d="M48 26 L60 2 L72 26" fill="none" stroke="#d2a75a" stroke-width="7"/><path d="M44 106 L35 143 M77 111 L91 139" stroke="#17151b" stroke-width="9"/></svg></div><i class="enemy-health"><span id="enemyRightHpFill"></span></i></div>
 </div><div id="combatFx" class="combat-fx" aria-live="polite"></div>
 <div class="scene-bottom"><div class="scene-character"><div class="mini-portrait mini-portrait-img inline-portrait" role="img" aria-label="Kurosaki"><img id="miniPortraitReal" class="portrait-real" src="/assets/ichigo-portrait.webp" alt="" decoding="async"><svg id="miniPortraitFallback" width="40" height="40" viewBox="0 0 40 40"><path d="M4 40V29Q7 21 13 19L9 11 14 4 19 8 25 2 31 7 36 13 31 19Q37 24 39 40" fill="#101116" stroke="#050509" stroke-width="2"/><path d="M8 12 3 5 12 8 12 1 19 7 24 1 27 8 37 4 32 13 31 19 9 19Z" fill="#ff8618" stroke="#bd470b" stroke-width="1.2"/><path d="M12 13 29 12 28 22 20 27 13 21Z" fill="#edb28e" stroke="#241820" stroke-width="1.2"/><path d="M13 15 18 16 M23 16 28 15" stroke="#15131a" stroke-width="1.5"/><path d="M18 22 23 22" stroke="#6e2025" stroke-width="1.5"/><path d="M9 23 20 30 31 23 34 40 6 40Z" fill="#111116"/></svg></div><div><strong>Shinigami</strong><small>Espadachim · Nv. <span id="sceneLevel">1</span></small></div></div><div class="scene-enemy-health"><div><span>INTEGRIDADE DO INIMIGO</span><b id="enemyHpText">30 / 30</b></div><div class="bar hp"><span id="enemyHpBar" style="width:100%"></span></div></div></div>
 </div>
-<div class="skill-dock panel"><div class="skill-icon red-skill"><span>◢</span><small>Q</small></div><div class="skill-icon red-skill"><span>⚔</span><small>W</small></div><div class="skill-icon purple-skill"><span>影</span><small>E</small></div><button class="skill-icon blue-skill" id="skillBtn" aria-pressed="true"><span>✦</span><small>AUTO SKILL</small><i id="skillCooldown"></i></button><div class="skill-icon passive-skill"><span>☯</span><small>PASSIVA</small></div><span class="tag" id="idleStatus">⚡ FULL AFK · ATIVO</span></div>
+<div class="skill-dock panel"><div class="skill-icon red-skill"><span>◢</span><small>Q</small></div><div class="skill-icon red-skill"><span>⚔</span><small>W</small></div><div class="skill-icon purple-skill"><span>影</span><small>E</small></div><button class="skill-icon blue-skill" id="skillBtn" aria-pressed="true"><span>✦</span><small>AUTO SKILL</small><i id="skillCooldown"></i></button><div class="skill-icon passive-skill"><span>☯</span><small>PASSIVA</small></div><div class="active-skill-chip" aria-live="polite"><span id="activeSkillIcon">🌙</span><div><strong id="activeSkillName">Corte Crescente</strong><small id="activeSkillInfo">Dano ×3.2 · Custo 20 · Recarga 8s</small></div></div><span class="tag" id="idleStatus">⚡ FULL AFK · ATIVO</span></div>
 <div class="grid2 battle-lower"><div class="panel"><div class="section-title"><h3>REGISTRO DE COMBATE</h3><button id="clearLog">Limpar</button></div><div class="feed" id="combatLog"><div class="feeditem">Uma presença hostil se aproxima das ruínas…</div></div><p class="tiny muted" id="battleStatus">Seu personagem está lutando automaticamente.</p></div><div class="panel"><div class="section-title"><h3>RECOMPENSAS EM TEMPO REAL</h3><span class="tag">AUTO-LOOT</span></div><div class="loot-strip"><span>✨<small>EXP</small></span><span>🪙<small>Ouro</small></span><span>💎<small>Essência</small></span><span>🗡️<small>Armas</small></span><span>🔮<small>Relíquias</small></span></div><div class="section-title" style="margin-top:15px"><h3>ENERGIA ESPIRITUAL</h3><b id="energyText">50 / 50</b></div><div class="bar"><span id="energyBar" style="width:100%"></span></div><p class="tiny muted">Vida: <b id="hpText">100 / 100</b> · Poder de ataque: <b id="attackValue">12</b> · <span id="classBadge">Lâmina</span></p><div class="bar hp"><span id="hpBar" style="width:100%"></span></div></div></div>
 </div>
 <aside class="battle-side">
@@ -563,11 +589,11 @@ const SKILLS=[
 {id:'bankai-wave',name:'Onda de Bankai',icon:'卍',level:20,cost:50,cooldown:20000,multiplier:7.5,desc:'Explosão de reiatsu para causar dano pesado.'}
 ];
 const ENEMIES=[
-{name:'Espírito Corrompido',icon:'👹',hp:30,xp:15,gold:5},
-{name:'Lobo do Véu',icon:'🐺',hp:48,xp:22,gold:8},
-{name:'Devorador de Ecos',icon:'👻',hp:75,xp:34,gold:12},
-{name:'Guardião Oco',icon:'💀',hp:110,xp:48,gold:18},
-{name:'Sentinela da Ruptura',icon:'👺',hp:165,xp:70,gold:27}
+{name:'Espírito Corrompido',icon:'👹',hp:38,xp:26,gold:9},
+{name:'Lobo do Véu',icon:'🐺',hp:50,xp:38,gold:14},
+{name:'Devorador de Ecos',icon:'👻',hp:72,xp:54,gold:20},
+{name:'Guardião Oco',icon:'💀',hp:100,xp:75,gold:28},
+{name:'Sentinela da Ruptura',icon:'👺',hp:135,xp:100,gold:38}
 ];
 const ENEMY_ART=['/assets/hollow-skull.webp','/assets/hollow-beast.webp','/assets/hollow-winged.webp','/assets/hollow-gold.webp','/assets/hollow-lord.webp'];
 const BOSSES=[
@@ -586,10 +612,10 @@ const LOOT=[
 const SAVE_KEY='xigoSoulRiftV1';
 const DEFAULT={
 version:3,level:1,xp:0,gold:0,kills:0,stage:1,classId:'blade',activeSkillId:'crescent',running:true,autoSkill:true,
-enemyHp:30,inventory:[],claimed:false,attackBonus:0,weaponLevel:1,energy:50,skillReadyAt:0,lastSeen:Date.now(),
+enemyHp:38,pendingRespawnAt:0,inventory:[],claimed:false,attackBonus:0,weaponLevel:1,energy:50,skillReadyAt:0,lastSeen:Date.now(),
 bossActive:false,bossKills:0,bestStage:1,prestige:0,lastDailyClaim:'',dailyStreak:0,skillUses:0,totalDamage:0,totalXp:0,totalGold:0,
 equipmentSlots:{weapon:null,armor:null,accessory:null,relic:null},
-questClaims:{},achievementsClaimed:{},settings:{speed:1,showDamage:true,reducedMotion:false,compactLog:false,autoEquip:false}
+questClaims:{},achievementsClaimed:{},settings:{speed:1,showDamage:true,reducedMotion:false,compactLog:false,autoEquip:true}
 };
 let offlineSummary=null;
 let state=loadState(),toastTimer;
@@ -618,7 +644,7 @@ function normalizeState(raw){
  out.weaponLevel=Math.floor(safeNumber(src.weaponLevel,1,1,10000));
  out.energy=safeNumber(src.energy,getClassFor(out).energy,0,getClassFor(out).energy);
  out.skillReadyAt=safeNumber(src.skillReadyAt,0,0,1e15);
- out.enemyHp=safeNumber(src.enemyHp,maxEnemyHpFor(out),0,1e12);
+ out.enemyHp=safeNumber(src.enemyHp,maxEnemyHpFor(out),0,1e12);out.pendingRespawnAt=safeNumber(src.pendingRespawnAt,0,0,1e15);
  out.bossActive=!!src.bossActive;out.bossKills=Math.floor(safeNumber(src.bossKills,0,0,1e9));out.prestige=Math.floor(safeNumber(src.prestige,0,0,10000));out.dailyStreak=Math.floor(safeNumber(src.dailyStreak,0,0,100000));out.lastDailyClaim=typeof src.lastDailyClaim==='string'?src.lastDailyClaim:'';
  out.bestStage=Math.max(out.stage,Math.floor(safeNumber(src.bestStage,out.stage,1,100000)));
  out.skillUses=Math.floor(safeNumber(src.skillUses,0,0,1e12));
@@ -651,13 +677,19 @@ function simulateOfflineState(st,elapsedMs){
   const simulatedTime=Date.now()-seconds*1000+tick*2000;
   if(st.autoSkill&&simulatedTime>=(st.skillReadyAt||0)){const sk=getSkillForState(st);if(st.energy>=sk.cost){st.energy-=sk.cost;st.skillReadyAt=simulatedTime+sk.cooldown;const extra=Math.round((cls.atk+(st.level-1)*2+st.attackBonus+equipmentPowerFor(st))*sk.multiplier);st.enemyHp-=extra;st.totalDamage+=extra;st.skillUses++}}
   if(st.enemyHp<=0){
-   const e=enemyAtStage(st.stage);st.kills++;st.xp+=e.xp;st.gold+=e.gold;st.totalXp+=e.xp;st.totalGold+=e.gold;
-   while(st.xp>=st.level*100){st.xp-=st.level*100;st.level++;st.gold+=15;st.totalGold+=15}
-   if(st.kills%5===0){st.stage++;st.gold+=10;st.totalGold+=10}
+   const beforeKills=st.kills,waveCount=3,e=enemyAtStage(st.stage),xpGain=e.xp*waveCount,goldGain=e.gold*waveCount;
+   st.kills+=waveCount;st.xp+=xpGain;st.gold+=goldGain;st.totalXp+=xpGain;st.totalGold+=goldGain;
+   while(st.xp>=xpForLevel(st.level)){st.xp-=xpForLevel(st.level);st.level++;st.gold+=30;st.totalGold+=30}
+   if(Math.floor(st.kills/5)>Math.floor(beforeKills/5)){st.stage++;st.gold+=15;st.totalGold+=15}
    st.bestStage=Math.max(st.bestStage,st.stage);
-   if(st.settings.autoEquip&&st.kills%9===0){const item=LOOT[st.kills%LOOT.length];const next={...item,id:'offline-'+st.kills};st.inventory.push(next);const slot=itemSlot(next);const current=st.inventory.find(x=>String(x.id)===String(st.equipmentSlots[slot]));if(!current||itemPower(next)+itemVitality(next)>itemPower(current)+itemVitality(current)){st.equipmentSlots[slot]=next.id;next.equipped=true}}
-   st.enemyHp=maxEnemyHpFor(st);
+   if(st.settings.autoEquip&&st.kills%3===0){
+    const item={...LOOT[Math.floor((st.kills/3)%LOOT.length)],id:'offline-'+st.kills};
+    st.inventory.push(item);const slot=itemSlot(item),current=st.inventory.find(x=>String(x.id)===String(st.equipmentSlots[slot]));
+    if(!current||itemPower(item)+itemVitality(item)>itemPower(current)+itemVitality(current)){st.equipmentSlots[slot]=item.id;item.equipped=true}
+   }
+   st.enemyHp=maxEnemyHpFor(st);st.pendingRespawnAt=0;
   }
+
  }
  const gainedKills=st.kills-startKills,gainedXp=st.totalXp-startXp,gainedGold=st.totalGold-startGold;
  if(gainedKills>0)offlineSummary={seconds,kills:gainedKills,xp:gainedXp,gold:gainedGold};
@@ -676,23 +708,37 @@ function loadState(){
 }
 function enemy(){return state.bossActive?BOSSES[Math.min(BOSSES.length-1,Math.floor((state.bossKills||0)/3))]:enemyAtStage(state.stage)}
 function enemyMaxHp(){return maxEnemyHpFor(state)}
-function maxXp(){return state.level*100}
+function xpForLevel(level){return Math.round(70+Math.max(0,level-1)*28)}
+function maxXp(){return xpForLevel(state.level)}
 function archetype(){return getClassFor(state)}
 function power(){return Math.round((archetype().atk+(state.level-1)*2+state.attackBonus+equipmentPowerFor(state))*(1+(state.prestige||0)*.05))}
 function maxHp(){return Math.round(archetype().hp+(state.level-1)*5+equipmentHpFor(state))}
-function combatVisual(kind,amount){
- const hero=document.querySelector('.hero-art'),enemyPack=document.querySelector('#enemyPack'),fx=document.querySelector('#combatFx'),arena=document.querySelector('#battleArena');
+function showFloatingText(message,kind='pop-reward'){
+ const fx=document.querySelector('#combatFx');if(!fx)return;
+ const pop=document.createElement('div');pop.className='combat-pop '+kind;pop.textContent=String(message);
+ pop.style.left=(54+Math.random()*20)+'%';pop.style.top=(28+Math.random()*22)+'%';
+ pop.style.setProperty('--float-x',((Math.random()-.5)*42)+'px');
+ fx.appendChild(pop);while(fx.children.length>10)fx.firstElementChild.remove();
+ setTimeout(()=>pop.remove(),kind==='pop-level'?1500:1050);
+}
+function combatVisual(kind,amount,critical=false){
+ const hero=document.querySelector('#battleArena .hero-art-real.is-loaded')||document.querySelector('#battleArena .hero-art'),enemyPack=document.querySelector('#enemyPack'),fx=document.querySelector('#combatFx'),arena=document.querySelector('#battleArena');
  if(hero){hero.classList.remove('is-attacking','is-skill');void hero.getBoundingClientRect();hero.classList.add(kind==='skill'?'is-skill':'is-attacking');setTimeout(()=>hero.classList.remove('is-attacking','is-skill'),kind==='skill'?760:460)}
  if(enemyPack){enemyPack.classList.remove('is-hit','is-defeated');void enemyPack.getBoundingClientRect();enemyPack.classList.add(kind==='defeat'?'is-defeated':'is-hit');setTimeout(()=>enemyPack.classList.remove('is-hit','is-defeated'),kind==='defeat'?700:360)}
  if(arena){arena.classList.remove('impact-normal','impact-skill');void arena.getBoundingClientRect();arena.classList.add(kind==='skill'?'impact-skill':'impact-normal');setTimeout(()=>arena.classList.remove('impact-normal','impact-skill'),400)}
- if(fx&&state.settings.showDamage){const pop=document.createElement('div');pop.className='combat-pop '+(kind==='skill'?'pop-skill':kind==='defeat'?'pop-defeat':'pop-hit');pop.textContent=kind==='skill'?'✦ '+activeSkill().name:kind==='defeat'?'PURIFICADO!':'−'+amount;fx.appendChild(pop);setTimeout(()=>pop.remove(),kind==='skill'?1000:850)}
+ if(fx&&state.settings.showDamage){
+  showFloatingText((critical?'CRÍTICO! ':'−')+Math.max(0,Math.round(amount)).toLocaleString('pt-BR'),critical?'pop-critical':'pop-damage');
+  if(kind==='skill')showFloatingText('✦ '+activeSkill().name,'pop-skill');
+  if(kind==='defeat')showFloatingText('PURIFICADO!','pop-finisher');
+ }
 }
+
 function useSkill(silent=false,quiet=false){
- const now=Date.now();if(now<(state.skillReadyAt||0))return false;
+ const now=Date.now();if((state.pendingRespawnAt||0)>now||now<(state.skillReadyAt||0))return false;
  const skill=activeSkill();if((state.energy===undefined?archetype().energy:state.energy)<skill.cost)return false;
  state.energy-=skill.cost;state.skillReadyAt=now+skill.cooldown;state.skillUses=(state.skillUses||0)+1;
- const damage=Math.round(power()*skill.multiplier);state.enemyHp-=damage;state.totalDamage=(state.totalDamage||0)+damage;
- combatVisual(state.enemyHp<=0?'defeat':'skill',damage);
+ const critical=Math.random()<.12,damage=Math.round(power()*skill.multiplier*(critical?1.7:1));state.enemyHp-=damage;state.totalDamage=(state.totalDamage||0)+damage;
+ combatVisual(state.enemyHp<=0?'defeat':'skill',damage,critical);
  log('✦ <strong>'+skill.name+'</strong> causou '+damage+' de dano espiritual!');
  if(state.enemyHp<=0)defeat();
  if(!quiet){render();save()}
@@ -718,45 +764,59 @@ function log(html){
 
 function awardXp(n){
  const earned=Math.max(0,Math.floor(Number(n)||0));state.xp+=earned;state.totalXp=(state.totalXp||0)+earned;
+ if(earned>0&&state.settings.showDamage)showFloatingText('+'+earned.toLocaleString('pt-BR')+' EXP','pop-xp');
  while(state.xp>=maxXp()){
-  state.xp-=maxXp();state.level++;state.gold+=15;state.totalGold=(state.totalGold||0)+15;
-  log('✨ <strong>Nível '+state.level+' alcançado!</strong> +15 ouro bônus.');
-  toast('Subiu para o nível '+state.level+'!');
+  state.xp-=maxXp();state.level++;state.gold+=30;state.totalGold=(state.totalGold||0)+30;
+  log('✨ <strong>NÍVEL '+state.level+'!</strong> +30 ouro · novas habilidades podem ser desbloqueadas.');
+  showFloatingText('LEVEL UP! · NV. '+state.level,'pop-level');
+  toast('SUBIU DE NÍVEL! Nv. '+state.level+' 🎉');
  }
  state.bestStage=Math.max(state.bestStage||1,state.stage);
 }
 
 function defeat(){
- const e=enemy(),wasBoss=!!state.bossActive;
- state.kills++;state.xp+=e.xp;state.totalXp=(state.totalXp||0)+e.xp;
- state.gold+=e.gold;state.totalGold=(state.totalGold||0)+e.gold;
- awardXp(0);
+ const e=enemy(),wasBoss=!!state.bossActive,beforeKills=state.kills,waveCount=wasBoss?1:3;
+ const xpGain=e.xp*waveCount,goldGain=e.gold*waveCount;
+ state.kills+=waveCount;state.gold+=goldGain;state.totalGold=(state.totalGold||0)+goldGain;
+ awardXp(xpGain);
  if(wasBoss){
-  state.bossKills=(state.bossKills||0)+1;state.bossActive=false;state.stage+=1;
-  state.gold+=20;state.totalGold=(state.totalGold||0)+20;
-  log('🏆 <strong>Chefe derrotado: '+e.name+'!</strong> +'+e.xp+' EXP · +'+(e.gold+20)+' ouro total.');
-  toast('Chefe purificado! Recompensa de elite recebida.');
+  state.bossKills=(state.bossKills||0)+1;state.bossActive=false;state.stage++;state.gold+=20;state.totalGold=(state.totalGold||0)+20;
+  log('🏆 <strong>CHEFE DERROTADO: '+e.name+'!</strong> +'+xpGain+' EXP · +'+(goldGain+20)+' ouro.');
+  toast('CHEFE DERROTADO! Recompensa épica! 🏆');
   const guaranteed=LOOT[state.bossKills%LOOT.length],drop={...guaranteed,id:'boss-'+Date.now()+'-'+Math.random()};
-  state.inventory.push(drop);log('👑 <strong>Recompensa de chefe:</strong> '+drop.name+'.');
-  if(state.settings.autoEquip)equipItem(state.inventory.length-1,true);
+  state.inventory.push(drop);log('👑 <strong>Drop de chefe:</strong> '+drop.name+'.');
+  showFloatingText('DROP DE CHEFE!','pop-loot');
+  if(state.settings.autoEquip&&isUpgradeForSlot(drop))equipItem(state.inventory.length-1,true);
  }else{
-  log('☯ <strong>'+e.name+' purificado.</strong> +'+e.xp+' EXP · +'+e.gold+' ouro.');
-  if(state.kills%5===0){state.stage++;state.gold+=10;state.totalGold=(state.totalGold||0)+10;log('🧭 <strong>Nova ameaça detectada.</strong> Você avançou para o estágio '+state.stage+'.')}
-  if(Math.random()<.24){
-   const item=LOOT[Math.floor(Math.random()*LOOT.length)],drop={...item,id:'drop-'+Date.now()+'-'+Math.random(),equipped:false};
-   state.inventory.push(drop);log('🎁 Encontrou: <strong>'+drop.name+'</strong>.');toast('Item encontrado: '+drop.name);
-   if(state.settings.autoEquip&&isUpgradeForSlot(drop))equipItem(state.inventory.length-1,true);
+  log('☯ <strong>3 Hollows purificados!</strong> +'+xpGain+' EXP · +'+goldGain+' ouro.');
+  if(Math.floor(state.kills/5)>Math.floor(beforeKills/5)){
+   state.stage++;state.gold+=15;state.totalGold=(state.totalGold||0)+15;
+   log('🧭 <strong>NOVO ESTÁGIO '+state.stage+'!</strong> +15 ouro por avanço.');
+   showFloatingText('ESTÁGIO '+state.stage+'!','pop-stage');
+   toast('Estágio '+state.stage+' desbloqueado! ⚔️');
+  }
+  const dropChance=state.kills<=18?.48:.32;
+  if(Math.random()<dropChance||state.kills%15===0){
+   const item={...LOOT[Math.floor(Math.random()*LOOT.length)],id:'drop-'+Date.now()+'-'+Math.random(),equipped:false};
+   state.inventory.push(item);log('🎁 <strong>DROP!</strong> '+item.name+'.');showFloatingText('ITEM ENCONTRADO!','pop-loot');toast('Item encontrado: '+item.name+' 🎁');
+   if(state.settings.autoEquip&&isUpgradeForSlot(item))equipItem(state.inventory.length-1,true);
   }
  }
- state.bestStage=Math.max(state.bestStage||1,state.stage);state.enemyHp=enemyMaxHp();
+ showFloatingText('+'+goldGain.toLocaleString('pt-BR')+' OURO','pop-gold');
+ state.bestStage=Math.max(state.bestStage||1,state.stage);
+ state.enemyHp=0;state.pendingRespawnAt=Date.now()+420;
 }
 
 function attack(manual=false,quiet=false){
  if(!state.running&&!manual)return;
- const damage=Math.max(1,Math.round(power()*(manual?2:1)));
+ const now=Date.now();
+ if((state.pendingRespawnAt||0)>now)return;
+ if(state.pendingRespawnAt&&now>=state.pendingRespawnAt){state.pendingRespawnAt=0;state.enemyHp=enemyMaxHp()}
+ if(!Number.isFinite(state.enemyHp)||state.enemyHp<=0)state.enemyHp=enemyMaxHp();
+ const critical=Math.random()<.12,damage=Math.max(1,Math.round(power()*(manual?2:1.35)*(critical?1.75:1)));
  state.enemyHp-=damage;state.totalDamage=(state.totalDamage||0)+damage;
  const killed=state.enemyHp<=0;
- combatVisual(killed?'defeat':'hit',damage);
+ combatVisual(killed?'defeat':'hit',damage,critical);
  if(killed)defeat();
  if(!quiet){render();save()}
 }
@@ -857,7 +917,7 @@ function render(){
  textOf('zoneTitle',state.bossActive?'Desafio de chefe':zone.subtitle);textOf('enemyName',e.name);textOf('enemyLevel',state.bossActive?'CHEFE · Nível '+state.stage+' · ameaça extrema':'Nível '+state.stage+' · '+zone.name+' · '+(state.stage<3?'comum':'elite'));
  const mainMob=document.querySelector('#enemyIcon');if(mainMob)mainMob.setAttribute('aria-label',e.name);
  const leftMob=document.querySelector('#enemyLeft');if(leftMob)leftMob.setAttribute('aria-label','Hollow secundário');const rightMob=document.querySelector('#enemyRight');if(rightMob)rightMob.setAttribute('aria-label','Hollow de elite');
- textOf('enemyHpText',Math.max(0,Math.ceil(state.enemyHp)).toLocaleString('pt-BR')+' / '+enemyMax.toLocaleString('pt-BR'));widthOf('enemyHpBar',hpPct);textOf('battleStatus',state.bossActive?'Chefe de elite em combate automático. Fique de olho nos efeitos e nas recompensas.':'Combate 100% automático: personagem ataca, usa habilidades e avança sozinho.');textOf('idleStatus','⚡ FULL AFK · '+(state.autoSkill?'SKILLS AUTO ON':'SKILLS AUTO OFF')+' · '+(state.settings.speed||1)+'×');
+ textOf('enemyHpText',Math.max(0,Math.ceil(state.enemyHp)).toLocaleString('pt-BR')+' / '+enemyMax.toLocaleString('pt-BR'));widthOf('enemyHpBar',hpPct);widthOf('enemyLeftHpFill',hpPct);widthOf('enemyMainHpFill',hpPct);widthOf('enemyRightHpFill',hpPct);textOf('battleStatus',state.bossActive?'Chefe de elite em combate automático. Fique de olho nos efeitos e nas recompensas.':'Combate 100% automático: personagem ataca, usa habilidades e avança sozinho.');textOf('idleStatus','⚡ FULL AFK · '+(state.autoSkill?'AUTO SKILLS ON':'AUTO SKILLS OFF')+' · '+(state.settings.speed||1)+'×');textOf('activeSkillName',activeSkill().name);textOf('activeSkillIcon',activeSkill().icon);textOf('activeSkillInfo','Dano ×'+activeSkill().multiplier+' · Custo '+activeSkill().cost+' · Recarga '+(activeSkill().cooldown/1000)+'s');
  textOf('classBadge',cls.name);textOf('attackValue',power());textOf('hpText',maxHp()+' / '+maxHp());widthOf('hpBar',100);state.energy=Math.min(state.energy===undefined?cls.energy:state.energy,cls.energy);textOf('energyText',state.energy+' / '+cls.energy);widthOf('energyBar',state.energy/cls.energy*100);
  const skill=document.querySelector('#skillBtn');if(skill){const remain=Math.max(0,Math.ceil(((state.skillReadyAt||0)-Date.now())/1000));skill.classList.toggle('skill-auto-off',!state.autoSkill);skill.setAttribute('aria-pressed',String(state.autoSkill));const label=skill.querySelector('small');if(label)label.textContent=state.autoSkill?'AUTO ON':'AUTO OFF';skill.title=activeSkill().name+' · custo '+activeSkill().cost+' · recarga '+(activeSkill().cooldown/1000)+'s';const cooldown=skill.querySelector('#skillCooldown');if(cooldown)cooldown.textContent=remain>0?'· '+remain+'s':''}
  widthOf('sideProgress',state.kills*10);textOf('sideKills',Math.min(10,state.kills)+' / 10 derrotados');widthOf('questBar',state.kills*10);textOf('questCount',Math.min(10,state.kills)+' / 10 derrotados');const claim=document.querySelector('#claimQuest');if(claim){claim.disabled=state.kills<10||!!state.questClaims.purify10;textOf('claimQuest',state.questClaims.purify10?'Recompensa resgatada':'Resgatar recompensa')}
@@ -916,7 +976,7 @@ document.addEventListener('click',ev=>{
 document.querySelector('#skillBtn').addEventListener('click',()=>{state.autoSkill=!state.autoSkill;render();save();toast('Habilidades automáticas '+(state.autoSkill?'ativadas':'desativadas'))});
 document.querySelector('#bossChallenge').addEventListener('click',()=>{
  if(state.bossActive){toast('Seu personagem já está enfrentando o chefe.');goto('battle');return}
- state.stage=Math.max(state.stage,5+(state.bossKills||0)*5);state.bossActive=true;state.enemyHp=enemyMaxHp();state.energy=Math.max(state.energy,20);goto('battle');render();save();toast('Desafio de chefe iniciado: '+enemy().name+'.');
+ state.stage=Math.max(state.stage,5+(state.bossKills||0)*5);state.bossActive=true;state.pendingRespawnAt=0;state.enemyHp=enemyMaxHp();state.energy=Math.max(state.energy,20);goto('battle');render();save();toast('Desafio de chefe iniciado: '+enemy().name+'.');
 });
 document.querySelector('#clearLog').addEventListener('click',()=>{const feed=document.querySelector('#combatLog');if(feed)feed.innerHTML='<div class="feeditem">Registro limpo. A caçada continua…</div>'});
 document.querySelector('#claimQuest').addEventListener('click',()=>claimQuest('purify10'));
@@ -934,8 +994,17 @@ document.querySelector('#settingCompact').addEventListener('change',ev=>{state.s
 document.querySelector('#settingAutoEquip').addEventListener('change',ev=>{state.settings.autoEquip=!!ev.target.checked;render();save()});
 render();
 if(offlineSummary){const mins=Math.floor(offlineSummary.seconds/60);toast('Enquanto você esteve fora: '+offlineSummary.kills+' derrotas, +'+offlineSummary.xp+' EXP e +'+offlineSummary.gold+' ouro.');log('🌙 <strong>Resumo da caçada offline:</strong> '+offlineSummary.kills+' derrotas em '+mins+' min · +'+offlineSummary.xp+' EXP · +'+offlineSummary.gold+' ouro.');offlineSummary=null;save()}
-function idleTick(){const speed=Math.max(1,Math.min(3,Number(state.settings.speed)||1));for(let i=0;i<speed;i++){state.energy=Math.min(archetype().energy,(state.energy===undefined?archetype().energy:state.energy)+3);attack(false,true);if(state.autoSkill&&Date.now()>=(state.skillReadyAt||0)&&state.energy>=20)useSkill(true,true)}render();save()}
-setInterval(idleTick,2000);setInterval(()=>{if(document.querySelector('#skillBtn'))render()},1000);setInterval(save,10000);window.addEventListener('pagehide',save);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')save()});
+function idleTick(){
+ const speed=Math.max(1,Math.min(3,Number(state.settings.speed)||1));
+ for(let i=0;i<speed;i++){
+  state.energy=Math.min(archetype().energy,(state.energy===undefined?archetype().energy:state.energy)+2);
+  attack(false,true);
+  const sk=activeSkill();
+  if(!state.pendingRespawnAt&&state.autoSkill&&Date.now()>=(state.skillReadyAt||0)&&state.energy>=sk.cost)useSkill(true,true);
+ }
+ render();
+}
+setInterval(idleTick,750);setInterval(()=>{if(document.querySelector('#skillBtn'))render()},1000);setInterval(save,10000);window.addEventListener('pagehide',save);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')save()});
 </script>
 </script>
 </body></html>
