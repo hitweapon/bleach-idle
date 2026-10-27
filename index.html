@@ -1569,6 +1569,83 @@ button.quick-skill.is-selected:before{content:"ATIVA";position:absolute;top:-7px
   #battleArena .xb-spell-impact{max-width:76px!important}
 }
 
+
+/* XBLEACH ARENA POLISH v3 — desktop-only proportions, grounded sprites and a richer platform */
+@media (min-width:801px){
+  #battleArena{
+    min-height:clamp(480px,60vh,590px)!important;
+    background-position:center 58%!important;
+    box-shadow:inset 0 0 0 1px #ffffff12,inset 0 -42px 66px #030711b8,0 20px 48px #0006!important;
+  }
+  /* All playable characters share the same ground line; adjust visual size per silhouette. */
+  #battleArena .hero-art-real.is-loaded,
+  #battleArena .hero-art-fallback:not(.asset-hidden){
+    height:auto!important;object-fit:contain!important;object-position:center bottom!important;
+    bottom:16%!important;filter:drop-shadow(0 12px 10px #030610b8) drop-shadow(0 0 16px #76bfff30)!important;
+  }
+  #battleArena[data-character="blade"] .hero-art-real.is-loaded,
+  #battleArena[data-character="blade"] .hero-art-fallback:not(.asset-hidden){
+    width:clamp(190px,22%,278px)!important;max-width:278px!important;max-height:53%!important;
+    left:7.5%!important;bottom:15.5%!important;
+  }
+  #battleArena[data-character="kido"] .hero-art-real.is-loaded,
+  #battleArena[data-character="kido"] .hero-art-fallback:not(.asset-hidden){
+    width:clamp(166px,18%,226px)!important;max-width:226px!important;max-height:54%!important;
+    left:9%!important;bottom:15.5%!important;
+  }
+  #battleArena[data-character="step"] .hero-art-real.is-loaded,
+  #battleArena[data-character="step"] .hero-art-fallback:not(.asset-hidden){
+    width:clamp(166px,18%,226px)!important;max-width:226px!important;max-height:54%!important;
+    left:9%!important;bottom:15.5%!important;
+  }
+  #battleArena .xb-hero-aura{
+    width:22%!important;max-width:270px!important;height:43%!important;left:5%!important;bottom:12%!important;
+    opacity:.26!important;filter:blur(5px)!important;
+  }
+  #battleArena #enemyPack,
+  #battleArena .enemy-pack{
+    width:42%!important;max-width:520px!important;height:47%!important;
+    right:5.5%!important;bottom:15%!important;gap:clamp(10px,1.6vw,24px)!important;
+    align-items:flex-end!important;justify-content:space-evenly!important;
+  }
+  #battleArena .enemy-card{flex:0 1 30%!important;max-width:31%!important;gap:4px!important}
+  #battleArena .enemy-art-wrap{
+    width:clamp(58px,6.1vw,84px)!important;height:clamp(78px,10.6vw,120px)!important;
+  }
+  #battleArena .enemy-art-wrap.enemy-art-main{
+    width:clamp(82px,8.7vw,118px)!important;height:clamp(108px,14.2vw,158px)!important;
+  }
+  #battleArena .enemy-art-wrap>img,
+  #battleArena .enemy-art-wrap>svg{
+    object-fit:contain!important;object-position:center bottom!important;
+    filter:drop-shadow(0 9px 8px #030610b8)!important;
+  }
+  #battleArena .enemy-large strong,
+  #battleArena #enemyName{
+    max-width:clamp(92px,9vw,126px)!important;font-size:clamp(10px,.82vw,12px)!important;
+    padding:5px 8px!important;line-height:1.2!important;
+  }
+  /* The illustrated backdrop remains visible while the lower foreground reads as a real platform. */
+  #battleArena .scene-ground{
+    display:block!important;z-index:5!important;left:0!important;right:0!important;bottom:0!important;
+    height:24%!important;opacity:1!important;border:0!important;
+    background:
+      radial-gradient(ellipse at 25% 0%,#e2c9a51c,transparent 44%),
+      repeating-linear-gradient(172deg,transparent 0 27px,#b7c6d20a 28px 29px,transparent 30px 52px),
+      linear-gradient(180deg,#101b2b00 0%,#1018279c 20%,#090e19ed 74%,#050811 100%)!important;
+    clip-path:polygon(0 20%,15% 12%,31% 18%,49% 7%,67% 17%,84% 10%,100% 20%,100% 100%,0 100%)!important;
+    box-shadow:inset 0 2px 0 #d9e8f01c!important;pointer-events:none!important;
+  }
+  #battleArena .scene-bottom{z-index:44!important}
+  #battleArena .xb-spell-wave{max-width:46%!important;filter:drop-shadow(0 0 12px #52bfff) drop-shadow(0 0 24px #326aff)!important}
+  #battleArena .xb-spell-impact{width:clamp(42px,5.4vw,72px)!important}
+}
+@media (min-width:801px) and (prefers-reduced-motion:reduce){
+  #battleArena .hero-art-real.is-loaded:not(.is-attacking):not(.is-skill):not(.is-critical),
+  #battleArena .hero-art-fallback:not(.asset-hidden),
+  #battleArena .enemy-pack,#battleArena .enemy-card{animation:none!important}
+}
+
 </style>
 </head>
 <body>
