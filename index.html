@@ -643,6 +643,7 @@ questClaims:{},achievementsClaimed:{},settings:{speed:1,showDamage:true,reducedM
 };
 let offlineSummary=null;
 let state=loadState(),toastTimer;
+let sessionStartedAt=Date.now(),sessionStartKills=state.kills||0,sessionStartDamage=state.totalDamage||0;
 function safeNumber(value,fallback=0,min=0,max=1e9){const n=Number(value);return Number.isFinite(n)?Math.min(max,Math.max(min,n)):fallback}
 function itemSlot(item){if(item&&['weapon','armor','accessory','relic'].includes(item.slot))return item.slot;const n=String(item?.name||'').toLowerCase();if(n.includes('lâmina'))return 'weapon';if(n.includes('faixa')||n.includes('manto'))return 'armor';if(n.includes('amuleto'))return 'accessory';return 'relic'}
 function itemPower(item){return safeNumber(item?.bonus, item?.name?.includes('Lâmina')?3:item?.name?.includes('Pedra')?4:item?.name?.includes('Amuleto')?2:item?.name?.includes('Fragmento')?1:0,0,100000)}
@@ -868,7 +869,16 @@ const ACHIEVEMENTS=[
 {id:'idleVeteran',name:'Veterano AFK',desc:'Derrote 250 inimigos.',icon:'🌘',gold:400,xp:300,check:s=>s.kills>=250}
 ];
 function textOf(id,value){const el=document.getElementById(id);if(el)el.textContent=String(value)}
-function widthOf(id,value){const el=document.getElementById(id);if(el)el.style.width=Math.max(0,Math.min(100,Number(value)||0))+'%'}
+function widthOf(id,value){
+ const el=document.getElementById(id);if(!el)return;
+ const v=Math.max(0,Math.min(100,Number(value)||0));el.style.width=v+'%';
+ const target=el.parentElement&&(el.parentElement.classList.contains('bar')||el.parentElement.classList.contains('prestige-progress'))?el.parentElement:el;
+ target.setAttribute('role','progressbar');target.setAttribute('aria-valuemin','0');target.setAttribute('aria-valuemax','100');target.setAttribute('aria-valuenow',String(Math.round(v)));
+ if(!target.hasAttribute('aria-label')){
+  const labels={xpBar:'Experiência',sideXpBar:'Experiência do personagem',enemyHpBar:'Vida da leva inimiga',enemyLeftHpFill:'Vida da leva inimiga',enemyMainHpFill:'Vida da leva inimiga',enemyRightHpFill:'Vida da leva inimiga',energyBar:'Energia espiritual',hpBar:'Vitalidade do personagem',questBar:'Progresso da missão',sideProgress:'Progresso do objetivo',weaponProgress:'Progresso da forja',prestigeProgressBar:'Progresso da ascensão'};
+  target.setAttribute('aria-label',labels[id]||'Progresso');
+ }
+}
 function escapeHTML(value){return String(value??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]))}
 function syncArtwork(imgId,fallbackId,src){
  const img=document.getElementById(imgId),fallback=fallbackId?document.getElementById(fallbackId):null;if(!img)return;
@@ -893,7 +903,46 @@ function renderSkillLoadout(){
  }).join('');
  textOf('activeSkillSummary',activeSkill().name);
 }
-function renderEquipment(){const slots=['weapon','armor','accessory','relic'],names={weapon:'Arma',armor:'Armadura',accessory:'Acessório',relic:'Relíquia'},icons={weapon:'🗡️',armor:'🥋',accessory:'📿',relic:'🔷'},eq=document.querySelector('#equipmentList');if(eq)eq.innerHTML=slots.map(slot=>{const it=equippedForSlot(slot);return '<div class="item equipment-slot"><span class="itemicon">'+icons[slot]+'</span><div class="itembody"><strong>'+names[slot]+': '+(it?escapeHTML(it.name):'Vazio')+'</strong><small>'+(it?escapeHTML(it.desc):'Nenhum item equipado')+'</small></div><span class="rarity '+(it?escapeHTML(it.rarity):'common')+'">'+(it?'Equipado':'Slot livre')+'</span>'+(it?'<button data-unequip="'+slot+'">Remover</button>':'')+'</div>'}).join('');const inv=document.querySelector('#inventoryList');if(inv)inv.innerHTML=state.inventory.map((it,i)=>'<div class="item inventory-item"><span class="itemicon">'+escapeHTML(it.icon)+'</span><div class="itembody"><strong>'+escapeHTML(it.name)+'</strong><small>'+escapeHTML(it.desc)+' · '+({weapon:'Arma',armor:'Armadura',accessory:'Acessório',relic:'Relíquia'}[itemSlot(it)]||'Item')+'</small></div><span class="rarity '+escapeHTML(it.rarity)+'">'+escapeHTML(it.rarity)+'</span><div class="inventory-actions"><button data-equip="'+i+'">'+(isEquipped(it)?'Remover':'Equipar')+'</button><button data-sell="'+i+'">Vender · '+(Number(it.sell)||4)+'</button></div></div>').join('');textOf('inventoryCount',state.inventory.length+' itens');const empty=document.querySelector('#emptyInventory');if(empty)empty.classList.toggle('hidden',state.inventory.length>0)}
+function renderEquipment(){
+ const slots=['weapon','armor','accessory','relic'],names={weapon:'Arma',armor:'Armadura',accessory:'Acessório',relic:'Relíquia'},icons={weapon:'🗡️',armor:'🥋',accessory:'📿',relic:'🔷'},eq=document.querySelector('#equipmentList');
+ if(eq)eq.innerHTML=slots.map(slot=>{const it=equippedForSlot(slot);return '<div class="item equipment-slot"><span class="itemicon">'+icons[slot]+'</span><div class="itembody"><strong>'+names[slot]+': '+(it?escapeHTML(it.name):'Vazio')+'</strong><small>'+(it?escapeHTML(it.desc):'Nenhum item equipado')+'</small></div><span class="rarity '+(it?escapeHTML(it.rarity):'common')+'">'+(it?'Equipado':'Slot livre')+'</span>'+(it?'<button data-unequip="'+slot+'">Remover</button>':'')+'</div>'}).join('');
+ const query=(document.querySelector('#inventorySearch')?.value||'').trim().toLocaleLowerCase('pt-BR');
+ const filter=document.querySelector('#inventoryTypeFilter')?.value||'all',sort=document.querySelector('#inventorySort')?.value||'power';
+ const rarityOrder={common:1,rare:2,epic:3,legendary:4,mythic:5};
+ const score=it=>itemPower(it)+itemVitality(it);
+ let rows=state.inventory.map((it,index)=>({it,index}));
+ if(query)rows=rows.filter(({it})=>(it.name+' '+it.desc+' '+it.rarity+' '+itemSlot(it)).toLocaleLowerCase('pt-BR').includes(query));
+ if(filter==='equipped')rows=rows.filter(({it})=>isEquipped(it));
+ else if(filter!=='all')rows=rows.filter(({it})=>itemSlot(it)===filter);
+ rows.sort((a,b)=>{
+  if(sort==='rarity')return (rarityOrder[b.it.rarity]||0)-(rarityOrder[a.it.rarity]||0)||score(b.it)-score(a.it);
+  if(sort==='newest')return b.index-a.index;
+  if(sort==='name')return a.it.name.localeCompare(b.it.name,'pt-BR');
+  if(sort==='sell')return (Number(b.it.sell)||0)-(Number(a.it.sell)||0);
+  return score(b.it)-score(a.it)||(rarityOrder[b.it.rarity]||0)-(rarityOrder[a.it.rarity]||0);
+ });
+ const inv=document.querySelector('#inventoryList');
+ if(inv)inv.innerHTML=rows.map(({it,index})=>'<div class="item inventory-item '+(isEquipped(it)?'is-equipped':'')+'"><span class="itemicon">'+escapeHTML(it.icon)+'</span><div class="itembody"><strong>'+escapeHTML(it.name)+(isEquipped(it)?' <span class="equipped-mark">✓ EQUIPADO</span>':'')+'</strong><small>'+escapeHTML(it.desc)+' · '+({weapon:'Arma',armor:'Armadura',accessory:'Acessório',relic:'Relíquia'}[itemSlot(it)]||'Item')+'</small><small class="item-score">Poder +'+itemPower(it)+' · Vitalidade +'+itemVitality(it)+' · Venda '+(Number(it.sell)||4)+' ouro</small></div><span class="rarity '+escapeHTML(it.rarity)+'">'+escapeHTML(it.rarity)+'</span><div class="inventory-actions"><button data-equip="'+index+'" aria-label="'+(isEquipped(it)?'Remover equipamento ':'Equipar ')+escapeHTML(it.name)+'">'+(isEquipped(it)?'Remover':'Equipar')+'</button><button data-sell="'+index+'" aria-label="Vender '+escapeHTML(it.name)+'">Vender · '+(Number(it.sell)||4)+'</button></div></div>').join('');
+ textOf('inventoryCount',state.inventory.length+' '+(state.inventory.length===1?'item':'itens'));
+ const overview=document.querySelector('#inventoryOverview');
+ if(overview){const equippedCount=state.inventory.filter(isEquipped).length,upgrades=state.inventory.filter(isUpgradeForSlot).length;overview.innerHTML='<span><b>'+rows.length+'</b> exibidos</span><span><b>'+equippedCount+'</b> equipados</span><span><b>'+upgrades+'</b> melhorias possíveis</span>'}
+ const empty=document.querySelector('#emptyInventory');
+ if(empty){const noItems=state.inventory.length===0,noMatches=state.inventory.length>0&&rows.length===0;empty.classList.toggle('hidden',rows.length>0);empty.innerHTML=noItems?'<span>◈</span><strong>Seu inventário está esperando o primeiro drop</strong><p>Continue a batalha automática para encontrar armas, armaduras, acessórios e relíquias.</p><button class="primary" data-goto="battle">Voltar à batalha</button>':noMatches?'<span>⌕</span><strong>Nenhum resultado para esse filtro</strong><p>Tente outro nome ou limpe o filtro de tipo.</p><button data-inventory-reset>Limpar filtros</button>':''}
+}
+function equipBestItems(){
+ let changed=0;
+ for(const slot of ['weapon','armor','accessory','relic']){
+  const candidates=state.inventory.filter(it=>itemSlot(it)===slot).sort((a,b)=>(itemPower(b)+itemVitality(b))-(itemPower(a)+itemVitality(a)));
+  if(!candidates.length)continue;
+  const best=candidates[0],current=equippedForSlot(slot);
+  if(!current||itemPower(best)+itemVitality(best)>itemPower(current)+itemVitality(current)){
+   if(current)current.equipped=false;state.equipmentSlots[slot]=best.id;best.equipped=true;changed++;
+  }
+ }
+ if(changed){render();save();toast(changed+' slot'+(changed===1?' aprimorado':'s aprimorados')+' automaticamente! ⚡')}
+ else toast('Você já está usando as melhores peças disponíveis.');
+}
+
 function renderAchievements(){const el=document.querySelector('#achievementsList');if(!el)return;const unlocked=ACHIEVEMENTS.filter(a=>a.check(state)).length,claimed=ACHIEVEMENTS.filter(a=>state.achievementsClaimed[a.id]).length,summary=document.querySelector('#achievementSummary');if(summary)summary.innerHTML='<div class="achievement-stat"><small>DESBLOQUEADAS</small><strong>'+unlocked+' / '+ACHIEVEMENTS.length+'</strong></div><div class="achievement-stat"><small>RESGATADAS</small><strong>'+claimed+'</strong></div><div class="achievement-stat"><small>PROGRESSO</small><strong>'+Math.floor(unlocked/ACHIEVEMENTS.length*100)+'%</strong></div>';el.innerHTML=ACHIEVEMENTS.map(a=>{const done=a.check(state),got=!!state.achievementsClaimed[a.id];return '<div class="achievement-card '+(done?'unlocked':'')+'"><div class="achievement-icon">'+a.icon+'</div><div class="achievement-copy"><strong>'+a.name+'</strong><small>'+a.desc+'</small><div class="achievement-reward"><span class="tag">'+a.gold+' ouro · '+a.xp+' EXP</span>'+(got?'<span class="muted tiny">Recompensa resgatada</span>':done?'<button class="primary" data-ach-claim="'+a.id+'">Resgatar</button>':'<span class="muted tiny">Ainda bloqueada</span>')+'</div></div></div>'}).join('')}
 function renderSettingsUI(){const settings=state.settings||DEFAULT.settings,speed=document.querySelector('#settingSpeed');if(speed)speed.value=String(settings.speed||1);const binds={settingAutoSkill:state.autoSkill,settingDamage:settings.showDamage,settingMotion:settings.reducedMotion,settingCompact:settings.compactLog,settingAutoEquip:settings.autoEquip};Object.entries(binds).forEach(([id,val])=>{const el=document.getElementById(id);if(el)el.checked=!!val});document.body.classList.toggle('reduce-motion',!!settings.reducedMotion);const summary=document.querySelector('#settingsSummary');if(summary)summary.innerHTML='<div class="summary-stat"><small>NÍVEL</small><strong>'+state.level+'</strong></div><div class="summary-stat"><small>OURO</small><strong>'+state.gold.toLocaleString('pt-BR')+'</strong></div><div class="summary-stat"><small>DERROTAS</small><strong>'+state.kills.toLocaleString('pt-BR')+'</strong></div><div class="summary-stat"><small>CHEFES</small><strong>'+state.bossKills+'</strong></div><div class="summary-stat"><small>DANO TOTAL</small><strong>'+Math.floor(state.totalDamage).toLocaleString('pt-BR')+'</strong></div><div class="summary-stat"><small>MELHOR ESTÁGIO</small><strong>'+state.bestStage+'</strong></div>';}
 
@@ -986,8 +1035,10 @@ function resetProgress(){
  state=normalizeState({...DEFAULT,lastSeen:Date.now()});offlineSummary=null;render();save();if(currentUser)saveRemote();log('🌱 <strong>Uma nova jornada começou.</strong>');toast('Progresso reiniciado.');
 }
 document.addEventListener('click',ev=>{
+ const reset=ev.target.closest?.('[data-inventory-reset]');if(reset){const search=document.querySelector('#inventorySearch'),type=document.querySelector('#inventoryTypeFilter'),sort=document.querySelector('#inventorySort');if(search)search.value='';if(type)type.value='all';if(sort)sort.value='power';renderEquipment();return}
  const nav=ev.target.closest?.('[data-page]');if(nav){goto(nav.dataset.page);return}
  const go=ev.target.closest?.('[data-goto]');if(go){goto(go.dataset.goto);return}
+ const quickSkill=ev.target.closest?.('[data-skill-quick]');if(quickSkill){const sk=SKILLS.find(x=>x.id===quickSkill.dataset.skillQuick);if(sk&&state.level>=sk.level){state.activeSkillId=sk.id;state.skillReadyAt=0;render();save();toast('Técnica automática: '+sk.name)}return}
  const chooseSkill=ev.target.closest?.('[data-skill-select]');if(chooseSkill){const sk=SKILLS.find(x=>x.id===chooseSkill.dataset.skillSelect);if(sk&&state.level>=sk.level){state.activeSkillId=sk.id;state.skillReadyAt=0;render();save();toast('Habilidade automática selecionada: '+sk.name)}return}
  const equip=ev.target.closest?.('[data-equip]');if(equip){equipItem(equip.dataset.equip);return}
  const sell=ev.target.closest?.('[data-sell]');if(sell){sellItem(sell.dataset.sell);return}
@@ -1004,6 +1055,10 @@ document.querySelector('#bossChallenge').addEventListener('click',()=>{
 });
 document.querySelector('#clearLog').addEventListener('click',()=>{const feed=document.querySelector('#combatLog');if(feed)feed.innerHTML='<div class="feeditem">Registro limpo. A caçada continua…</div>'});
 document.querySelector('#claimQuest').addEventListener('click',()=>claimQuest('purify10'));
+document.querySelector('#inventorySearch').addEventListener('input',()=>renderEquipment());
+document.querySelector('#inventoryTypeFilter').addEventListener('change',()=>renderEquipment());
+document.querySelector('#inventorySort').addEventListener('change',()=>renderEquipment());
+document.querySelector('#equipBestBtn').addEventListener('click',equipBestItems);
 document.querySelector('#claimDailyRewardBtn').addEventListener('click',claimDailyReward);
 document.querySelector('#prestigeBtn').addEventListener('click',performPrestige);
 document.querySelector('#upgradeWeaponBtn').addEventListener('click',upgradeWeapon);
@@ -1018,15 +1073,45 @@ document.querySelector('#settingCompact').addEventListener('change',ev=>{state.s
 document.querySelector('#settingAutoEquip').addEventListener('change',ev=>{state.settings.autoEquip=!!ev.target.checked;render();save()});
 render();
 if(offlineSummary){const mins=Math.floor(offlineSummary.seconds/60);toast('Enquanto você esteve fora: '+offlineSummary.kills+' derrotas, +'+offlineSummary.xp+' EXP e +'+offlineSummary.gold+' ouro.');log('🌙 <strong>Resumo da caçada offline:</strong> '+offlineSummary.kills+' derrotas em '+mins+' min · +'+offlineSummary.xp+' EXP · +'+offlineSummary.gold+' ouro.');offlineSummary=null;save()}
+function updateCombatHUD(){
+ const e=enemy(),zone=currentZone(),cls=archetype(),enemyMax=enemyMaxHp(),hpPct=Math.max(0,Math.min(100,state.enemyHp/enemyMax*100)),xpPct=Math.min(100,state.xp/maxXp()*100),elapsed=Math.max(1,(Date.now()-sessionStartedAt)/1000);
+ ['topGold','statGold','sideGold'].forEach(id=>textOf(id,state.gold.toLocaleString('pt-BR')));
+ textOf('topLevel','Nv. '+state.level);textOf('statLevel',state.level);textOf('statPower',power());textOf('statKills',state.kills);
+ textOf('xpLabel',state.xp+' / '+maxXp()+' EXP');textOf('xpPct',Math.floor(xpPct)+'%');widthOf('xpBar',xpPct);widthOf('sideXpBar',xpPct);
+ textOf('stage',state.stage);textOf('sceneLevel',state.level);textOf('sideLevel',state.level);
+ textOf('sidePower',power());textOf('sideForce',power());textOf('sideAgility',Math.round(cls.atk*.7+state.level));textOf('sideSpirit',Math.round(cls.energy*.2+state.level));textOf('sideVitality',maxHp());
+ textOf('homeEnemyName',e.name);textOf('homeEnemyMeta',(state.bossActive?'CHEFE · ':'Estágio ')+state.stage+' · ameaça '+(state.stage<3?'baixa':state.stage<6?'média':'alta'));
+ textOf('zoneTitle',state.bossActive?'Desafio de chefe':zone.subtitle);textOf('enemyName',e.name);textOf('enemyLevel',state.bossActive?'CHEFE · Nível '+state.stage+' · ameaça extrema':'Nível '+state.stage+' · '+zone.name+' · '+(state.stage<3?'comum':'elite'));
+ textOf('enemyHpText',Math.max(0,Math.ceil(state.enemyHp)).toLocaleString('pt-BR')+' / '+enemyMax.toLocaleString('pt-BR'));
+ widthOf('enemyHpBar',hpPct);widthOf('enemyLeftHpFill',hpPct);widthOf('enemyMainHpFill',hpPct);widthOf('enemyRightHpFill',hpPct);
+ textOf('battleStatus',state.pendingRespawnAt>Date.now()?'Próxima leva chegando…':state.bossActive?'Chefe de elite em combate automático.':'Combate 100% automático: ataques, habilidades e progressão seguem sozinhos.');
+ textOf('liveStatusText',state.pendingRespawnAt>Date.now()?'PRÓXIMA LEVA':state.bossActive?'CHEFE EM COMBATE':'COMBATE ATIVO');
+ textOf('idleStatus','⚡ FULL AFK · '+(state.autoSkill?'AUTO SKILLS ON':'AUTO SKILLS OFF')+' · '+(state.settings.speed||1)+'×');
+ const skill=activeSkill();textOf('activeSkillName',skill.name);textOf('activeSkillIcon',skill.icon);textOf('activeSkillInfo','Dano ×'+skill.multiplier+' · Custo '+skill.cost+' · Recarga '+(skill.cooldown/1000)+'s');
+ const skillBtn=document.querySelector('#skillBtn');if(skillBtn){const remain=Math.max(0,Math.ceil(((state.skillReadyAt||0)-Date.now())/1000));skillBtn.classList.toggle('skill-auto-off',!state.autoSkill);skillBtn.setAttribute('aria-pressed',String(state.autoSkill));skillBtn.title=skill.name+' · custo '+skill.cost+' · recarga '+(skill.cooldown/1000)+'s';const small=skillBtn.querySelector('small');if(small)small.textContent=state.autoSkill?'AUTO ON':'AUTO OFF';textOf('skillCooldown',remain>0?remain+'s':'')}
+ widthOf('energyBar',state.energy/cls.energy*100);textOf('energyText',state.energy+' / '+cls.energy);widthOf('hpBar',100);textOf('hpText',maxHp()+' / '+maxHp());textOf('attackValue',power());textOf('classBadge',cls.name);
+ widthOf('sideProgress',state.kills*10);textOf('sideKills',Math.min(10,state.kills)+' / 10 derrotados');widthOf('questBar',state.kills*10);textOf('questCount',Math.min(10,state.kills)+' / 10 derrotados');
+ const claim=document.querySelector('#claimQuest');if(claim){claim.disabled=state.kills<10||!!state.questClaims.purify10;textOf('claimQuest',state.questClaims.purify10?'Recompensa resgatada':'Resgatar recompensa')}
+ const sessionDamage=Math.max(0,(state.totalDamage||0)-sessionStartDamage),sessionKills=Math.max(0,state.kills-sessionStartKills);
+ textOf('sessionDps',Math.floor(sessionDamage).toLocaleString('pt-BR'));textOf('sessionDpsLabel','DPS estimado: '+Math.floor(sessionDamage/elapsed).toLocaleString('pt-BR'));
+ textOf('sessionKills',sessionKills.toLocaleString('pt-BR'));textOf('sessionKillsLabel','em '+Math.floor(elapsed/60)+' min');
+ const milestone=Math.ceil((state.kills+1)/5)*5;textOf('nextMilestone',milestone+' derrotas');textOf('nextMilestoneLabel',(milestone-state.kills)+' até o avanço');
+ const arena=document.querySelector('#battleArena');if(arena){arena.dataset.map=zone.id;arena.dataset.boss=state.bossActive?'true':'false';arena.classList.toggle('is-respawning',state.pendingRespawnAt>Date.now())}
+ const quickMap={crescent:'Q','flash-step':'W','bankai-wave':'E'};
+ document.querySelectorAll('[data-skill-quick]').forEach(btn=>{const id=btn.dataset.skillQuick,sk=SKILLS.find(x=>x.id===id),unlocked=!!sk&&state.level>=sk.level;btn.disabled=!unlocked;btn.classList.toggle('is-selected',!!sk&&skill.id===id);btn.setAttribute('aria-pressed',String(!!sk&&skill.id===id));if(sk){btn.title=unlocked?sk.name+' · custo '+sk.cost+' · '+(sk.cooldown/1000)+'s recarga':'Desbloqueia no nível '+sk.level;const small=btn.querySelector('small');if(small)small.textContent=quickMap[id]+' · '+(unlocked?'NV. '+sk.level:'🔒 '+sk.level)}});
+ const maps=document.querySelectorAll('.map-row'),thresholds=[1,11,21,31];maps.forEach((map,i)=>map.classList.toggle('locked',state.bestStage<thresholds[i]));
+}
 function idleTick(){
  const speed=Math.max(1,Math.min(3,Number(state.settings.speed)||1));
+ const before={kills:state.kills,level:state.level,stage:state.stage,gold:state.gold,xp:state.xp,inventory:state.inventory.length,bossKills:state.bossKills,prestige:state.prestige};
  for(let i=0;i<speed;i++){
   state.energy=Math.min(archetype().energy,(state.energy===undefined?archetype().energy:state.energy)+2);
   attack(false,true);
   const sk=activeSkill();
   if(!state.pendingRespawnAt&&state.autoSkill&&Date.now()>=(state.skillReadyAt||0)&&state.energy>=sk.cost)useSkill(true,true);
  }
- render();
+ const majorChange=before.kills!==state.kills||before.level!==state.level||before.stage!==state.stage||before.gold!==state.gold||before.xp!==state.xp||before.inventory!==state.inventory.length||before.bossKills!==state.bossKills||before.prestige!==state.prestige;
+ if(majorChange)render();else updateCombatHUD();
 }
 setInterval(idleTick,750);setInterval(()=>{if(document.querySelector('#skillBtn'))render()},1000);setInterval(save,10000);window.addEventListener('pagehide',save);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')save()});
 </script>
