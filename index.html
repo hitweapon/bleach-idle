@@ -1507,7 +1507,7 @@ async function loadPremiumIchigoArt(){
   const base64=parts.join('');
   if(base64.length!==55872)throw new Error('Tamanho inesperado da arte: '+base64.length);
   const binary=atob(base64);
-  if(binary.length!==54026)throw new Error('Dados incompletos da arte: '+binary.length);
+  if(binary.length!==41904)throw new Error('Dados incompletos da arte: '+binary.length);
   const bytes=new Uint8Array(binary.length);
   for(let i=0;i<binary.length;i++)bytes[i]=binary.charCodeAt(i);
   objectUrl=URL.createObjectURL(new Blob([bytes],{type:'image/webp'}));
