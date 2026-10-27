@@ -1646,6 +1646,27 @@ button.quick-skill.is-selected:before{content:"ATIVA";position:absolute;top:-7px
   #battleArena .enemy-pack,#battleArena .enemy-card{animation:none!important}
 }
 
+
+/* XBLEACH TOAST CONTRAST FIX — readable item drops and reward notifications */
+#toast.toast{
+ color:#fff7fc!important;
+ background:linear-gradient(135deg,rgba(72,20,52,.98),rgba(24,13,34,.99) 58%,rgba(15,20,39,.99))!important;
+ border:1px solid #ff7ca8!important;
+ box-shadow:0 14px 42px #000d,0 0 0 1px #ff7ca826,0 0 28px #ff4d8b20!important;
+ text-shadow:0 1px 2px #000!important;
+ font-size:clamp(14px,.9rem,16px)!important;
+ line-height:1.45!important;
+ font-weight:850!important;
+ opacity:1!important;
+ -webkit-text-fill-color:#fff7fc!important;
+}
+#toast.toast:not(.hidden){animation:toastIn .22s ease-out,toastGlow 2.4s ease-in-out}
+@keyframes toastGlow{0%,100%{box-shadow:0 14px 42px #000d,0 0 0 1px #ff7ca826,0 0 18px #ff4d8b18}50%{box-shadow:0 14px 42px #000d,0 0 0 1px #ff7ca855,0 0 28px #ff4d8b35}}
+@media(max-width:800px){
+ #toast.toast{bottom:calc(18px + env(safe-area-inset-bottom))!important;width:max-content;max-width:calc(100vw - 32px)!important;padding:13px 16px!important;text-align:center!important;border-radius:14px!important}
+}
+@media(prefers-reduced-motion:reduce){#toast.toast:not(.hidden){animation:none!important}}
+
 </style>
 </head>
 <body>
