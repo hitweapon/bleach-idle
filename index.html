@@ -631,23 +631,24 @@ function combatVisual(kind,amount){
  if(arena){arena.classList.remove('impact-normal','impact-skill');void arena.getBoundingClientRect();arena.classList.add(kind==='skill'?'impact-skill':'impact-normal');setTimeout(()=>arena.classList.remove('impact-normal','impact-skill'),400)}
  if(fx){const pop=document.createElement('div');pop.className='combat-pop '+(kind==='skill'?'pop-skill':kind==='defeat'?'pop-defeat':'pop-hit');pop.textContent=kind==='skill'?'✦ '+archetype().skill:kind==='defeat'?'PURIFICADO!':'−'+amount;fx.appendChild(pop);setTimeout(()=>pop.remove(),kind==='skill'?1000:850)}
 }
-function useSkill(silent=false){
+function useSkill(silent=false,quiet=false){
  const now=Date.now();
- if(now<(state.skillReadyAt||0))return;
+ if(now<(state.skillReadyAt||0))return false;
  const cost=20;
- if((state.energy===undefined?archetype().energy:state.energy)<cost)return;
- state.energy-=cost;state.skillReadyAt=now+8000;
- const damage=Math.round(power()*3.2);state.enemyHp-=damage;
+ if((state.energy===undefined?archetype().energy:state.energy)<cost)return false;
+ state.energy-=cost;state.skillReadyAt=now+8000;state.skillUses=(state.skillUses||0)+1;
+ const damage=Math.round(power()*3.2);state.enemyHp-=damage;state.totalDamage=(state.totalDamage||0)+damage;
  combatVisual(state.enemyHp<=0?'defeat':'skill',damage);
  log('✦ <strong>'+archetype().skill+'</strong> causou '+damage+' de dano espiritual!');
  if(state.enemyHp<=0)defeat();
- render();save();
- if(!silent)toast(archetype().skill+'! −'+damage+' HP inimigo')
+ if(!quiet){render();save()}
+ if(!silent)toast(archetype().skill+'! −'+damage+' HP inimigo');
+ return true;
 }
-function maxHp(){return archetype().hp+(state.level-1)*10}
+
 function save(){state.lastSeen=Date.now();try{localStorage.setItem(SAVE_KEY,JSON.stringify({...state,running:true}));const status=document.querySelector('#saveStatus');if(status)status.textContent=currentUser?'Salvando…':'Salvo neste dispositivo';if(currentUser){clearTimeout(remoteSaveTimer);remoteSaveTimer=setTimeout(saveRemote,1200)}}catch(e){console.error('Falha ao gravar progresso local',e);const status=document.querySelector('#saveStatus');if(status)status.textContent='Armazenamento cheio'}}
-async function saveRemote(){if(!currentUser||!supabaseClient||remoteSaveBusy)return;remoteSaveBusy=true;try{const profile={id:currentUser.id,username:'player_'+currentUser.id.replace(/-/g,'').slice(0,16),display_name:(currentUser.email||'Shinigami').split('@')[0].slice(0,40),level:state.level,experience:state.xp,gold:state.gold,updated_at:new Date().toISOString()};const game={player_id:currentUser.id,character_class:state.classId,current_zone:state.stage<3?'ruins':state.stage<6?'forest':'rift',highest_stage:state.stage,inventory:state.inventory,equipment:{weapon:'training_blade',armor:'simple_mantle',attackBonus:state.attackBonus,kills:state.kills,claimed:state.claimed},last_seen_at:new Date().toISOString(),updated_at:new Date().toISOString()};const p=await supabaseClient.from('player_profiles').upsert(profile,{onConflict:'id'});if(p.error)throw p.error;const g=await supabaseClient.from('player_game_state').upsert(game,{onConflict:'player_id'});if(g.error)throw g.error;document.querySelector('#saveStatus').textContent='Salvo na nuvem'}catch(e){console.error('Falha ao salvar no Supabase',e);document.querySelector('#saveStatus').textContent='Erro no salvamento online'}finally{remoteSaveBusy=false}} 
-async function loadRemote(){if(!currentUser||!supabaseClient)return;try{const [p,g]=await Promise.all([supabaseClient.from('player_profiles').select('*').eq('id',currentUser.id).maybeSingle(),supabaseClient.from('player_game_state').select('*').eq('player_id',currentUser.id).maybeSingle()]);if(p.error)throw p.error;if(g.error)throw g.error;if(p.data||g.data){if(p.data){state.level=p.data.level||1;state.xp=p.data.experience||0;state.gold=p.data.gold||0}if(g.data){state.classId=g.data.character_class||'blade';state.stage=g.data.highest_stage||1;state.inventory=Array.isArray(g.data.inventory)?g.data.inventory:[];const eq=g.data.equipment||{};state.attackBonus=eq.attackBonus||0;state.kills=eq.kills||0;state.claimed=!!eq.claimed;state.enemyHp=enemyMaxHp()}render();save();log('☁️ <strong>Jornada sincronizada com a nuvem.</strong>')}else{await saveRemote();log('☁️ <strong>Perfil criado.</strong> Sua jornada agora será salva na nuvem.')}document.querySelector('#saveStatus').textContent='Sincronizado com Supabase'}catch(e){console.error('Falha ao carregar Supabase',e);document.querySelector('#authMessage').textContent='Não foi possível sincronizar: '+(e.message||'erro de conexão');document.querySelector('#saveStatus').textContent='Falha na nuvem'}} 
+async function saveRemote(){if(!currentUser||!supabaseClient||remoteSaveBusy)return;remoteSaveBusy=true;try{const profile={id:currentUser.id,username:'player_'+currentUser.id.replace(/-/g,'').slice(0,16),display_name:(currentUser.email||'Shinigami').split('@')[0].slice(0,40),level:state.level,experience:state.xp,gold:state.gold,updated_at:new Date().toISOString()};const game={player_id:currentUser.id,character_class:state.classId,current_zone:state.stage<11?'ruins':state.stage<21?'forest':state.stage<31?'rift':'society',highest_stage:state.stage,inventory:state.inventory,equipment:{weapon:'training_blade',armor:'simple_mantle',equipmentSlots:state.equipmentSlots,attackBonus:state.attackBonus,weaponLevel:state.weaponLevel,kills:state.kills,claimed:state.claimed,questClaims:state.questClaims,achievementsClaimed:state.achievementsClaimed,bossKills:state.bossKills,autoSkill:state.autoSkill,settings:state.settings,totalDamage:state.totalDamage,totalXp:state.totalXp,totalGold:state.totalGold},last_seen_at:new Date().toISOString(),updated_at:new Date().toISOString()};const p=await supabaseClient.from('player_profiles').upsert(profile,{onConflict:'id'});if(p.error)throw p.error;const g=await supabaseClient.from('player_game_state').upsert(game,{onConflict:'player_id'});if(g.error)throw g.error;document.querySelector('#saveStatus').textContent='Salvo na nuvem'}catch(e){console.error('Falha ao salvar no Supabase',e);document.querySelector('#saveStatus').textContent='Erro no salvamento online'}finally{remoteSaveBusy=false}} 
+async function loadRemote(){if(!currentUser||!supabaseClient)return;try{const [p,g]=await Promise.all([supabaseClient.from('player_profiles').select('*').eq('id',currentUser.id).maybeSingle(),supabaseClient.from('player_game_state').select('*').eq('player_id',currentUser.id).maybeSingle()]);if(p.error)throw p.error;if(g.error)throw g.error;if(p.data||g.data){if(p.data){state.level=p.data.level||1;state.xp=p.data.experience||0;state.gold=p.data.gold||0}if(g.data){state.classId=g.data.character_class||'blade';state.stage=g.data.highest_stage||1;state.inventory=Array.isArray(g.data.inventory)?g.data.inventory:[];const eq=g.data.equipment||{};state.attackBonus=eq.attackBonus||0;state.weaponLevel=eq.weaponLevel||1;state.kills=eq.kills||0;state.claimed=!!eq.claimed;state.questClaims=eq.questClaims&&typeof eq.questClaims==='object'?eq.questClaims:state.questClaims;state.achievementsClaimed=eq.achievementsClaimed&&typeof eq.achievementsClaimed==='object'?eq.achievementsClaimed:state.achievementsClaimed;state.bossKills=eq.bossKills||0;state.autoSkill=eq.autoSkill!==false;state.settings={...state.settings,...(eq.settings||{})};state.equipmentSlots=eq.equipmentSlots&&typeof eq.equipmentSlots==='object'?eq.equipmentSlots:state.equipmentSlots;state.totalDamage=eq.totalDamage||state.totalDamage;state.totalXp=eq.totalXp||state.totalXp;state.totalGold=eq.totalGold||state.totalGold;state.bossActive=false;state.enemyHp=enemyMaxHp()}render();save();log('☁️ <strong>Jornada sincronizada com a nuvem.</strong>')}else{await saveRemote();log('☁️ <strong>Perfil criado.</strong> Sua jornada agora será salva na nuvem.')}document.querySelector('#saveStatus').textContent='Sincronizado com Supabase'}catch(e){console.error('Falha ao carregar Supabase',e);document.querySelector('#authMessage').textContent='Não foi possível sincronizar: '+(e.message||'erro de conexão');document.querySelector('#saveStatus').textContent='Falha na nuvem'}} 
 function setAuthUI(){const signed=!!currentUser;document.querySelector('#authForm').classList.toggle('hidden',signed);document.querySelector('#signedInBox').classList.toggle('hidden',!signed);document.querySelector('#signedInEmail').textContent=signed?'Conectado como '+currentUser.email:'';document.querySelector('#accountToggle').textContent=signed?'Conta conectada':'Entrar / Criar conta';if(signed)document.querySelector('#authMessage').textContent='Conta conectada. A progressão será sincronizada entre dispositivos.'}
 document.querySelector('#accountToggle').addEventListener('click',()=>document.querySelector('#accountPanel').classList.toggle('hidden'));document.querySelector('#accountClose').addEventListener('click',()=>document.querySelector('#accountPanel').classList.add('hidden'));
 document.querySelector('#signUpBtn').addEventListener('click',async()=>{if(!supabaseClient){document.querySelector('#authMessage').textContent='Login indisponível agora; a batalha local continua funcionando.';return}const email=document.querySelector('#authEmail').value.trim(),password=document.querySelector('#authPassword').value;if(!email||password.length<6){document.querySelector('#authMessage').textContent='Informe um e-mail válido e senha com pelo menos 6 caracteres.';return}document.querySelector('#authMessage').textContent='Criando conta…';const {data,error}=await supabaseClient.auth.signUp({email,password});if(error){document.querySelector('#authMessage').textContent=error.message;return}if(data.session){currentUser=data.user;setAuthUI();await loadRemote()}else{document.querySelector('#authMessage').textContent='Conta criada. Confira seu e-mail para confirmar o cadastro e depois entre.'}});
@@ -655,13 +656,58 @@ document.querySelector('#signInBtn').addEventListener('click',async()=>{if(!supa
 document.querySelector('#signOutBtn').addEventListener('click',async()=>{await saveRemote();await supabaseClient.auth.signOut();currentUser=null;setAuthUI();save();document.querySelector('#authMessage').textContent='Você saiu da conta.'});
 if(supabaseClient)supabaseClient.auth.getSession().then(async({data})=>{if(data.session){currentUser=data.session.user;setAuthUI();await loadRemote()}else setAuthUI()});else setAuthUI();
 function toast(msg){const el=document.querySelector('#toast');el.textContent=msg;el.classList.remove('hidden');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.add('hidden'),2400)}
-function log(msg){const feed=document.querySelector('#combatLog');const el=document.createElement('div');el.className='feeditem';el.innerHTML=msg;feed.prepend(el);while(feed.children.length>15)feed.lastChild.remove()}
-function awardXp(n){state.xp+=n;while(state.xp>=maxXp()){state.xp-=maxXp();state.level++;state.gold+=15;log('✨ <strong>Nível '+state.level+' alcançado!</strong> +15 ouro bônus.');toast('Subiu para o nível '+state.level+'!')} }
-function defeat(){const e=enemy();state.kills++;state.xp+=e.xp;state.gold+=e.gold;awardXp(0);log('☯ <strong>'+e.name+' purificado.</strong> +'+e.xp+' EXP · +'+e.gold+' ouro.');if(state.kills>=10&&!state.claimed)document.querySelector('#claimQuest').disabled=false;
-if(Math.random()<.24){const item=LOOT[Math.floor(Math.random()*LOOT.length)];state.inventory.push({...item,id:Date.now()+Math.random()});log('🎁 Encontrou: <strong>'+item.name+'</strong>.');toast('Item encontrado: '+item.name)}
-state.enemyHp=enemyMaxHp();if(state.kills%5===0){state.stage++;state.gold+=10;log('🧭 <strong>Nova ameaça detectada.</strong> Você avançou para o estágio '+state.stage+'.');}
+function log(html){
+ const feed=document.querySelector('#combatLog');if(!feed)return;
+ const entry=document.createElement('div');entry.className='feeditem';entry.innerHTML=html;feed.prepend(entry);
+ const limit=state?.settings?.compactLog?16:48;
+ while(feed.children.length>limit)feed.lastElementChild.remove();
 }
-function attack(manual=false){if(!state.running&&!manual)return;const damage=power()*(manual?2:1);state.enemyHp-=damage;const killed=state.enemyHp<=0;combatVisual(killed?'defeat':'hit',damage);if(killed)defeat();render();save()}
+
+function awardXp(n){
+ const earned=Math.max(0,Math.floor(Number(n)||0));state.xp+=earned;state.totalXp=(state.totalXp||0)+earned;
+ while(state.xp>=maxXp()){
+  state.xp-=maxXp();state.level++;state.gold+=15;state.totalGold=(state.totalGold||0)+15;
+  log('✨ <strong>Nível '+state.level+' alcançado!</strong> +15 ouro bônus.');
+  toast('Subiu para o nível '+state.level+'!');
+ }
+ state.bestStage=Math.max(state.bestStage||1,state.stage);
+}
+
+function defeat(){
+ const e=enemy(),wasBoss=!!state.bossActive;
+ state.kills++;state.xp+=e.xp;state.totalXp=(state.totalXp||0)+e.xp;
+ state.gold+=e.gold;state.totalGold=(state.totalGold||0)+e.gold;
+ awardXp(0);
+ if(wasBoss){
+  state.bossKills=(state.bossKills||0)+1;state.bossActive=false;state.stage+=1;
+  state.gold+=20;state.totalGold=(state.totalGold||0)+20;
+  log('🏆 <strong>Chefe derrotado: '+e.name+'!</strong> +'+e.xp+' EXP · +'+(e.gold+20)+' ouro total.');
+  toast('Chefe purificado! Recompensa de elite recebida.');
+  const guaranteed=LOOT[state.bossKills%LOOT.length],drop={...guaranteed,id:'boss-'+Date.now()+'-'+Math.random()};
+  state.inventory.push(drop);log('👑 <strong>Recompensa de chefe:</strong> '+drop.name+'.');
+  if(state.settings.autoEquip)equipItem(state.inventory.length-1,true);
+ }else{
+  log('☯ <strong>'+e.name+' purificado.</strong> +'+e.xp+' EXP · +'+e.gold+' ouro.');
+  if(state.kills%5===0){state.stage++;state.gold+=10;state.totalGold=(state.totalGold||0)+10;log('🧭 <strong>Nova ameaça detectada.</strong> Você avançou para o estágio '+state.stage+'.')}
+  if(Math.random()<.24){
+   const item=LOOT[Math.floor(Math.random()*LOOT.length)],drop={...item,id:'drop-'+Date.now()+'-'+Math.random(),equipped:false};
+   state.inventory.push(drop);log('🎁 Encontrou: <strong>'+drop.name+'</strong>.');toast('Item encontrado: '+drop.name);
+   if(state.settings.autoEquip&&isUpgradeForSlot(drop))equipItem(state.inventory.length-1,true);
+  }
+ }
+ state.bestStage=Math.max(state.bestStage||1,state.stage);state.enemyHp=enemyMaxHp();
+}
+
+function attack(manual=false,quiet=false){
+ if(!state.running&&!manual)return;
+ const damage=Math.max(1,Math.round(power()*(manual?2:1)));
+ state.enemyHp-=damage;state.totalDamage=(state.totalDamage||0)+damage;
+ const killed=state.enemyHp<=0;
+ combatVisual(killed?'defeat':'hit',damage);
+ if(killed)defeat();
+ if(!quiet){render();save()}
+}
+
 function render(){
 const e=enemy(),enemyIndex=Math.min(ENEMIES.length-1,Math.floor((state.stage-1)/2)),em=enemyMaxHp(),c=archetype(),xpPct=Math.min(100,state.xp/maxXp()*100);
 ['topGold','statGold'].forEach(id=>document.getElementById(id).textContent=state.gold);document.querySelector('#topLevel').textContent='Nv. '+state.level;document.querySelector('#statLevel').textContent=state.level;document.querySelector('#statPower').textContent=power();document.querySelector('#statKills').textContent=state.kills;document.querySelector('#xpLabel').textContent=state.xp+' / '+maxXp()+' EXP';document.querySelector('#xpPct').textContent=Math.floor(xpPct)+'%';document.querySelector('#xpBar').style.width=xpPct+'%';
