@@ -332,18 +332,123 @@ const CLASSES=[
 {id:'kido',name:'Condutor',icon:'🔮',title:'Dano espiritual',desc:'Canaliza energia em rajadas fortes, mas tem menos vida.',atk:16,hp:78,energy:80,skill:'Pulso Astral'},
 {id:'step',name:'Passo Sombrio',icon:'🌪️',title:'Velocidade',desc:'Ataca com frequência e esquiva de parte do perigo.',atk:9,hp:90,energy:60,skill:'Passo Relâmpago'}
 ];
-const ENEMIES=[{name:'Espírito Corrompido',icon:'👹',hp:30,xp:15,gold:5},{name:'Lobo do Véu',icon:'🐺',hp:48,xp:22,gold:8},{name:'Devorador de Ecos',icon:'👻',hp:75,xp:34,gold:12},{name:'Guardião Oco',icon:'💀',hp:110,xp:48,gold:18},{name:'Sentinela da Ruptura',icon:'👺',hp:165,xp:70,gold:27}];
+const ENEMIES=[
+{name:'Espírito Corrompido',icon:'👹',hp:30,xp:15,gold:5},
+{name:'Lobo do Véu',icon:'🐺',hp:48,xp:22,gold:8},
+{name:'Devorador de Ecos',icon:'👻',hp:75,xp:34,gold:12},
+{name:'Guardião Oco',icon:'💀',hp:110,xp:48,gold:18},
+{name:'Sentinela da Ruptura',icon:'👺',hp:165,xp:70,gold:27}
+];
 const ENEMY_ART=['/assets/hollow-skull.webp','/assets/hollow-beast.webp','/assets/hollow-winged.webp','/assets/hollow-gold.webp','/assets/hollow-lord.webp'];
-const LOOT=[{name:'Fragmento de Essência',icon:'💎',rarity:'rare',desc:'Material espiritual · útil em melhorias'},{name:'Faixa do Aprendiz',icon:'🥋',rarity:'common',desc:'+2 de poder · equipamento'},{name:'Pedra de Eco',icon:'🔷',rarity:'epic',desc:'Material raro de aprimoramento'},{name:'Lâmina Desgastada',icon:'🗡️',rarity:'common',desc:'+3 de poder · equipamento'}];
-const DEFAULT={level:1,xp:0,gold:0,kills:0,stage:1,classId:'blade',running:true,autoSkill:true,enemyHp:30,inventory:[],claimed:false,attackBonus:0,energy:50,skillReadyAt:0,lastSeen:Date.now()};
+const BOSSES=[
+{name:'Grande Hollow',icon:'☠',hp:560,xp:180,gold:120,art:'/assets/hollow-lord.webp',skill:'Ruptura Abissal'},
+{name:'Carrasco do Véu',icon:'⚔',hp:1100,xp:320,gold:220,art:'/assets/hollow-gold.webp',skill:'Tempestade Espiritual'},
+{name:'Predador da Lua',icon:'🌑',hp:2100,xp:600,gold:400,art:'/assets/hollow-winged.webp',skill:'Eclipse Hollow'}
+];
+const LOOT=[
+{name:'Fragmento de Essência',icon:'💎',rarity:'rare',slot:'relic',bonus:1,hpBonus:0,sell:8,desc:'+1 poder · material espiritual'},
+{name:'Faixa do Aprendiz',icon:'🥋',rarity:'common',slot:'armor',bonus:0,hpBonus:18,sell:6,desc:'+18 vitalidade · armadura'},
+{name:'Pedra de Eco',icon:'🔷',rarity:'epic',slot:'relic',bonus:4,hpBonus:0,sell:22,desc:'+4 poder · relíquia rara'},
+{name:'Lâmina Desgastada',icon:'🗡️',rarity:'common',slot:'weapon',bonus:3,hpBonus:0,sell:10,desc:'+3 poder de ataque'},
+{name:'Amuleto de Karakura',icon:'📿',rarity:'rare',slot:'accessory',bonus:2,hpBonus:10,sell:18,desc:'+2 poder · +10 vitalidade'},
+{name:'Manto de Cinzas',icon:'🥷',rarity:'rare',slot:'armor',bonus:1,hpBonus:35,sell:16,desc:'+1 poder · +35 vitalidade'}
+];
+const SAVE_KEY='xigoSoulRiftV1';
+const DEFAULT={
+version:3,level:1,xp:0,gold:0,kills:0,stage:1,classId:'blade',running:true,autoSkill:true,
+enemyHp:30,inventory:[],claimed:false,attackBonus:0,weaponLevel:1,energy:50,skillReadyAt:0,lastSeen:Date.now(),
+bossActive:false,bossKills:0,bestStage:1,skillUses:0,totalDamage:0,totalXp:0,totalGold:0,
+equipmentSlots:{weapon:null,armor:null,accessory:null,relic:null},
+questClaims:{},achievementsClaimed:{},settings:{speed:1,showDamage:true,reducedMotion:false,compactLog:false,autoEquip:false}
+};
 let offlineSummary=null;
 let state=loadState(),toastTimer;
-function loadState(){try{const s=JSON.parse(localStorage.getItem('xigoSoulRiftV1'));if(s&&typeof s.level==='number'){const loaded={...DEFAULT,...s,running:true,autoSkill:s.autoSkill!==false};const elapsed=Math.max(0,Math.min(8*60*60*1000,Date.now()-(Number(s.lastSeen)||Date.now())));const seconds=Math.floor(elapsed/1000);const kills=Math.min(240,Math.floor(seconds/8));if(kills>0){const e=ENEMIES[Math.min(ENEMIES.length-1,Math.floor((loaded.stage-1)/2))];const xpEach=e.xp;const goldEach=e.gold;loaded.kills+=kills;loaded.xp+=kills*xpEach;loaded.gold+=kills*goldEach;while(loaded.xp>=loaded.level*100){loaded.xp-=loaded.level*100;loaded.level++;loaded.gold+=15}loaded.stage=Math.max(loaded.stage,1+Math.floor(loaded.kills/5));loaded.enemyHp=Math.round(ENEMIES[Math.min(ENEMIES.length-1,Math.floor((loaded.stage-1)/2))].hp*(1+(loaded.stage-1)*.32));offlineSummary={seconds,kills,xp:kills*xpEach,gold:kills*goldEach};}loaded.lastSeen=Date.now();return loaded}}catch(e){}return {...DEFAULT,lastSeen:Date.now()}}
-function enemy(){return ENEMIES[Math.min(ENEMIES.length-1,Math.floor((state.stage-1)/2))]}
-function enemyMaxHp(){return Math.round(enemy().hp*(1+(state.stage-1)*.32))}
+
+let state=loadState(),toastTimer;
+function safeNumber(value,fallback=0,min=0,max=1e9){const n=Number(value);return Number.isFinite(n)?Math.min(max,Math.max(min,n)):fallback}
+function itemSlot(item){if(item&&['weapon','armor','accessory','relic'].includes(item.slot))return item.slot;const n=String(item?.name||'').toLowerCase();if(n.includes('lâmina'))return 'weapon';if(n.includes('faixa')||n.includes('manto'))return 'armor';if(n.includes('amuleto'))return 'accessory';return 'relic'}
+function itemPower(item){return safeNumber(item?.bonus, item?.name?.includes('Lâmina')?3:item?.name?.includes('Pedra')?4:item?.name?.includes('Amuleto')?2:item?.name?.includes('Fragmento')?1:0,0,100000)}
+function itemVitality(item){return safeNumber(item?.hpBonus,item?.name?.includes('Faixa')?18:item?.name?.includes('Manto')?35:item?.name?.includes('Amuleto')?10:0,0,100000)}
+function getClassFor(st){return CLASSES.find(item=>item.id===st.classId)||CLASSES[0]}
+function slotItems(st){const slots=st.equipmentSlots||{};return Object.entries(slots).map(([slot,id])=>({slot,id,item:(st.inventory||[]).find(x=>String(x.id)===String(id))})).filter(x=>x.item)}
+function equipmentPowerFor(st){return slotItems(st).reduce((sum,x)=>sum+itemPower(x.item),0)}
+function equipmentHpFor(st){return slotItems(st).reduce((sum,x)=>sum+itemVitality(x.item),0)}
+function enemyAtStage(stage){return ENEMIES[Math.min(ENEMIES.length-1,Math.max(0,Math.floor((stage-1)/2)))]}
+function maxEnemyHpFor(st){const e=st.bossActive?BOSSES[Math.min(BOSSES.length-1,Math.floor((st.bossKills||0)/3))]:enemyAtStage(st.stage);return Math.round(e.hp*(st.bossActive?1+Math.max(0,st.stage-1)*.12:1+(st.stage-1)*.32))}
+function normalizeState(raw){
+ const src=raw&&typeof raw==='object'?raw:{};
+ const out={...DEFAULT,...src,version:3};
+ out.level=Math.floor(safeNumber(src.level,1,1,100000));
+ out.xp=safeNumber(src.xp,0,0,1e12);out.gold=Math.floor(safeNumber(src.gold,0,0,1e12));
+ out.kills=Math.floor(safeNumber(src.kills,0,0,1e12));out.stage=Math.floor(safeNumber(src.stage,1,1,100000));
+ out.classId=CLASSES.some(x=>x.id===src.classId)?src.classId:'blade';
+ out.autoSkill=src.autoSkill!==false;out.running=true;
+ out.attackBonus=Math.floor(safeNumber(src.attackBonus,0,0,100000));
+ out.weaponLevel=Math.floor(safeNumber(src.weaponLevel,1,1,10000));
+ out.energy=safeNumber(src.energy,getClassFor(out).energy,0,getClassFor(out).energy);
+ out.skillReadyAt=safeNumber(src.skillReadyAt,0,0,1e15);
+ out.enemyHp=safeNumber(src.enemyHp,maxEnemyHpFor(out),0,1e12);
+ out.bossActive=!!src.bossActive;out.bossKills=Math.floor(safeNumber(src.bossKills,0,0,1e9));
+ out.bestStage=Math.max(out.stage,Math.floor(safeNumber(src.bestStage,out.stage,1,100000)));
+ out.skillUses=Math.floor(safeNumber(src.skillUses,0,0,1e12));
+ out.totalDamage=safeNumber(src.totalDamage,0,0,1e15);out.totalXp=safeNumber(src.totalXp,0,0,1e15);out.totalGold=safeNumber(src.totalGold,0,0,1e15);
+ out.settings={...DEFAULT.settings,...(src.settings&&typeof src.settings==='object'?src.settings:{})};
+ out.settings.speed=[1,2,3].includes(Number(out.settings.speed))?Number(out.settings.speed):1;
+ ['showDamage','reducedMotion','compactLog','autoEquip'].forEach(k=>out.settings[k]=!!out.settings[k]);
+ out.inventory=Array.isArray(src.inventory)?src.inventory.slice(0,500).map((it,i)=>{const base=LOOT.find(x=>x.name===it?.name)||LOOT[0];return {...base,id:it?.id!==undefined?String(it.id):'item-'+i,equipped:!!it?.equipped}}):[];
+ out.equipmentSlots={...DEFAULT.equipmentSlots,...(src.equipmentSlots&&typeof src.equipmentSlots==='object'?src.equipmentSlots:{})};
+ if(!src.equipmentSlots){for(const it of out.inventory.filter(x=>x.equipped)){const slot=itemSlot(it);out.equipmentSlots[slot]=it.id}}
+ Object.keys(out.equipmentSlots).forEach(slot=>{const id=out.equipmentSlots[slot];if(id!==null&&!out.inventory.some(it=>String(it.id)===String(id)&&itemSlot(it)===slot))out.equipmentSlots[slot]=null});
+ out.inventory.forEach(it=>it.equipped=Object.values(out.equipmentSlots).some(id=>id!==null&&String(id)===String(it.id)));
+ out.questClaims=src.questClaims&&typeof src.questClaims==='object'?{...src.questClaims}:{};
+ out.achievementsClaimed=src.achievementsClaimed&&typeof src.achievementsClaimed==='object'?{...src.achievementsClaimed}:{};
+ if(src.claimed)out.questClaims.purify10=true;
+ out.claimed=!!out.questClaims.purify10;
+ out.lastSeen=safeNumber(src.lastSeen,Date.now(),0,1e15);
+ return out;
+}
+function simulateOfflineState(st,elapsedMs){
+ const seconds=Math.floor(Math.max(0,Math.min(8*60*60*1000,elapsedMs))/1000);
+ if(seconds<2){st.bossActive=false;return}
+ const startKills=st.kills,startXp=st.totalXp,startGold=st.totalGold;
+ const ticks=Math.floor(seconds/2);st.bossActive=false;
+ for(let tick=0;tick<ticks;tick++){
+  const cls=getClassFor(st),maximum=maxEnemyHpFor(st);
+  if(!Number.isFinite(st.enemyHp)||st.enemyHp<=0||st.enemyHp>maximum*2)st.enemyHp=maximum;
+  st.energy=Math.min(cls.energy,safeNumber(st.energy,cls.energy,0,cls.energy)+3);
+  let hit=Math.round(cls.atk+(st.level-1)*2+st.attackBonus+equipmentPowerFor(st));st.enemyHp-=hit;st.totalDamage+=hit;
+  const simulatedTime=Date.now()-seconds*1000+tick*2000;
+  if(st.autoSkill&&simulatedTime>=(st.skillReadyAt||0)&&st.energy>=20){st.energy-=20;st.skillReadyAt=simulatedTime+8000;const extra=Math.round((cls.atk+(st.level-1)*2+st.attackBonus+equipmentPowerFor(st))*3.2);st.enemyHp-=extra;st.totalDamage+=extra;st.skillUses++}
+  if(st.enemyHp<=0){
+   const e=enemyAtStage(st.stage);st.kills++;st.xp+=e.xp;st.gold+=e.gold;st.totalXp+=e.xp;st.totalGold+=e.gold;
+   while(st.xp>=st.level*100){st.xp-=st.level*100;st.level++;st.gold+=15;st.totalGold+=15}
+   if(st.kills%5===0){st.stage++;st.gold+=10;st.totalGold+=10}
+   st.bestStage=Math.max(st.bestStage,st.stage);
+   if(st.settings.autoEquip&&st.kills%9===0){const item=LOOT[st.kills%LOOT.length];const next={...item,id:'offline-'+st.kills};st.inventory.push(next);const slot=itemSlot(next);const current=st.inventory.find(x=>String(x.id)===String(st.equipmentSlots[slot]));if(!current||itemPower(next)+itemVitality(next)>itemPower(current)+itemVitality(current)){st.equipmentSlots[slot]=next.id;next.equipped=true}}
+   st.enemyHp=maxEnemyHpFor(st);
+  }
+ }
+ const gainedKills=st.kills-startKills,gainedXp=st.totalXp-startXp,gainedGold=st.totalGold-startGold;
+ if(gainedKills>0)offlineSummary={seconds,kills:gainedKills,xp:gainedXp,gold:gainedGold};
+ st.lastSeen=Date.now();st.bestStage=Math.max(st.bestStage,st.stage);
+}
+function loadState(){
+ try{
+  const raw=JSON.parse(localStorage.getItem(SAVE_KEY)||'null');
+  if(raw&&typeof raw.level==='number'){
+   const loaded=normalizeState(raw);const elapsed=Math.max(0,Date.now()-(Number(raw.lastSeen)||Date.now()));
+   simulateOfflineState(loaded,elapsed);loaded.lastSeen=Date.now();loaded.enemyHp=Math.max(1,Math.min(loaded.enemyHp,maxEnemyHpFor(loaded)));
+   return loaded;
+  }
+ }catch(e){console.warn('Save local inválido; iniciando com uma cópia segura.',e)}
+ return normalizeState({...DEFAULT,lastSeen:Date.now()});
+}
+function enemy(){return state.bossActive?BOSSES[Math.min(BOSSES.length-1,Math.floor((state.bossKills||0)/3))]:enemyAtStage(state.stage)}
+function enemyMaxHp(){return maxEnemyHpFor(state)}
 function maxXp(){return state.level*100}
-function archetype(){return CLASSES.find(c=>c.id===state.classId)||CLASSES[0]}
-function power(){return Math.round(archetype().atk+(state.level-1)*2+state.attackBonus)}
+function archetype(){return getClassFor(state)}
+function power(){return Math.round(archetype().atk+(state.level-1)*2+state.attackBonus+equipmentPowerFor(state))}
+function maxHp(){return Math.round(archetype().hp+(state.level-1)*5+equipmentHpFor(state))}
 function combatVisual(kind,amount){
  const hero=document.querySelector('.hero-art'),enemyPack=document.querySelector('#enemyPack'),fx=document.querySelector('#combatFx'),arena=document.querySelector('#battleArena');
  if(hero){hero.classList.remove('is-attacking','is-skill');void hero.getBoundingClientRect();hero.classList.add(kind==='skill'?'is-skill':'is-attacking');setTimeout(()=>hero.classList.remove('is-attacking','is-skill'),kind==='skill'?760:460)}
@@ -365,7 +470,7 @@ function useSkill(silent=false){
  if(!silent)toast(archetype().skill+'! −'+damage+' HP inimigo')
 }
 function maxHp(){return archetype().hp+(state.level-1)*10}
-function save(){state.lastSeen=Date.now();localStorage.setItem('xigoSoulRiftV1',JSON.stringify({...state,running:true}));document.querySelector('#saveStatus').textContent=currentUser?'Salvo neste dispositivo':'Salvo localmente';if(currentUser){clearTimeout(remoteSaveTimer);remoteSaveTimer=setTimeout(saveRemote,1200)}} 
+function save(){state.lastSeen=Date.now();try{localStorage.setItem(SAVE_KEY,JSON.stringify({...state,running:true}));const status=document.querySelector('#saveStatus');if(status)status.textContent=currentUser?'Salvando…':'Salvo neste dispositivo';if(currentUser){clearTimeout(remoteSaveTimer);remoteSaveTimer=setTimeout(saveRemote,1200)}}catch(e){console.error('Falha ao gravar progresso local',e);const status=document.querySelector('#saveStatus');if(status)status.textContent='Armazenamento cheio'}}
 async function saveRemote(){if(!currentUser||!supabaseClient||remoteSaveBusy)return;remoteSaveBusy=true;try{const profile={id:currentUser.id,username:'player_'+currentUser.id.replace(/-/g,'').slice(0,16),display_name:(currentUser.email||'Shinigami').split('@')[0].slice(0,40),level:state.level,experience:state.xp,gold:state.gold,updated_at:new Date().toISOString()};const game={player_id:currentUser.id,character_class:state.classId,current_zone:state.stage<3?'ruins':state.stage<6?'forest':'rift',highest_stage:state.stage,inventory:state.inventory,equipment:{weapon:'training_blade',armor:'simple_mantle',attackBonus:state.attackBonus,kills:state.kills,claimed:state.claimed},last_seen_at:new Date().toISOString(),updated_at:new Date().toISOString()};const p=await supabaseClient.from('player_profiles').upsert(profile,{onConflict:'id'});if(p.error)throw p.error;const g=await supabaseClient.from('player_game_state').upsert(game,{onConflict:'player_id'});if(g.error)throw g.error;document.querySelector('#saveStatus').textContent='Salvo na nuvem'}catch(e){console.error('Falha ao salvar no Supabase',e);document.querySelector('#saveStatus').textContent='Erro no salvamento online'}finally{remoteSaveBusy=false}} 
 async function loadRemote(){if(!currentUser||!supabaseClient)return;try{const [p,g]=await Promise.all([supabaseClient.from('player_profiles').select('*').eq('id',currentUser.id).maybeSingle(),supabaseClient.from('player_game_state').select('*').eq('player_id',currentUser.id).maybeSingle()]);if(p.error)throw p.error;if(g.error)throw g.error;if(p.data||g.data){if(p.data){state.level=p.data.level||1;state.xp=p.data.experience||0;state.gold=p.data.gold||0}if(g.data){state.classId=g.data.character_class||'blade';state.stage=g.data.highest_stage||1;state.inventory=Array.isArray(g.data.inventory)?g.data.inventory:[];const eq=g.data.equipment||{};state.attackBonus=eq.attackBonus||0;state.kills=eq.kills||0;state.claimed=!!eq.claimed;state.enemyHp=enemyMaxHp()}render();save();log('☁️ <strong>Jornada sincronizada com a nuvem.</strong>')}else{await saveRemote();log('☁️ <strong>Perfil criado.</strong> Sua jornada agora será salva na nuvem.')}document.querySelector('#saveStatus').textContent='Sincronizado com Supabase'}catch(e){console.error('Falha ao carregar Supabase',e);document.querySelector('#authMessage').textContent='Não foi possível sincronizar: '+(e.message||'erro de conexão');document.querySelector('#saveStatus').textContent='Falha na nuvem'}} 
 function setAuthUI(){const signed=!!currentUser;document.querySelector('#authForm').classList.toggle('hidden',signed);document.querySelector('#signedInBox').classList.toggle('hidden',!signed);document.querySelector('#signedInEmail').textContent=signed?'Conectado como '+currentUser.email:'';document.querySelector('#accountToggle').textContent=signed?'Conta conectada':'Entrar / Criar conta';if(signed)document.querySelector('#authMessage').textContent='Conta conectada. A progressão será sincronizada entre dispositivos.'}
