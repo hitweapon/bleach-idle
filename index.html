@@ -1310,6 +1310,38 @@ button.quick-skill.is-selected:before{content:"ATIVA";position:absolute;top:-7px
  #battleArena .enemy-art-wrap.enemy-art-main{width:clamp(32px,8vw,43px)!important;height:clamp(44px,10vw,57px)!important}
 }
 
+
+/* Fine-tune mobile arena scale: hero and mobs slightly larger, skill VFX less oversized */
+@media(max-width:800px){
+ #battleArena img.hero-art-real.is-loaded,
+ #battleArena img.hero-art-real:not(.asset-hidden),
+ #battleArena .hero-art-real.is-loaded,
+ #battleArena .hero-art-fallback:not(.asset-hidden){
+  width:clamp(76px,14%,104px)!important;max-width:14%!important;max-height:45%!important;left:10%!important;
+ }
+ #battleArena #enemyPack,#battleArena .enemy-pack{width:34%!important;max-width:34%!important;right:6%!important;height:33%!important}
+ #battleArena .enemy-art-wrap{width:clamp(31px,6.6vw,47px)!important;height:clamp(43px,9.5vw,62px)!important}
+ #battleArena .enemy-art-wrap.enemy-art-main{width:clamp(41px,8.8vw,59px)!important;height:clamp(55px,11.5vw,76px)!important}
+ #battleArena .xb-spell-wave{left:27%!important;top:46%!important;width:47%!important;height:12%!important;filter:drop-shadow(0 0 5px #52bfff)!important}
+ #battleArena .xb-spell-impact{left:70%!important;top:45%!important;width:clamp(24px,4.5vw,40px)!important}
+ #battleArena .xb-skill-callout{left:34%!important;top:29%!important;max-width:43%!important;font-size:clamp(9px,1.8vw,13px)!important;padding:4px 7px!important}
+ #combatFx .combat-pop{transform:scale(.78);transform-origin:center}
+}
+@media(max-width:520px){
+ #battleArena img.hero-art-real.is-loaded,
+ #battleArena img.hero-art-real:not(.asset-hidden),
+ #battleArena .hero-art-real.is-loaded,
+ #battleArena .hero-art-fallback:not(.asset-hidden){
+  width:clamp(68px,13%,88px)!important;max-width:13%!important;max-height:42%!important;left:10%!important;
+ }
+ #battleArena #enemyPack,#battleArena .enemy-pack{width:35%!important;max-width:35%!important;right:5%!important;height:30%!important}
+ #battleArena .enemy-art-wrap{width:clamp(28px,7.5vw,39px)!important;height:clamp(39px,9.5vw,51px)!important}
+ #battleArena .enemy-art-wrap.enemy-art-main{width:clamp(36px,9vw,48px)!important;height:clamp(49px,11vw,61px)!important}
+ #battleArena .xb-spell-wave{left:28%!important;top:47%!important;width:43%!important;height:10%!important}
+ #battleArena .xb-spell-impact{left:69%!important;top:46%!important;width:27px!important}
+ #battleArena .xb-skill-callout{left:31%!important;top:30%!important;max-width:45%!important;font-size:9px!important;padding:3px 6px!important}
+}
+
 </style>
 </head>
 <body>
@@ -1414,7 +1446,10 @@ const ENEMY_ART=['/assets/hollow-skull.webp','/assets/hollow-beast.webp','/asset
 const BOSSES=[
 {name:'Grande Hollow',icon:'☠',hp:560,xp:180,gold:120,art:'/assets/hollow-lord.webp',skill:'Ruptura Abissal'},
 {name:'Carrasco do Véu',icon:'⚔',hp:1100,xp:320,gold:220,art:'/assets/hollow-gold.webp',skill:'Tempestade Espiritual'},
-{name:'Predador da Lua',icon:'🌑',hp:2100,xp:600,gold:400,art:'/assets/hollow-winged.webp',skill:'Eclipse Hollow'}
+{name:'Predador da Lua',icon:'🌑',hp:2100,xp:600,gold:400,art:'/assets/hollow-winged.webp',skill:'Eclipse Hollow'},
+{name:'Vasto da Noite',icon:'🌑',hp:3200,xp:850,gold:560,art:'/assets/hollow-lord.webp',skill:'Maré do Vazio'},
+{name:'Colosso Mascarado',icon:'💀',hp:4800,xp:1250,gold:820,art:'/assets/hollow-beast.webp',skill:'Impacto Abissal'},
+{name:'Arauto da Ruptura',icon:'👁️',hp:7200,xp:1900,gold:1250,art:'/assets/hollow-gold.webp',skill:'Chuva de Reiatsu'}
 ];
 const LOOT=[
 {name:'Fragmento de Essência',icon:'💎',rarity:'rare',slot:'relic',bonus:1,hpBonus:0,sell:8,desc:'+1 poder · material espiritual'},
@@ -1422,7 +1457,12 @@ const LOOT=[
 {name:'Pedra de Eco',icon:'🔷',rarity:'epic',slot:'relic',bonus:4,hpBonus:0,sell:22,desc:'+4 poder · relíquia rara'},
 {name:'Lâmina Desgastada',icon:'🗡️',rarity:'common',slot:'weapon',bonus:3,hpBonus:0,sell:10,desc:'+3 poder de ataque'},
 {name:'Amuleto de Karakura',icon:'📿',rarity:'rare',slot:'accessory',bonus:2,hpBonus:10,sell:18,desc:'+2 poder · +10 vitalidade'},
-{name:'Manto de Cinzas',icon:'🥷',rarity:'rare',slot:'armor',bonus:1,hpBonus:35,sell:16,desc:'+1 poder · +35 vitalidade'}
+{name:'Manto de Cinzas',icon:'🥷',rarity:'rare',slot:'armor',bonus:1,hpBonus:35,sell:16,desc:'+1 poder · +35 vitalidade'},
+{name:'Zangetsu Fragmentada',icon:'⚔️',rarity:'rare',slot:'weapon',bonus:8,hpBonus:0,sell:75,desc:'+8 poder · lâmina espiritual'},
+{name:'Lâmina do Eclipse',icon:'🌑',rarity:'epic',slot:'weapon',bonus:16,hpBonus:0,sell:180,desc:'+16 poder · arma de elite'},
+{name:'Zanpakutō Carmesim',icon:'🩸',rarity:'epic',slot:'weapon',bonus:22,hpBonus:0,sell:260,desc:'+22 poder · energia carmesim'},
+{name:'Manto do Vazio',icon:'🥷',rarity:'rare',slot:'armor',bonus:2,hpBonus:65,sell:95,desc:'+2 poder e +65 vitalidade'},
+{name:'Núcleo de Reiatsu',icon:'🔷',rarity:'epic',slot:'relic',bonus:12,hpBonus:35,sell:210,desc:'+12 poder e +35 vitalidade'}
 ];
 const SAVE_KEY='xigoSoulRiftV1';
 const DEFAULT={
