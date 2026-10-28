@@ -2034,6 +2034,28 @@ button.quick-skill.is-selected:before{content:"ATIVA";position:absolute;top:-7px
  #battleArena #enemyPack .enemy-large strong,#battleArena .enemy-pack .enemy-large strong,#battleArena #enemyPack #enemyName{max-width:48px!important;font-size:7px!important}
 }
 
+
+/* XBLEACH FIX — exactly one enemy artwork per slot (real image OR SVG fallback) */
+#battleArena .enemy-art-wrap>.enemy-art-real,
+#battleArena .enemy-art-wrap>img.enemy-art-real{
+ display:block!important;
+}
+#battleArena .enemy-art-wrap>.enemy-art-fallback,
+#battleArena .enemy-art-wrap>svg.enemy-art-fallback{
+ display:block!important;
+}
+#battleArena .enemy-art-wrap>.enemy-art-real.is-loaded~.enemy-art-fallback,
+#battleArena .enemy-art-wrap>.enemy-art-fallback.asset-hidden,
+#battleArena .enemy-art-wrap>img.enemy-art-real.is-loaded+svg.enemy-art-fallback{
+ display:none!important;opacity:0!important;visibility:hidden!important;pointer-events:none!important;
+}
+#battleArena .enemy-art-wrap>.enemy-art-real:not(.is-loaded){
+ opacity:0!important;visibility:hidden!important;pointer-events:none!important;
+}
+#battleArena .enemy-art-wrap>.enemy-art-fallback:not(.asset-hidden){
+ opacity:1!important;visibility:visible!important;
+}
+
 </style>
 </head>
 <body>
