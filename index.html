@@ -2582,10 +2582,26 @@ async function loadPremiumIchigoArt(){
 }
 
 function syncArtwork(imgId,fallbackId,src){
- const img=document.getElementById(imgId),fallback=fallbackId?document.getElementById(fallbackId):null;if(!img)return;
- if(!img.dataset.artWired){img.dataset.artWired='1';img.dataset.fallbackId=fallbackId||'';img.addEventListener('load',()=>{if(img.naturalWidth>0){img.classList.add('is-loaded');img.style.display='';const fb=document.getElementById(img.dataset.fallbackId);if(fb)fb.classList.add('asset-hidden')}});img.addEventListener('error',()=>{img.classList.remove('is-loaded');img.style.display='none';const fb=document.getElementById(img.dataset.fallbackId);if(fb)fb.classList.remove('asset-hidden')})}
- if(img.getAttribute('src')!==src){img.classList.remove('is-loaded');img.style.display='';if(fallback)fallback.classList.remove('asset-hidden');img.setAttribute('src',src)}
- if(img.complete){if(img.naturalWidth>0){img.classList.add('is-loaded');if(fallback)fallback.classList.add('asset-hidden')}else{img.style.display='none';if(fallback)fallback.classList.remove('asset-hidden')}}
+ const img=document.getElementById(imgId),fallback=fallbackId?document.getElementById(fallbackId):null;
+ if(!img)return;
+ const setVisible=(node,visible)=>{
+  if(!node)return;
+  node.style.setProperty('display',visible?'block':'none','important');
+  node.style.setProperty('visibility',visible?'visible':'hidden','important');
+  node.style.setProperty('opacity',visible?'1':'0','important');
+  node.style.setProperty('pointer-events','none','important');
+  node.classList.toggle('asset-hidden',!visible);
+ };
+ const showFallback=()=>{img.classList.remove('is-loaded');setVisible(img,false);setVisible(fallback,true)};
+ const showReal=()=>{img.classList.add('is-loaded');setVisible(img,true);setVisible(fallback,false)};
+ if(!img.dataset.artWired){
+  img.dataset.artWired='1';
+  img.addEventListener('load',()=>{if(img.naturalWidth>0)showReal();else showFallback()});
+  img.addEventListener('error',showFallback);
+ }
+ if(img.getAttribute('src')!==src){showFallback();img.setAttribute('src',src)}
+ if(img.complete){if(img.naturalWidth>0)showReal();else showFallback()}
+ else if(!img.classList.contains('is-loaded')){setVisible(img,false);setVisible(fallback,true)}
 }
 function currentZone(){if(state.stage<11)return{id:'desert',name:'Deserto Espiritual',subtitle:'Dunas sob o céu âmbar'};if(state.stage<21)return{id:'ruins',name:'Ruínas de Karakura',subtitle:'Ruínas sob a lua'};if(state.stage<31)return{id:'forest',name:'Floresta das Almas',subtitle:'Floresta espiritual'};if(state.stage<41)return{id:'rift',name:'Vale do Hollow',subtitle:'Fenda das almas'};return{id:'society',name:'Sociedade das Almas',subtitle:'Distrito espiritual'}}
 function currentQuestValue(q){return q.metric==='kills'?state.kills:q.metric==='level'?state.level:q.metric==='stage'?state.bestStage:state.bossKills}
