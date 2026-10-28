@@ -1912,6 +1912,128 @@ button.quick-skill.is-selected:before{content:"ATIVA";position:absolute;top:-7px
  #battleArena #enemyPack,#battleArena #enemyPack .enemy-art-wrap{animation:none!important;will-change:auto!important}
 }
 
+
+/* XBLEACH ENCOUNTER FORMATION — fit every mob in one readable row */
+#battleArena #enemyPack,
+#battleArena .enemy-pack{
+ position:absolute!important;
+ left:auto!important;right:2%!important;top:auto!important;
+ bottom:15%!important;
+ width:57%!important;max-width:57%!important;min-width:0!important;
+ height:42%!important;
+ display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;
+ align-items:flex-end!important;justify-content:space-around!important;
+ gap:clamp(2px,.6vw,8px)!important;
+ padding:0 2px!important;overflow:visible!important;
+ box-sizing:border-box!important;
+}
+#battleArena #enemyPack .enemy-card,
+#battleArena .enemy-pack .enemy-card{
+ position:relative!important;display:flex!important;
+ flex:1 1 0!important;flex-direction:column!important;
+ align-items:center!important;justify-content:flex-end!important;
+ width:0!important;min-width:0!important;max-width:33.333%!important;
+ gap:2px!important;margin:0!important;padding:0!important;
+ box-sizing:border-box!important;transform:none;
+}
+#battleArena #enemyPack .enemy-art-wrap,
+#battleArena .enemy-pack .enemy-art-wrap{
+ display:flex!important;position:relative!important;
+ align-items:flex-end!important;justify-content:center!important;
+ width:clamp(36px,6.2vw,68px)!important;
+ height:clamp(52px,10vw,86px)!important;
+ min-width:0!important;max-width:100%!important;
+ flex:0 1 auto!important;overflow:visible!important;
+}
+#battleArena #enemyPack .enemy-art-wrap.enemy-art-main,
+#battleArena .enemy-pack .enemy-art-wrap.enemy-art-main{
+ width:clamp(44px,7.2vw,78px)!important;
+ height:clamp(62px,12vw,100px)!important;
+}
+#battleArena #enemyPack .enemy-art-wrap>img,
+#battleArena #enemyPack .enemy-art-wrap>svg,
+#battleArena .enemy-pack .enemy-art-wrap>img,
+#battleArena .enemy-pack .enemy-art-wrap>svg{
+ position:absolute!important;left:50%!important;bottom:0!important;
+ width:100%!important;height:100%!important;
+ max-width:100%!important;max-height:100%!important;
+ object-fit:contain!important;object-position:center bottom!important;
+ transform:translateX(-50%)!important;
+}
+#battleArena #enemyPack #enemyLeft,
+#battleArena #enemyPack #enemyRight,
+#battleArena #enemyPack #enemyIcon{
+ width:100%!important;height:100%!important;max-width:100%!important;max-height:100%!important;
+}
+#battleArena #enemyPack .enemy-card .enemy-health,
+#battleArena .enemy-pack .enemy-card .enemy-health{
+ display:block!important;position:relative!important;
+ width:clamp(28px,5vw,48px)!important;max-width:88%!important;
+ height:4px!important;flex:0 0 4px!important;margin:4px 0 0!important;
+}
+#battleArena #enemyPack .enemy-large .enemy-health,
+#battleArena .enemy-pack .enemy-large .enemy-health{
+ width:clamp(34px,5.6vw,54px)!important;
+}
+#battleArena #enemyPack .enemy-large strong,
+#battleArena .enemy-pack .enemy-large strong,
+#battleArena #enemyPack #enemyName{
+ display:block!important;position:relative!important;
+ width:max-content!important;max-width:min(100%,92px)!important;
+ margin:4px 0 0!important;padding:4px 5px!important;
+ box-sizing:border-box!important;
+ font-size:clamp(8px,1.45vw,10px)!important;line-height:1.1!important;
+ text-align:center!important;white-space:normal!important;overflow-wrap:anywhere!important;
+}
+#battleArena #enemyPack .enemy-card{filter:drop-shadow(0 5px 6px #030610a8)!important}
+#battleArena #enemyPack .enemy-art-wrap{animation:xbEnemyBreath 1.05s steps(2,end) infinite!important}
+#battleArena #enemyPack .enemy-card:nth-child(2) .enemy-art-wrap{animation-delay:-.24s!important}
+#battleArena #enemyPack .enemy-card:nth-child(3) .enemy-art-wrap{animation-delay:-.48s!important}
+@media(min-width:801px){
+ #battleArena #enemyPack,#battleArena .enemy-pack{
+  width:48%!important;max-width:590px!important;right:3%!important;
+  height:44%!important;bottom:15%!important;gap:clamp(5px,.8vw,12px)!important;
+ }
+ #battleArena #enemyPack .enemy-art-wrap,#battleArena .enemy-pack .enemy-art-wrap{
+  width:clamp(48px,5.6vw,76px)!important;height:clamp(66px,9.5vw,108px)!important;
+ }
+ #battleArena #enemyPack .enemy-art-wrap.enemy-art-main,#battleArena .enemy-pack .enemy-art-wrap.enemy-art-main{
+  width:clamp(58px,6.7vw,90px)!important;height:clamp(78px,11.5vw,126px)!important;
+ }
+ #battleArena #enemyPack .enemy-large strong,#battleArena .enemy-pack .enemy-large strong,#battleArena #enemyPack #enemyName{
+  max-width:clamp(74px,8vw,112px)!important;font-size:clamp(9px,.75vw,11px)!important;
+ }
+}
+@media(max-width:800px){
+ #battleArena #enemyPack,#battleArena .enemy-pack{
+  width:61%!important;max-width:61%!important;right:0!important;
+  height:39%!important;bottom:16%!important;gap:1px!important;padding:0!important;
+ }
+ #battleArena #enemyPack .enemy-card,#battleArena .enemy-pack .enemy-card{max-width:33.333%!important}
+ #battleArena #enemyPack .enemy-art-wrap,#battleArena .enemy-pack .enemy-art-wrap{
+  width:clamp(31px,9vw,48px)!important;height:clamp(44px,13vw,66px)!important;
+ }
+ #battleArena #enemyPack .enemy-art-wrap.enemy-art-main,#battleArena .enemy-pack .enemy-art-wrap.enemy-art-main{
+  width:clamp(38px,10.5vw,56px)!important;height:clamp(52px,16vw,76px)!important;
+ }
+ #battleArena #enemyPack .enemy-card .enemy-health,#battleArena .enemy-pack .enemy-card .enemy-health{
+  width:clamp(24px,7.8vw,38px)!important;height:3px!important;flex-basis:3px!important;margin-top:3px!important;
+ }
+ #battleArena #enemyPack .enemy-large .enemy-health,#battleArena .enemy-pack .enemy-large .enemy-health{
+  width:clamp(28px,8.8vw,43px)!important;
+ }
+ #battleArena #enemyPack .enemy-large strong,#battleArena .enemy-pack .enemy-large strong,#battleArena #enemyPack #enemyName{
+  max-width:clamp(46px,15vw,70px)!important;padding:3px 3px!important;margin-top:3px!important;
+  font-size:clamp(7px,1.8vw,9px)!important;line-height:1.05!important;
+ }
+}
+@media(max-width:390px){
+ #battleArena #enemyPack,#battleArena .enemy-pack{width:63%!important;max-width:63%!important;right:0!important;bottom:17%!important;height:36%!important}
+ #battleArena #enemyPack .enemy-art-wrap,#battleArena .enemy-pack .enemy-art-wrap{width:30px!important;height:42px!important}
+ #battleArena #enemyPack .enemy-art-wrap.enemy-art-main,#battleArena .enemy-pack .enemy-art-wrap.enemy-art-main{width:36px!important;height:49px!important}
+ #battleArena #enemyPack .enemy-large strong,#battleArena .enemy-pack .enemy-large strong,#battleArena #enemyPack #enemyName{max-width:48px!important;font-size:7px!important}
+}
+
 </style>
 </head>
 <body>
