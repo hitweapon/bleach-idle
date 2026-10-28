@@ -1689,6 +1689,178 @@ button.quick-skill.is-selected:before{content:"ATIVA";position:absolute;top:-7px
 }
 @media(prefers-reduced-motion:reduce){#toast:not(.hidden){animation:none!important}}
 
+
+/* XBLEACH ARENA REDESIGN — clean HUD, grounded characters, responsive battle composition */
+#battleArena{
+ position:relative!important;isolation:isolate!important;overflow:hidden!important;
+ border:1px solid #46546d!important;border-radius:18px!important;
+ background-color:#090f1b!important;
+ box-shadow:inset 0 1px #ffffff14,inset 0 -45px 85px #02050caa,0 18px 48px #0005!important;
+}
+#battleArena:before{
+ z-index:0!important;opacity:1!important;
+ background:
+  radial-gradient(ellipse at 50% 54%,#6885bd18,transparent 48%),
+  linear-gradient(180deg,#0a1220a8 0%,#0b1322a0 48%,#080c16e8 100%),
+  url('/assets/spirit-night.svg') center 52%/cover no-repeat!important;
+ filter:saturate(.9)!important;
+}
+#battleArena:after{
+ z-index:1!important;left:-2%!important;right:-2%!important;bottom:0!important;height:25%!important;
+ background:linear-gradient(180deg,#1c273b 0%,#101725 18%,#080d17 78%,#050811 100%)!important;
+ clip-path:polygon(0 18%,14% 11%,29% 17%,44% 8%,59% 17%,74% 10%,88% 16%,100% 12%,100% 100%,0 100%)!important;
+ border-top:1px solid #c0d5ef25!important;
+}
+#battleArena .scene-top{
+ position:absolute!important;top:0!important;left:0!important;right:0!important;
+ display:flex!important;align-items:flex-start!important;justify-content:space-between!important;
+ gap:12px!important;padding:16px!important;z-index:50!important;pointer-events:none!important;
+}
+#battleArena .scene-location,#battleArena .scene-stage{
+ display:flex!important;align-items:center!important;gap:10px!important;
+ min-width:0!important;width:auto!important;max-width:42%!important;
+ padding:10px 12px!important;border:1px solid #8ba5c52e!important;border-radius:13px!important;
+ background:linear-gradient(135deg,#091522f2,#0b101cf0)!important;
+ box-shadow:0 8px 24px #0005,inset 0 1px #ffffff0c!important;
+ backdrop-filter:blur(12px)!important;
+}
+#battleArena .scene-location>div,#battleArena .scene-stage>div{display:flex!important;flex-direction:column!important;gap:3px!important;min-width:0!important}
+#battleArena .scene-emblem,#battleArena .scene-stage>span{font-size:1.45rem!important;flex:0 0 auto!important;color:#9ecbff!important;text-shadow:0 0 16px #5aa6ff44!important}
+#battleArena .scene-location small,#battleArena .scene-stage small{font-size:9px!important;letter-spacing:.14em!important;color:#9eb7d5!important}
+#battleArena .scene-location strong,#battleArena .scene-stage strong{font-family:Inter,system-ui,sans-serif!important;font-size:clamp(12px,1.05vw,15px)!important;line-height:1.2!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;color:#f4f7ff!important}
+#battleArena .scene-location span:not(.scene-emblem),#battleArena .scene-stage span{font-size:10px!important;color:#a8b8cc!important;line-height:1.3!important}
+#battleArena .scene-ground{
+ z-index:8!important;display:block!important;position:absolute!important;left:0!important;right:0!important;bottom:0!important;
+ height:var(--xb-platform-height,15%)!important;opacity:1!important;pointer-events:none!important;
+ background:
+  linear-gradient(180deg,#a9c0dc18 0 1px,transparent 2px),
+  repeating-linear-gradient(8deg,transparent 0 25px,#c6d7ef0b 26px 27px,transparent 28px 47px),
+  repeating-linear-gradient(90deg,transparent 0 88px,#c6d7ef08 89px 90px,transparent 91px 176px),
+  linear-gradient(180deg,#263247 0%,#172131 14%,#0d1421 60%,#080d17 100%)!important;
+ clip-path:polygon(0 9%,13% 3%,28% 8%,44% 0,59% 8%,75% 2%,89% 7%,100% 3%,100% 100%,0 100%)!important;
+ border-top:1px solid #a7bfd72c!important;box-shadow:inset 0 8px 18px #0004!important;
+}
+#battleArena .hero-art-real.is-loaded,#battleArena .hero-art-fallback:not(.asset-hidden){
+ z-index:30!important;object-fit:contain!important;object-position:center bottom!important;
+ filter:drop-shadow(0 13px 11px #02050bc9) drop-shadow(0 0 12px #6db9ff22)!important;
+}
+#battleArena .enemy-pack{
+ z-index:31!important;align-items:flex-end!important;justify-content:space-evenly!important;
+ gap:clamp(6px,1.2vw,16px)!important;
+}
+#battleArena .enemy-art-wrap{filter:drop-shadow(0 10px 8px #02050bc9)!important}
+#battleArena .enemy-art-wrap.enemy-art-main{filter:drop-shadow(0 0 13px #d5e6ff12) drop-shadow(0 10px 8px #02050bc9)!important}
+#battleArena .enemy-card strong,#battleArena #enemyName{
+ border:1px solid #8b9db833!important;border-radius:7px!important;
+ background:#09111deF!important;color:#eaf2ff!important;
+ box-shadow:0 5px 15px #0006!important;font-weight:750!important;
+}
+#battleArena .enemy-card i.enemy-health{height:5px!important;border-radius:99px!important;border:1px solid #8e5369!important;background:#170d19!important;overflow:hidden!important}
+#battleArena .enemy-card i.enemy-health>span{border-radius:99px!important;background:linear-gradient(90deg,#bc3454,#ff647e)!important}
+#battleArena .scene-bottom{
+ position:absolute!important;top:auto!important;left:14px!important;right:14px!important;bottom:12px!important;
+ z-index:60!important;display:flex!important;align-items:center!important;justify-content:space-between!important;
+ gap:12px!important;padding:0!important;margin:0!important;border:0!important;border-radius:0!important;
+ background:transparent!important;box-shadow:none!important;backdrop-filter:none!important;
+ pointer-events:none!important;
+}
+#battleArena .scene-character{
+ display:flex!important;align-items:center!important;gap:9px!important;min-width:0!important;max-width:38%!important;
+ padding:7px 11px!important;border:1px solid #9db7d532!important;border-radius:12px!important;
+ background:linear-gradient(135deg,#091522f2,#0a101bf2)!important;
+ box-shadow:0 8px 22px #0006,inset 0 1px #ffffff0b!important;backdrop-filter:blur(12px)!important;
+}
+#battleArena .scene-character .mini-portrait{width:35px!important;height:38px!important;flex:0 0 35px!important;border-radius:8px!important;overflow:hidden!important}
+#battleArena .scene-character strong{display:block!important;color:#f5f7ff!important;font-size:clamp(10px,.9vw,13px)!important;line-height:1.2!important;white-space:nowrap!important}
+#battleArena .scene-character small{display:block!important;margin-top:3px!important;color:#a9bad0!important;font-size:10px!important;white-space:nowrap!important}
+#battleArena .scene-enemy-health{
+ width:min(39%,360px)!important;max-width:39%!important;min-width:0!important;flex:0 1 360px!important;
+ padding:9px 12px!important;border:1px solid #9db7d532!important;border-radius:12px!important;
+ background:linear-gradient(135deg,#091522f2,#0a101bf2)!important;
+ box-shadow:0 8px 22px #0006,inset 0 1px #ffffff0b!important;backdrop-filter:blur(12px)!important;
+}
+#battleArena .scene-enemy-health>div:first-child{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:8px!important;color:#a9bad0!important;font-size:10px!important;letter-spacing:.08em!important}
+#battleArena .scene-enemy-health>div:first-child b{color:#f4f7ff!important;font-size:11px!important;font-variant-numeric:tabular-nums!important;white-space:nowrap!important}
+#battleArena .scene-enemy-health .bar{height:7px!important;margin-top:7px!important;border:1px solid #9c49604d!important;background:#140d19!important;border-radius:99px!important;overflow:hidden!important}
+#battleArena .scene-enemy-health .bar span{border-radius:99px!important;background:linear-gradient(90deg,#cf3557,#ff647e 68%,#ffb1b7)!important;box-shadow:0 0 12px #ff476c4a!important}
+#battleArena .xb-skill-callout{
+ z-index:55!important;max-width:min(42%,300px)!important;padding:8px 12px!important;
+ border:1px solid #81d7ff!important;border-radius:11px!important;
+ background:linear-gradient(135deg,#09263bea,#10172bed)!important;color:#effaff!important;
+ box-shadow:0 8px 25px #0008,0 0 22px #43bfff2a!important;
+ font-size:clamp(10px,.9vw,13px)!important;letter-spacing:.04em!important;
+}
+#battleArena #combatFx .combat-pop{z-index:65!important;text-shadow:0 2px 5px #000!important;backdrop-filter:blur(4px)!important}
+@media(min-width:801px){
+ #battleArena{min-height:clamp(470px,58vh,570px)!important;--xb-platform-height:15%}
+ #battleArena .hero-art-real.is-loaded,#battleArena .hero-art-fallback:not(.asset-hidden){
+  width:clamp(165px,19%,235px)!important;max-width:235px!important;max-height:55%!important;left:7%!important;bottom:14%!important;
+ }
+ #battleArena[data-character="blade"] .hero-art-real.is-loaded,#battleArena[data-character="blade"] .hero-art-fallback:not(.asset-hidden){width:clamp(175px,20%,250px)!important;max-width:250px!important;left:6.5%!important}
+ #battleArena[data-character="kido"] .hero-art-real.is-loaded,#battleArena[data-character="kido"] .hero-art-fallback:not(.asset-hidden),
+ #battleArena[data-character="step"] .hero-art-real.is-loaded,#battleArena[data-character="step"] .hero-art-fallback:not(.asset-hidden){width:clamp(155px,17%,215px)!important;max-width:215px!important;left:8%!important}
+ #battleArena #enemyPack{width:42%!important;max-width:500px!important;height:45%!important;right:5%!important;bottom:14%!important;top:auto!important}
+ #battleArena .enemy-art-wrap.enemy-art-small{width:clamp(48px,5.6vw,76px)!important;height:clamp(66px,9.6vw,110px)!important}
+ #battleArena .enemy-art-wrap.enemy-art-main{width:clamp(72px,8vw,108px)!important;height:clamp(96px,12.5vw,142px)!important}
+ #battleArena .scene-bottom{bottom:12px!important}
+}
+@media(max-width:800px){
+ #battleArena{min-height:clamp(360px,92vw,450px)!important;--xb-platform-height:16%;border-radius:14px!important}
+ #battleArena .scene-top{padding:10px!important;gap:8px!important}
+ #battleArena .scene-location,#battleArena .scene-stage{max-width:48%!important;padding:8px!important;gap:6px!important;border-radius:10px!important}
+ #battleArena .scene-emblem,#battleArena .scene-stage>span{font-size:1.1rem!important}
+ #battleArena .scene-location small,#battleArena .scene-stage small{font-size:7px!important;letter-spacing:.1em!important}
+ #battleArena .scene-location strong,#battleArena .scene-stage strong{font-size:clamp(10px,2.6vw,12px)!important}
+ #battleArena .scene-location span:not(.scene-emblem),#battleArena .scene-stage span{font-size:8px!important}
+ #battleArena .hero-art-real.is-loaded,#battleArena .hero-art-fallback:not(.asset-hidden){
+  width:clamp(112px,34%,165px)!important;max-width:43%!important;max-height:63%!important;left:1%!important;bottom:15%!important;
+ }
+ #battleArena[data-character="blade"] .hero-art-real.is-loaded,#battleArena[data-character="blade"] .hero-art-fallback:not(.asset-hidden){width:clamp(120px,36%,174px)!important;max-width:45%!important}
+ #battleArena[data-character="kido"] .hero-art-real.is-loaded,#battleArena[data-character="kido"] .hero-art-fallback:not(.asset-hidden),
+ #battleArena[data-character="step"] .hero-art-real.is-loaded,#battleArena[data-character="step"] .hero-art-fallback:not(.asset-hidden){width:clamp(104px,31%,150px)!important;max-width:40%!important;left:2%!important}
+ #battleArena #enemyPack{width:55%!important;max-width:58%!important;right:0!important;bottom:15%!important;height:44%!important;top:auto!important;gap:3px!important}
+ #battleArena .enemy-art-wrap.enemy-art-small{width:clamp(34px,11vw,53px)!important;height:clamp(48px,15vw,75px)!important}
+ #battleArena .enemy-art-wrap.enemy-art-main{width:clamp(58px,17vw,82px)!important;height:clamp(78px,23vw,112px)!important}
+ #battleArena .enemy-card strong,#battleArena #enemyName{max-width:80px!important;font-size:clamp(7px,1.9vw,9px)!important;padding:4px 5px!important;line-height:1.1!important}
+ #battleArena .enemy-card i.enemy-health{width:clamp(30px,10vw,46px)!important;height:4px!important;margin-top:4px!important}
+ #battleArena .enemy-card.enemy-large i.enemy-health{width:clamp(42px,13vw,60px)!important}
+ #battleArena .scene-bottom{left:8px!important;right:8px!important;bottom:8px!important;gap:7px!important}
+ #battleArena .scene-character{max-width:48%!important;gap:6px!important;padding:6px 7px!important;border-radius:10px!important}
+ #battleArena .scene-character .mini-portrait{width:28px!important;height:30px!important;flex-basis:28px!important}
+ #battleArena .scene-character strong{font-size:10px!important;max-width:100%!important;overflow:hidden!important;text-overflow:ellipsis!important}
+ #battleArena .scene-character small{font-size:8px!important}
+ #battleArena .scene-enemy-health{width:48%!important;max-width:48%!important;flex:0 1 48%!important;padding:7px 8px!important;border-radius:10px!important}
+ #battleArena .scene-enemy-health>div:first-child{font-size:8px!important;letter-spacing:.04em!important}
+ #battleArena .scene-enemy-health>div:first-child b{font-size:9px!important}
+ #battleArena .scene-enemy-health .bar{height:5px!important;margin-top:5px!important}
+ #battleArena .xb-skill-callout{max-width:42%!important;padding:5px 7px!important;font-size:9px!important;border-radius:8px!important}
+ #battleArena .xb-hero-aura{width:35%!important;max-width:140px!important;left:0!important;bottom:12%!important;opacity:.2!important}
+}
+@media(max-width:420px){
+ #battleArena{min-height:350px!important}
+ #battleArena .scene-top{padding:8px!important;gap:6px!important}
+ #battleArena .scene-location,#battleArena .scene-stage{max-width:49%!important;padding:7px 6px!important;gap:5px!important}
+ #battleArena .scene-emblem,#battleArena .scene-stage>span{font-size:.95rem!important}
+ #battleArena .scene-location strong,#battleArena .scene-stage strong{font-size:10px!important}
+ #battleArena .scene-location span:not(.scene-emblem),#battleArena .scene-stage span{font-size:7px!important}
+ #battleArena .hero-art-real.is-loaded,#battleArena .hero-art-fallback:not(.asset-hidden){width:clamp(105px,34%,138px)!important;max-width:41%!important;max-height:60%!important;left:0!important}
+ #battleArena #enemyPack{width:56%!important;right:-1%!important}
+ #battleArena .enemy-art-wrap.enemy-art-small{width:clamp(30px,9vw,38px)!important;height:clamp(43px,13vw,54px)!important}
+ #battleArena .enemy-art-wrap.enemy-art-main{width:clamp(48px,14vw,60px)!important;height:clamp(66px,19vw,80px)!important}
+ #battleArena .scene-bottom{left:6px!important;right:6px!important;bottom:6px!important;gap:5px!important}
+ #battleArena .scene-character{max-width:47%!important;padding:5px!important;gap:5px!important}
+ #battleArena .scene-character .mini-portrait{width:24px!important;height:26px!important;flex-basis:24px!important}
+ #battleArena .scene-character strong{font-size:9px!important}
+ #battleArena .scene-character small{font-size:7px!important}
+ #battleArena .scene-enemy-health{width:49%!important;max-width:49%!important;flex-basis:49%!important;padding:6px!important}
+ #battleArena .scene-enemy-health>div:first-child{font-size:7px!important}
+ #battleArena .scene-enemy-health>div:first-child b{font-size:8px!important}
+}
+@media(prefers-reduced-motion:reduce){
+ #battleArena .hero-art-real.is-loaded:not(.is-attacking):not(.is-skill):not(.is-critical),
+ #battleArena .hero-art-fallback:not(.asset-hidden),#battleArena .enemy-art-wrap>img.is-loaded{animation:none!important}
+}
+
 </style>
 </head>
 <body>
