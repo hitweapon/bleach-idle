@@ -2056,6 +2056,21 @@ button.quick-skill.is-selected:before{content:"ATIVA";position:absolute;top:-7px
  opacity:1!important;visibility:visible!important;
 }
 
+
+/* XBLEACH HOTFIX — CSS !important must not override syncArtwork's fallback visibility */
+#battleArena .enemy-art-wrap>img.enemy-art-real:not(.is-loaded){
+ display:none!important;opacity:0!important;visibility:hidden!important;
+}
+#battleArena .enemy-art-wrap>img.enemy-art-real.is-loaded{
+ display:block!important;opacity:1!important;visibility:visible!important;
+}
+#battleArena .enemy-art-wrap>svg.enemy-art-fallback.asset-hidden{
+ display:none!important;opacity:0!important;visibility:hidden!important;
+}
+#battleArena .enemy-art-wrap>svg.enemy-art-fallback:not(.asset-hidden){
+ display:block!important;opacity:1!important;visibility:visible!important;
+}
+
 </style>
 </head>
 <body>
