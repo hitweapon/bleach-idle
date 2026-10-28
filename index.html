@@ -1861,6 +1861,57 @@ button.quick-skill.is-selected:before{content:"ATIVA";position:absolute;top:-7px
  #battleArena .hero-art-fallback:not(.asset-hidden),#battleArena .enemy-art-wrap>img.is-loaded{animation:none!important}
 }
 
+
+/* XBLEACH ENEMY MOTION SYNC — animate each sprite wrapper, regardless of IMG or SVG fallback */
+#battleArena #enemyPack{animation:xbEnemyGroupDrift 5.8s ease-in-out infinite!important;will-change:transform}
+#battleArena #enemyPack .enemy-card{
+ animation:none!important;translate:none!important;transform:none!important;
+}
+#battleArena #enemyPack .enemy-art-wrap{
+ position:relative!important;transform:none!important;translate:0 0;
+ animation:xbEnemyBreath 1.05s steps(2,end) infinite!important;
+ transform-origin:50% 100%!important;will-change:translate;
+}
+#battleArena #enemyPack .enemy-card:nth-child(2) .enemy-art-wrap{animation-delay:-.24s!important}
+#battleArena #enemyPack .enemy-card:nth-child(3) .enemy-art-wrap{animation-delay:-.48s!important}
+#battleArena #enemyPack .enemy-art-wrap>img,
+#battleArena #enemyPack .enemy-art-wrap>svg{
+ animation:none!important;transform:translateX(-50%)!important;
+ transform-origin:50% 100%!important;
+}
+#battleArena #enemyPack .enemy-art-wrap>img.is-loaded{opacity:1;visibility:visible}
+#battleArena #enemyPack.is-hit .enemy-art-wrap{animation:xbEnemyHitSync .28s ease-out!important}
+#battleArena #enemyPack.is-hit .enemy-art-wrap>img,
+#battleArena #enemyPack.is-hit .enemy-art-wrap>svg{filter:brightness(1.7) drop-shadow(0 0 10px #71d8ff)!important}
+#battleArena #enemyPack.is-defeated .enemy-art-wrap{animation:xbEnemyDefeatSync .58s ease-in forwards!important}
+#battleArena #enemyPack.is-defeated .enemy-art-wrap>img,
+#battleArena #enemyPack.is-defeated .enemy-art-wrap>svg{filter:brightness(1.5) saturate(.6)!important}
+@keyframes xbEnemyBreath{
+ 0%,100%{translate:0 0;rotate:-.25deg}
+ 50%{translate:0 -4px;rotate:.45deg}
+}
+@keyframes xbEnemyGroupDrift{
+ 0%,100%{transform:translateX(0)}
+ 45%,58%{transform:translateX(-2.5%)}
+ 70%{transform:translateX(-1%)}
+}
+@keyframes xbEnemyHitSync{
+ 0%,100%{translate:0 0;filter:none}
+ 35%{translate:-5px 0;filter:brightness(1.8)}
+ 65%{translate:3px 0}
+}
+@keyframes xbEnemyDefeatSync{
+ 0%{translate:0 0;opacity:1}
+ 100%{translate:12px 0;opacity:.12;filter:blur(2px)}
+}
+@media(max-width:800px){
+ #battleArena #enemyPack{animation:xbEnemyGroupDrift 6.2s ease-in-out infinite!important}
+ #battleArena #enemyPack .enemy-art-wrap{animation-duration:1.12s!important}
+}
+@media(prefers-reduced-motion:reduce){
+ #battleArena #enemyPack,#battleArena #enemyPack .enemy-art-wrap{animation:none!important;will-change:auto!important}
+}
+
 </style>
 </head>
 <body>
