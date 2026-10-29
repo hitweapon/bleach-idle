@@ -2267,6 +2267,16 @@ function applyInterfaceArt(){
  });
  const homeBox=document.querySelector('#page-home .battlebox');
  if(homeBox){const zoneKey=mapKeys[Math.min(mapKeys.length-1,Math.floor((Math.max(1,state.stage)-1)/10))];homeBox.style.backgroundImage='linear-gradient(180deg,#05071125,#070a15c9),url("'+XBLEACH_ART.zones[zoneKey]+'")';homeBox.style.backgroundSize='cover';homeBox.style.backgroundPosition='center'}
+ const lootArt=[XBLEACH_ART.ui.experience,XBLEACH_ART.ui.currency,XBLEACH_ART.materials.hollowFragment,XBLEACH_ART.ui.weapon,XBLEACH_ART.ui.relic];
+ document.querySelectorAll('.loot-strip>span').forEach((node,i)=>{const label=node.querySelector('small');if(!label)return;const keep=label.outerHTML;node.innerHTML='<img class="loot-art-icon" src="'+lootArt[i%lootArt.length]+'" alt="" loading="lazy">'+keep});
+ const sideResources=document.querySelectorAll('.side-resources>span');
+ sideResources.forEach((node,i)=>{const value=node.querySelector('b');if(!value)return;node.innerHTML='<img class="side-resource-art" src="'+(i===0?XBLEACH_ART.ui.currency:XBLEACH_ART.ui.skills)+'" alt="">'+value.outerHTML});
+ const sideCountMap={sideCountEssence:XBLEACH_ART.materials.hollowFragment,sideCountRelics:XBLEACH_ART.ui.relic,sideCountWeapons:XBLEACH_ART.ui.weapon,sideCountArmor:XBLEACH_ART.ui.armor};
+ Object.entries(sideCountMap).forEach(([id,src])=>{const val=document.getElementById(id);const icon=val&&val.parentElement.querySelector('[aria-hidden="true"]');if(icon&&!icon.querySelector('img'))icon.innerHTML='<img class="side-count-art" src="'+src+'" alt="">'});
+ const sideSlots=[['sideSlotWeapon',XBLEACH_ART.equipment.weapon],['sideSlotArmor',XBLEACH_ART.equipment.armor],['sideSlotAccessory',XBLEACH_ART.equipment.accessory],['sideSlotRelic',XBLEACH_ART.equipment.relic]];
+ sideSlots.forEach(([id,src])=>{const slot=document.getElementById(id),label=slot&&slot.querySelector('small');if(slot&&label)slot.innerHTML='<img class="side-slot-art" src="'+src+'" alt="">'+label.outerHTML});
+ const evolutionArts=[XBLEACH_ART.ui.character,XBLEACH_ART.items.awakenedZangetsu,XBLEACH_ART.skills.crescent,XBLEACH_ART.skills['bankai-wave']];
+ document.querySelectorAll('.evolution-track .evolution-step').forEach((step,i)=>{const icon=step.querySelector('b');if(icon)icon.innerHTML='<img class="evolution-art-icon" src="'+evolutionArts[i%evolutionArts.length]+'" alt="">'});
 }
 
 function rollLoot(boss=false){
