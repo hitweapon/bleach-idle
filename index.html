@@ -2071,6 +2071,9 @@ button.quick-skill.is-selected:before{content:"ATIVA";position:absolute;top:-7px
  display:block!important;opacity:1!important;visibility:visible!important;
 }
 
+
+#battleArena #combatFx .pop-player-hit{left:40%;top:58%;font-size:clamp(1.05rem,2.5vw,1.6rem);color:#ff9da7;border-color:#e34c70aa;background:#3b0b18e8;text-shadow:0 0 13px #ff1f4b}
+#battleArena.is-player-defeated:after{content:"VOCÊ FOI DERROTADO";position:absolute;z-index:95;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:18px;color:#ffd2d9;font-size:clamp(1.1rem,3.2vw,2rem);font-weight:1000;letter-spacing:.12em;background:radial-gradient(ellipse at center,#5c1329dd,#090710ee 72%);backdrop-filter:blur(3px);text-shadow:0 0 24px #ff234d}
 </style>
 </head>
 <body>
@@ -2184,30 +2187,30 @@ const SKILLS=[
 {id:'raijin-burst',name:'Rajada de Raijin',icon:'✧',level:20,cost:46,cooldown:17000,multiplier:7.0,desc:'Libera um arco de relâmpago espiritual devastador.',characterId:'step'}
 ];
 const ENEMIES=[
-{name:'Espírito Corrompido',icon:'👹',hp:38,xp:26,gold:9},
-{name:'Lobo do Véu',icon:'🐺',hp:50,xp:38,gold:14},
-{name:'Devorador de Ecos',icon:'👻',hp:72,xp:54,gold:20},
-{name:'Guardião Oco',icon:'💀',hp:100,xp:75,gold:28},
-{name:'Sentinela da Ruptura',icon:'👺',hp:135,xp:100,gold:38},
-{name:'Caçador de Reishi',icon:'🏹',hp:148,xp:112,gold:43},
-{name:'Hollow das Dunas',icon:'🦂',hp:162,xp:125,gold:49},
-{name:'Lanceiro de Cinzas',icon:'👹',hp:178,xp:140,gold:55},
-{name:'Espectro de Cristal',icon:'💠',hp:195,xp:155,gold:62},
-{name:'Predador da Névoa',icon:'🐺',hp:215,xp:172,gold:70},
-{name:'Guardião de Obsidiana',icon:'🛡️',hp:238,xp:190,gold:78},
-{name:'Cavaleiro do Vazio',icon:'⚔️',hp:264,xp:212,gold:88},
-{name:'Draco Espiritual',icon:'🐉',hp:292,xp:238,gold:99},
-{name:'Hollow Carmesim',icon:'🩸',hp:324,xp:266,gold:112},
-{name:'Arauto das Sombras',icon:'🌑',hp:360,xp:298,gold:126}
+{name:'Espírito Corrompido',icon:'👹',hp:350,xp:10,gold:9},
+{name:'Lobo do Véu',icon:'🐺',hp:420,xp:14,gold:14},
+{name:'Devorador de Ecos',icon:'👻',hp:510,xp:18,gold:20},
+{name:'Guardião Oco',icon:'💀',hp:610,xp:22,gold:28},
+{name:'Sentinela da Ruptura',icon:'👺',hp:720,xp:28,gold:38},
+{name:'Caçador de Reishi',icon:'🏹',hp:850,xp:34,gold:43},
+{name:'Hollow das Dunas',icon:'🦂',hp:1000,xp:40,gold:49},
+{name:'Lanceiro de Cinzas',icon:'👹',hp:1160,xp:48,gold:55},
+{name:'Espectro de Cristal',icon:'💠',hp:1340,xp:56,gold:62},
+{name:'Predador da Névoa',icon:'🐺',hp:1530,xp:64,gold:70},
+{name:'Guardião de Obsidiana',icon:'🛡️',hp:1740,xp:72,gold:78},
+{name:'Cavaleiro do Vazio',icon:'⚔️',hp:1970,xp:82,gold:88},
+{name:'Draco Espiritual',icon:'🐉',hp:2220,xp:92,gold:99},
+{name:'Hollow Carmesim',icon:'🩸',hp:2500,xp:104,gold:112},
+{name:'Arauto das Sombras',icon:'🌑',hp:2800,xp:116,gold:126}
 ];
 const ENEMY_ART=['/assets/hollow-skull.webp','/assets/hollow-beast.webp','/assets/hollow-winged.webp','/assets/hollow-gold.webp','/assets/hollow-lord.webp'];
 const BOSSES=[
-{name:'Grande Hollow',icon:'☠',hp:560,xp:180,gold:120,art:'/assets/hollow-lord.webp',skill:'Ruptura Abissal'},
-{name:'Carrasco do Véu',icon:'⚔',hp:1100,xp:320,gold:220,art:'/assets/hollow-gold.webp',skill:'Tempestade Espiritual'},
-{name:'Predador da Lua',icon:'🌑',hp:2100,xp:600,gold:400,art:'/assets/hollow-winged.webp',skill:'Eclipse Hollow'},
-{name:'Vasto da Noite',icon:'🌑',hp:3200,xp:850,gold:560,art:'/assets/hollow-lord.webp',skill:'Maré do Vazio'},
-{name:'Colosso Mascarado',icon:'💀',hp:4800,xp:1250,gold:820,art:'/assets/hollow-beast.webp',skill:'Impacto Abissal'},
-{name:'Arauto da Ruptura',icon:'👁️',hp:7200,xp:1900,gold:1250,art:'/assets/hollow-gold.webp',skill:'Chuva de Reiatsu'}
+{name:'Grande Hollow',icon:'☠',hp:850,xp:180,gold:120,art:'/assets/hollow-lord.webp',skill:'Ruptura Abissal'},
+{name:'Carrasco do Véu',icon:'⚔',hp:1800,xp:320,gold:220,art:'/assets/hollow-gold.webp',skill:'Tempestade Espiritual'},
+{name:'Predador da Lua',icon:'🌑',hp:3200,xp:600,gold:400,art:'/assets/hollow-winged.webp',skill:'Eclipse Hollow'},
+{name:'Vasto da Noite',icon:'🌑',hp:5200,xp:850,gold:560,art:'/assets/hollow-lord.webp',skill:'Maré do Vazio'},
+{name:'Colosso Mascarado',icon:'💀',hp:8000,xp:1250,gold:820,art:'/assets/hollow-beast.webp',skill:'Impacto Abissal'},
+{name:'Arauto da Ruptura',icon:'👁️',hp:12000,xp:1900,gold:1250,art:'/assets/hollow-gold.webp',skill:'Chuva de Reiatsu'}
 ];
 const LOOT=[
 {name:'Fragmento de Essência',icon:'💎',rarity:'rare',slot:'relic',bonus:1,hpBonus:0,sell:8,desc:'+1 poder · material espiritual'},
@@ -2225,13 +2228,22 @@ const LOOT=[
 {name:'Manoplas Shunkō',icon:'⚡',rarity:'epic',slot:'weapon',bonus:14,hpBonus:15,sell:175,desc:'+14 poder e +15 vitalidade'},
 {name:'Zangetsu Desperta',icon:'🌌',rarity:'epic',slot:'weapon',bonus:28,hpBonus:12,sell:340,desc:'+28 poder e +12 vitalidade · lâmina lendária'}
 ];
+function rollLoot(boss=false){
+ const common=LOOT.filter(x=>x.rarity==='common'),rare=LOOT.filter(x=>x.rarity==='rare'),epic=LOOT.filter(x=>x.rarity==='epic');
+ let pool;
+ if(boss)pool=Math.random()<.72?epic:rare;
+ else{const r=Math.random();pool=r<.68?common:r<.95?rare:epic}
+ if(!pool||!pool.length)pool=LOOT;
+ return {...pool[Math.floor(Math.random()*pool.length)]};
+}
+
 const SAVE_KEY='xigoSoulRiftV1';
 const GUEST_SAVE_KEY=SAVE_KEY+':guest';
 function accountSaveKey(userId){return SAVE_KEY+':account:'+String(userId||'')}
 function currentLocalSaveKey(){return currentUser&&accountHydrated?accountSaveKey(currentUser.id):GUEST_SAVE_KEY}
 const DEFAULT={
 version:3,level:1,xp:0,gold:0,kills:0,stage:1,classId:'blade',activeSkillId:'crescent',running:true,autoSkill:true,
-enemyHp:38,pendingRespawnAt:0,inventory:[],claimed:false,attackBonus:0,weaponLevel:1,energy:55,skillReadyAt:0,lastSeen:Date.now(),
+enemyHp:350,playerHp:100,playerDownUntil:0,enemyAttackMeter:0,pendingRespawnAt:0,inventory:[],claimed:false,attackBonus:0,weaponLevel:1,energy:55,skillReadyAt:0,lastSeen:Date.now(),
 bossActive:false,bossKills:0,bestStage:1,prestige:0,lastDailyClaim:'',dailyStreak:0,skillUses:0,totalDamage:0,totalXp:0,totalGold:0,remoteSyncPending:false,
 equipmentSlots:{weapon:null,armor:null,accessory:null,relic:null},
 questClaims:{},achievementsClaimed:{},settings:{speed:1,showDamage:true,reducedMotion:false,compactLog:false,autoEquip:true}
@@ -2250,7 +2262,10 @@ function slotItems(st){const slots=st.equipmentSlots||{};return Object.entries(s
 function equipmentPowerFor(st){return slotItems(st).reduce((sum,x)=>sum+itemPower(x.item),0)}
 function equipmentHpFor(st){return slotItems(st).reduce((sum,x)=>sum+itemVitality(x.item),0)}
 function enemyAtStage(stage){return ENEMIES[Math.max(0,Math.floor((stage-1)/2))%ENEMIES.length]}
-function maxEnemyHpFor(st){const e=st.bossActive?BOSSES[Math.min(BOSSES.length-1,Math.floor((st.bossKills||0)/3))]:enemyAtStage(st.stage);return Math.round(e.hp*(st.bossActive?1+Math.max(0,st.stage-1)*.12:1+(st.stage-1)*.32))}
+function maxEnemyHpFor(st){const e=st.bossActive?BOSSES[Math.min(BOSSES.length-1,Math.floor((st.bossKills||0)/3))]:enemyAtStage(st.stage);return Math.round(e.hp*(st.bossActive?1+Math.max(0,st.stage-1)*.12:1+(st.stage-1)*.08))}
+function maxHpForState(st){const cls=getClassFor(st);return Math.round(cls.hp+(Math.max(1,Number(st.level)||1)-1)*5+equipmentHpFor(st))}
+function enemyAttackDamageFor(st){const stage=Math.max(1,Math.floor(Number(st.stage)||1)),base=3+stage*.7+Math.floor((stage-1)/10)*1.5;return Math.max(st.bossActive?8:3,Math.round(base*(st.bossActive?1.55:1)))}
+function enemyAttackIntervalFor(st){return st.bossActive?2700:2100}
 function normalizeState(raw){
  const src=raw&&typeof raw==='object'?raw:{};
  const out={...DEFAULT,...src,version:3};
@@ -2282,36 +2297,46 @@ function normalizeState(raw){
  out.achievementsClaimed=src.achievementsClaimed&&typeof src.achievementsClaimed==='object'?{...src.achievementsClaimed}:{};
  if(src.claimed)out.questClaims.purify10=true;
  out.claimed=!!out.questClaims.purify10;
+ const playerHpLimit=maxHpForState(out);
+ out.playerHp=safeNumber(src.playerHp,playerHpLimit,0,playerHpLimit);
+ out.playerDownUntil=safeNumber(src.playerDownUntil,0,0,1e15);
+ out.enemyAttackMeter=safeNumber(src.enemyAttackMeter,0,0,100000);
+ if(typeof src.playerHp!=="number")out.enemyHp=maxEnemyHpFor(out);
+ if(out.playerHp<=0&&out.playerDownUntil<=Date.now())out.playerHp=Math.max(1,Math.round(playerHpLimit*.55));
  out.lastSeen=safeNumber(src.lastSeen,Date.now(),0,1e15);
  return out;
 }
 function simulateOfflineState(st,elapsedMs){
  const seconds=Math.floor(Math.max(0,Math.min(8*60*60*1000,elapsedMs))/1000);
  if(seconds<2){st.bossActive=false;return}
- const startKills=st.kills,startXp=st.totalXp,startGold=st.totalGold;
+ const simulationStart=Date.now()-seconds*1000,startKills=st.kills,startXp=st.totalXp,startGold=st.totalGold;
  const ticks=Math.min(38400,Math.floor(seconds*1000/750)),speed=Math.max(1,Math.min(3,Number(st.settings?.speed)||1));
- st.bossActive=false;
+ st.bossActive=false;st.playerHp=safeNumber(st.playerHp,maxHpForState(st),0,maxHpForState(st));st.enemyAttackMeter=safeNumber(st.enemyAttackMeter,0,0,100000);
  for(let tick=0;tick<ticks;tick++){
-  const cls=getClassFor(st),maximum=maxEnemyHpFor(st);
+  const simulatedTime=simulationStart+tick*750;
+  if(st.playerDownUntil&&simulatedTime<st.playerDownUntil)continue;
+  if(st.playerDownUntil&&simulatedTime>=st.playerDownUntil){st.playerDownUntil=0;st.playerHp=Math.max(1,Math.round(maxHpForState(st)*.55));st.enemyHp=maxEnemyHpFor(st);st.enemyAttackMeter=0}
+  const cls=getClassFor(st),maximum=maxEnemyHpFor(st),playerMaximum=maxHpForState(st);
   if(!Number.isFinite(st.enemyHp)||st.enemyHp<=0||st.enemyHp>maximum*2)st.enemyHp=maximum;
+  st.playerHp=Math.min(playerMaximum,st.playerHp+Math.max(.2,playerMaximum*.002));
   st.energy=Math.min(cls.energy,safeNumber(st.energy,cls.energy,0,cls.energy)+2*speed);
   let hit=Math.round((cls.atk+(st.level-1)*2+st.attackBonus+equipmentPowerFor(st))*(cls.basicMultiplier||1))*speed;
   if(cls.id==='step'&&tick%2===1)hit+=Math.max(1,Math.round(hit*.5));
   st.enemyHp-=hit;st.totalDamage+=hit;
-  const simulatedTime=Date.now()-seconds*1000+tick*750;
   if(st.autoSkill&&simulatedTime>=(st.skillReadyAt||0)){const sk=getSkillForState(st);if(st.energy>=sk.cost){st.energy-=sk.cost;st.skillReadyAt=simulatedTime+sk.cooldown;const extra=Math.round((cls.atk+(st.level-1)*2+st.attackBonus+equipmentPowerFor(st))*sk.multiplier*(cls.skillMultiplier||1));st.enemyHp-=extra;st.totalDamage+=extra;st.skillUses++}}
+  if(st.enemyHp>0){
+   st.enemyAttackMeter+=750*speed;const interval=enemyAttackIntervalFor(st);let strikes=0;
+   while(st.enemyAttackMeter>=interval&&strikes<3&&st.enemyHp>0){st.enemyAttackMeter-=interval;strikes++;st.playerHp=Math.max(0,st.playerHp-enemyAttackDamageFor(st));if(st.playerHp<=0){st.playerDownUntil=simulatedTime+6500;st.enemyHp=maxEnemyHpFor(st);st.enemyAttackMeter=0;break}}
+   if(st.playerDownUntil>simulatedTime)continue;
+  }
   if(st.enemyHp<=0){
    const beforeKills=st.kills,e=enemyAtStage(st.stage),xpGain=e.xp*3,goldGain=e.gold*3;
    st.kills+=3;st.xp+=xpGain;st.gold+=goldGain;st.totalXp+=xpGain;st.totalGold+=goldGain;
-   while(st.xp>=xpForLevel(st.level)){st.xp-=xpForLevel(st.level);st.level++;st.gold+=30;st.totalGold+=30}
-   if(Math.floor(st.kills/6)>Math.floor(beforeKills/6)){st.stage++;st.gold+=15;st.totalGold+=15}
+   while(st.xp>=xpForLevel(st.level)){const oldMax=maxHpForState(st);st.xp-=xpForLevel(st.level);st.level++;st.gold+=30;st.totalGold+=30;st.playerHp=Math.min(maxHpForState(st),st.playerHp+(maxHpForState(st)-oldMax))}
+   if(Math.floor(st.kills/9)>Math.floor(beforeKills/9)){st.stage++;st.gold+=15;st.totalGold+=15}
    st.bestStage=Math.max(st.bestStage,st.stage);
-   if(st.settings.autoEquip&&st.kills%3===0&&st.inventory.length<500){
-    const item={...LOOT[Math.floor((st.kills/3)%LOOT.length)],id:'offline-'+st.kills};
-    st.inventory.push(item);const slot=itemSlot(item),current=st.inventory.find(x=>String(x.id)===String(st.equipmentSlots[slot]));
-    if(!current||itemPower(item)+itemVitality(item)>itemPower(current)+itemVitality(current)){st.equipmentSlots[slot]=item.id;item.equipped=true}
-   }
-   st.enemyHp=maxEnemyHpFor(st);st.pendingRespawnAt=0;
+   if(st.settings.autoEquip&&st.kills%3===0&&st.inventory.length<500){const item={...rollLoot(),id:'offline-'+st.kills};st.inventory.push(item);const slot=itemSlot(item),current=st.inventory.find(x=>String(x.id)===String(st.equipmentSlots[slot]));if(!current||itemPower(item)+itemVitality(item)>itemPower(current)+itemVitality(current)){st.equipmentSlots[slot]=item.id;item.equipped=true}}
+   st.playerHp=Math.min(maxHpForState(st),st.playerHp+Math.round(maxHpForState(st)*.1));st.enemyHp=maxEnemyHpFor(st);st.pendingRespawnAt=0;st.enemyAttackMeter=0;
   }
  }
  const gainedKills=st.kills-startKills,gainedXp=st.totalXp-startXp,gainedGold=st.totalGold-startGold;
@@ -2354,7 +2379,7 @@ function stateFromRemote(profile,game){
   bossKills:safeNumber(eq.bossKills,0,0,1e9),autoSkill:eq.autoSkill!==false,
   settings:{...DEFAULT.settings,...(eq.settings&&typeof eq.settings==='object'?eq.settings:{})},
   totalDamage:safeNumber(eq.totalDamage,0,0,1e15),totalXp:safeNumber(eq.totalXp,0,0,1e15),totalGold:safeNumber(eq.totalGold,0,0,1e15),
-  energy:eq.energy,skillReadyAt:safeNumber(eq.skillReadyAt,0,0,1e15),bossActive:false,pendingRespawnAt:0,lastSeen:Date.now()
+  energy:eq.energy,skillReadyAt:safeNumber(eq.skillReadyAt,0,0,1e15),playerHp:eq.playerHp,playerDownUntil:safeNumber(eq.playerDownUntil,0,0,1e15),enemyAttackMeter:safeNumber(eq.enemyAttackMeter,0,0,100000),bossActive:false,pendingRespawnAt:0,lastSeen:Date.now()
  };
  const restored=normalizeState(source);restored.bestStage=Math.max(restored.bestStage,restored.stage);
  restored.enemyHp=maxEnemyHpFor(restored);restored.energy=Math.min(getClassFor(restored).energy,safeNumber(eq.energy,getClassFor(restored).energy,0,getClassFor(restored).energy));
@@ -2362,11 +2387,11 @@ function stateFromRemote(profile,game){
 }
 function enemy(){return state.bossActive?BOSSES[Math.min(BOSSES.length-1,Math.floor(state.bossKills||0))]:enemyAtStage(state.stage)}
 function enemyMaxHp(){return maxEnemyHpFor(state)}
-function xpForLevel(level){return Math.round(70+Math.max(0,level-1)*28)}
+function xpForLevel(level){const n=Math.max(0,level-1);return Math.round(100+n*48+Math.pow(n,1.45)*10)}
 function maxXp(){return xpForLevel(state.level)}
 function archetype(){return getClassFor(state)}
 function power(){return Math.round((archetype().atk+(state.level-1)*2+state.attackBonus+equipmentPowerFor(state))*(1+(state.prestige||0)*.05))}
-function maxHp(){return Math.round(archetype().hp+(state.level-1)*5+equipmentHpFor(state))}
+function maxHp(){return maxHpForState(state)}
 function showFloatingText(message,kind='pop-reward'){
  const fx=document.querySelector('#combatFx');if(!fx)return;
  const pop=document.createElement('div');pop.className='combat-pop '+kind;pop.textContent=String(message);
@@ -2445,7 +2470,7 @@ function combatVisual(kind,amount,critical=false){
 }
 
 function useSkill(silent=false,quiet=false){
- const now=Date.now();if((state.pendingRespawnAt||0)>now||now<(state.skillReadyAt||0))return false;
+ const now=Date.now();if((state.pendingRespawnAt||0)>now||(state.playerDownUntil||0)>now||state.playerHp<=0||now<(state.skillReadyAt||0))return false;
  const skill=activeSkill();if((state.energy===undefined?archetype().energy:state.energy)<skill.cost)return false;
  state.energy-=skill.cost;state.skillReadyAt=now+skill.cooldown;state.skillUses=(state.skillUses||0)+1;
  const cls=archetype(),critical=Math.random()<(cls.critChance||.12),damage=Math.round(power()*skill.multiplier*(cls.skillMultiplier||1)*(critical?1.7:1));state.enemyHp-=damage;state.totalDamage=(state.totalDamage||0)+damage;
@@ -2491,7 +2516,7 @@ async function saveRemote(){
      kills:snapshot.kills,bestStage:snapshot.bestStage,claimed:snapshot.claimed,questClaims:snapshot.questClaims,
      achievementsClaimed:snapshot.achievementsClaimed,bossKills:snapshot.bossKills,autoSkill:snapshot.autoSkill,
      settings:snapshot.settings,totalDamage:snapshot.totalDamage,totalXp:snapshot.totalXp,totalGold:snapshot.totalGold,
-     energy:snapshot.energy,skillReadyAt:snapshot.skillReadyAt};
+     energy:snapshot.energy,skillReadyAt:snapshot.skillReadyAt,playerHp:snapshot.playerHp,playerDownUntil:snapshot.playerDownUntil,enemyAttackMeter:snapshot.enemyAttackMeter};
     const game={player_id:user.id,character_class:snapshot.classId,
      current_zone:snapshot.stage<11?'desert':snapshot.stage<21?'ruins':snapshot.stage<31?'forest':snapshot.stage<41?'rift':'society',
      highest_stage:snapshot.stage,inventory:snapshot.inventory,equipment:eq,last_seen_at:timestamp,updated_at:timestamp};
@@ -2647,7 +2672,7 @@ function awardXp(n){
  const earned=Math.max(0,Math.floor(Number(n)||0));state.xp+=earned;state.totalXp=(state.totalXp||0)+earned;
  if(earned>0&&state.settings.showDamage)showFloatingText('+'+earned.toLocaleString('pt-BR')+' EXP','pop-xp');
  while(state.xp>=maxXp()){
-  state.xp-=maxXp();state.level++;state.gold+=30;state.totalGold=(state.totalGold||0)+30;
+  const oldMaxHp=maxHp();state.xp-=maxXp();state.level++;state.gold+=30;state.totalGold=(state.totalGold||0)+30;state.playerHp=Math.min(maxHp(),Math.max(0,state.playerHp)+(maxHp()-oldMaxHp));
   log('✨ <strong>NÍVEL '+state.level+'!</strong> +30 ouro · novas habilidades podem ser desbloqueadas.');
   showFloatingText('LEVEL UP! · NV. '+state.level,'pop-level');
   toast('SUBIU DE NÍVEL! Nv. '+state.level+' 🎉');
@@ -2664,44 +2689,61 @@ function defeat(){
   state.bossKills=(state.bossKills||0)+1;state.bossActive=false;state.stage++;state.gold+=20;state.totalGold=(state.totalGold||0)+20;
   log('🏆 <strong>CHEFE DERROTADO: '+e.name+'!</strong> +'+xpGain+' EXP · +'+(goldGain+20)+' ouro.');
   toast('CHEFE DERROTADO! Recompensa épica! 🏆');
-  const guaranteed=LOOT[state.bossKills%LOOT.length],drop={...guaranteed,id:'boss-'+Date.now()+'-'+Math.random()};
+  const drop={...rollLoot(true),id:'boss-'+Date.now()+'-'+Math.random()};
   state.inventory.push(drop);log('👑 <strong>Drop de chefe:</strong> '+drop.name+'.');
   showFloatingText('DROP DE CHEFE!','pop-loot');
   if(state.settings.autoEquip&&isUpgradeForSlot(drop))equipItem(state.inventory.length-1,true);
  }else{
   log('☯ <strong>3 Hollows purificados!</strong> +'+xpGain+' EXP · +'+goldGain+' ouro.');
-  if(Math.floor(state.kills/6)>Math.floor(beforeKills/6)){
+  if(Math.floor(state.kills/9)>Math.floor(beforeKills/9)){
    state.stage++;state.gold+=15;state.totalGold=(state.totalGold||0)+15;
    log('🧭 <strong>NOVO ESTÁGIO '+state.stage+'!</strong> +15 ouro por avanço.');
    showFloatingText('ESTÁGIO '+state.stage+'!','pop-stage');
    toast('Estágio '+state.stage+' desbloqueado! ⚔️');
   }
-  const dropChance=state.kills<=18?.48:.32;
-  if(Math.random()<dropChance||state.kills%15===0){
-   const item={...LOOT[Math.floor(Math.random()*LOOT.length)],id:'drop-'+Date.now()+'-'+Math.random(),equipped:false};
+  const dropChance=state.kills<=18?.18:.12;
+  if(Math.random()<dropChance||state.kills%24===0){
+   const item={...rollLoot(),id:'drop-'+Date.now()+'-'+Math.random(),equipped:false};
    state.inventory.push(item);log('🎁 <strong>DROP!</strong> '+item.name+'.');showFloatingText('ITEM ENCONTRADO!','pop-loot');toast('Item encontrado: '+item.name+' 🎁');
    if(state.settings.autoEquip&&isUpgradeForSlot(item))equipItem(state.inventory.length-1,true);
   }
  }
  showFloatingText('+'+goldGain.toLocaleString('pt-BR')+' OURO','pop-gold');
  state.bestStage=Math.max(state.bestStage||1,state.stage);
+ state.playerHp=Math.min(maxHp(),state.playerHp+Math.round(maxHp()*(wasBoss?.25:.1)));state.enemyAttackMeter=0;
  state.enemyHp=0;state.pendingRespawnAt=Date.now()+420;
 }
 
+function playerDefeated(now=Date.now()){
+ const wasBoss=!!state.bossActive;state.playerHp=0;state.playerDownUntil=now+6500;state.pendingRespawnAt=0;
+ state.bossActive=false;state.enemyHp=maxEnemyHpFor(state);state.enemyAttackMeter=0;showFloatingText('DERROTADO','pop-player-hit');
+ log('💀 <strong>VOCÊ FOI DERROTADO.</strong> '+(wasBoss?'O desafio do chefe falhou; ele precisa ser iniciado novamente.':'Nenhuma recompensa desta leva. Você se recupera em alguns segundos.'));
+ toast(wasBoss?'Você perdeu o desafio do chefe. Recupere-se e tente novamente.':'Você foi derrotado! Recuperação em 6 segundos.');
+}
+function recoverPlayerIfReady(now=Date.now()){
+ if(!state.playerDownUntil||now<state.playerDownUntil)return false;
+ state.playerDownUntil=0;state.playerHp=Math.max(1,Math.round(maxHp()*.55));state.enemyHp=enemyMaxHp();state.pendingRespawnAt=0;state.enemyAttackMeter=0;
+ showFloatingText('DE VOLTA AO COMBATE','pop-stage');log('✦ <strong>Você se recuperou com '+state.playerHp+' / '+maxHp()+' HP.</strong> A batalha recomeça sem recompensa pela derrota anterior.');
+ toast('Você voltou ao combate com '+state.playerHp+' HP.');return true;
+}
+function advanceEnemyCombat(stepMs=750){
+ const now=Date.now();if(state.playerDownUntil>now||(state.pendingRespawnAt||0)>now||state.enemyHp<=0)return;
+ state.enemyAttackMeter=(state.enemyAttackMeter||0)+stepMs;const interval=enemyAttackIntervalFor(state);let strikes=0;
+ while(state.enemyAttackMeter>=interval&&strikes<3&&state.enemyHp>0&&state.playerDownUntil<=now){
+  state.enemyAttackMeter-=interval;strikes++;const damage=enemyAttackDamageFor(state);state.playerHp=Math.max(0,state.playerHp-damage);
+  showFloatingText('−'+damage+' HP','pop-player-hit');if(state.playerHp<=0){playerDefeated(now);return}
+ }
+}
 function attack(manual=false,quiet=false){
- if(!state.running&&!manual)return;
- const now=Date.now();
- if((state.pendingRespawnAt||0)>now)return;
- if(state.pendingRespawnAt&&now>=state.pendingRespawnAt){state.pendingRespawnAt=0;state.enemyHp=enemyMaxHp()}
+ const now=Date.now();if((state.playerDownUntil||0)>now||state.playerHp<=0)return;
+ if(state.playerDownUntil&&state.playerDownUntil<=now)recoverPlayerIfReady(now);
+ if(!state.running&&!manual)return;if((state.pendingRespawnAt||0)>now)return;
+ if(state.pendingRespawnAt&&now>=state.pendingRespawnAt){state.pendingRespawnAt=0;state.enemyHp=enemyMaxHp();state.enemyAttackMeter=0}
  if(!Number.isFinite(state.enemyHp)||state.enemyHp<=0)state.enemyHp=enemyMaxHp();
  const cls=archetype(),critical=Math.random()<(cls.critChance||.12),damage=Math.max(1,Math.round(power()*(manual?2:1.35)*(cls.basicMultiplier||1)*(critical?1.75:1)));
- state.enemyHp-=damage;state.totalDamage=(state.totalDamage||0)+damage;
- const killed=state.enemyHp<=0;
- combatVisual(killed?'defeat':'hit',damage,critical);
- if(killed)defeat();
- if(!quiet){render();save()}
+ state.enemyHp-=damage;state.totalDamage=(state.totalDamage||0)+damage;const killed=state.enemyHp<=0;combatVisual(killed?'defeat':'hit',damage,critical);
+ if(killed)defeat();if(!quiet){render();save()}
 }
-
 const QUESTS=[
 {id:'purify10',name:'Primeira purificação',desc:'Purifique seus primeiros 10 inimigos.',metric:'kills',goal:10,gold:75,xp:100,icon:'☯'},
 {id:'slayer25',name:'Caçador persistente',desc:'Derrote 25 espíritos corrompidos.',metric:'kills',goal:25,gold:120,xp:80,icon:'⚔'},
@@ -2886,7 +2928,7 @@ function renderPrestige(){
 function performPrestige(){
  if(state.level<30){toast('A ascensão exige nível 30.');return}
  if(!window.confirm('Ascender agora? Nível, estágio e ouro serão reiniciados. Equipamentos, conquistas e total de derrotas ficam.'))return;
- state.prestige=(state.prestige||0)+1;state.level=1;state.xp=0;state.gold=0;state.stage=1;state.bossActive=false;state.enemyHp=enemyMaxHp();state.energy=archetype().energy;state.skillReadyAt=0;state.lastSeen=Date.now();state.bestStage=Math.max(state.bestStage,1);
+ state.prestige=(state.prestige||0)+1;state.level=1;state.xp=0;state.gold=0;state.stage=1;state.bossActive=false;state.playerHp=maxHp();state.playerDownUntil=0;state.enemyAttackMeter=0;state.enemyHp=enemyMaxHp();state.energy=archetype().energy;state.skillReadyAt=0;state.lastSeen=Date.now();state.bestStage=Math.max(state.bestStage,1);
  render();save();if(currentUser)saveRemote();toast('Ascensão '+state.prestige+'! Poder permanente +5%.');log('卍 <strong>Ascensão espiritual realizada.</strong> Bônus de poder acumulado: +'+(state.prestige*5)+'%.');
 }
 function renderStarterGuide(){
@@ -2923,12 +2965,12 @@ function render(){
  textOf('homeEnemyName',e.name);textOf('homeEnemyMeta',(state.bossActive?'CHEFE · ':'Estágio ')+state.stage+' · ameaça '+(state.stage<3?'baixa':state.stage<6?'média':'alta'));const homeImage=document.querySelector('#homeEnemyArt');if(homeImage)homeImage.alt=e.name+' em combate';const mainImage=document.querySelector('#enemyIconArt');if(mainImage)mainImage.alt=e.name;const leftImage=document.querySelector('#enemyLeftArt');if(leftImage)leftImage.alt='Hollow auxiliar da leva';const rightImage=document.querySelector('#enemyRightArt');if(rightImage)rightImage.alt='Hollow de apoio da leva';const bossImage=document.querySelector('#bossArtReal');if(bossImage)bossImage.alt=BOSSES[Math.min(BOSSES.length-1,Math.floor(state.bossKills||0))].name;
  const hs=document.querySelector('#homeEnemy');if(hs)hs.setAttribute('aria-label',e.name);
  textOf('stage',state.stage);textOf('sceneCharacterName',cls.name);textOf('sceneCharacterRole',cls.title.split(' · ')[0]);textOf('sceneLevel',state.level);textOf('sideLevel',state.level);textOf('currentZoneTitle',zone.name);textOf('currentZoneNumber',zone.id==='desert'?1:zone.id==='ruins'?2:zone.id==='forest'?3:zone.id==='rift'?4:5);textOf('sideGold',state.gold.toLocaleString('pt-BR'));textOf('sidePower',power());textOf('sideForce',power());textOf('sideAgility',Math.round(cls.atk*.7+state.level));textOf('sideSpirit',Math.round(cls.energy*.2+state.level));textOf('sideVitality',maxHp());widthOf('sideXpBar',xpPct);
- const arena=document.querySelector('#battleArena');if(arena){arena.dataset.map=zone.id;arena.dataset.character=state.classId;arena.dataset.boss=state.bossActive?'true':'false'}
+ const arena=document.querySelector('#battleArena');if(arena){arena.dataset.map=zone.id;arena.dataset.character=state.classId;arena.dataset.boss=state.bossActive?'true':'false';arena.classList.toggle('is-player-defeated',state.playerDownUntil>Date.now())}
  textOf('currentZoneTitle',zone.name);textOf('currentZoneNumber',zone.id==='desert'?1:zone.id==='ruins'?2:zone.id==='forest'?3:zone.id==='rift'?4:5);textOf('zoneTitle',state.bossActive?'Desafio de chefe':zone.subtitle);textOf('enemyName',e.name);textOf('enemyLevel',state.bossActive?'CHEFE · Nível '+state.stage+' · ameaça extrema':'Nível '+state.stage+' · '+zone.name+' · '+(state.stage<3?'comum':'elite'));
  const mainMob=document.querySelector('#enemyIcon');if(mainMob)mainMob.setAttribute('aria-label',e.name);
  const leftMob=document.querySelector('#enemyLeft');if(leftMob)leftMob.setAttribute('aria-label','Hollow secundário');const rightMob=document.querySelector('#enemyRight');if(rightMob)rightMob.setAttribute('aria-label','Hollow de elite');
- textOf('enemyHpText',Math.max(0,Math.ceil(state.enemyHp)).toLocaleString('pt-BR')+' / '+enemyMax.toLocaleString('pt-BR'));widthOf('enemyHpBar',hpPct);widthOf('enemyLeftHpFill',hpPct);widthOf('enemyMainHpFill',hpPct);widthOf('enemyRightHpFill',hpPct);textOf('battleStatus',state.bossActive?'Chefe de elite em combate automático. Fique de olho nos efeitos e nas recompensas.':'Combate 100% automático: personagem ataca, usa habilidades e avança sozinho.');textOf('idleStatus','⚡ FULL AFK · '+(state.autoSkill?'AUTO SKILLS ON':'AUTO SKILLS OFF')+' · '+(state.settings.speed||1)+'×');textOf('activeSkillName',activeSkill().name);textOf('activeSkillIcon',activeSkill().icon);textOf('activeSkillInfo','Dano ×'+activeSkill().multiplier+' · Custo '+activeSkill().cost+' · Recarga '+(activeSkill().cooldown/1000)+'s');
- textOf('classBadge',cls.name);textOf('attackValue',power());textOf('hpText',maxHp()+' / '+maxHp());widthOf('hpBar',100);state.energy=Math.min(state.energy===undefined?cls.energy:state.energy,cls.energy);textOf('energyText',state.energy+' / '+cls.energy);widthOf('energyBar',state.energy/cls.energy*100);
+ textOf('enemyHpText',Math.max(0,Math.ceil(state.enemyHp)).toLocaleString('pt-BR')+' / '+enemyMax.toLocaleString('pt-BR'));widthOf('enemyHpBar',hpPct);widthOf('enemyLeftHpFill',hpPct);widthOf('enemyMainHpFill',hpPct);widthOf('enemyRightHpFill',hpPct);textOf('battleStatus',state.playerDownUntil>Date.now()?'Você foi derrotado. Recuperação em '+Math.ceil((state.playerDownUntil-Date.now())/1000)+'s.':state.bossActive?'Chefe de elite em combate automático.':'Combate automático: você ataca, recebe dano e pode ser derrotado.');textOf('idleStatus','⚡ FULL AFK · '+(state.autoSkill?'AUTO SKILLS ON':'AUTO SKILLS OFF')+' · '+(state.settings.speed||1)+'×');textOf('activeSkillName',activeSkill().name);textOf('activeSkillIcon',activeSkill().icon);textOf('activeSkillInfo','Dano ×'+activeSkill().multiplier+' · Custo '+activeSkill().cost+' · Recarga '+(activeSkill().cooldown/1000)+'s');
+ const playerMaxHp=maxHp();state.playerHp=Math.min(playerMaxHp,Math.max(0,Number(state.playerHp)||0));textOf('classBadge',cls.name);textOf('attackValue',power());textOf('hpText',Math.ceil(state.playerHp)+' / '+playerMaxHp);widthOf('hpBar',state.playerHp/playerMaxHp*100);state.energy=Math.min(state.energy===undefined?cls.energy:state.energy,cls.energy);textOf('energyText',state.energy+' / '+cls.energy);widthOf('energyBar',state.energy/cls.energy*100);
  const skill=document.querySelector('#skillBtn');if(skill){const remain=Math.max(0,Math.ceil(((state.skillReadyAt||0)-Date.now())/1000));skill.classList.toggle('skill-auto-off',!state.autoSkill);skill.setAttribute('aria-pressed',String(state.autoSkill));const label=skill.querySelector('small');if(label)label.textContent=state.autoSkill?'AUTO ON':'AUTO OFF';skill.title=activeSkill().name+' · custo '+activeSkill().cost+' · recarga '+(activeSkill().cooldown/1000)+'s';const cooldown=skill.querySelector('#skillCooldown');if(cooldown)cooldown.textContent=remain>0?'· '+remain+'s':''}
  widthOf('sideProgress',state.kills*10);textOf('sideKills',Math.min(10,state.kills)+' / 10 derrotados');widthOf('questBar',state.kills*10);textOf('questCount',Math.min(10,state.kills)+' / 10 derrotados');const claim=document.querySelector('#claimQuest');if(claim){claim.disabled=state.kills<10||!!state.questClaims.purify10;textOf('claimQuest',state.questClaims.purify10?'Recompensa resgatada':'Resgatar recompensa')}
  const classes=document.querySelector('#classList');if(classes)classes.innerHTML=CLASSES.map(x=>'<div class="classcard '+(x.id===state.classId?'selected':'')+'" data-class="'+x.id+'"><div class="classhead"><img class="class-portrait" src="'+x.portrait+'" alt="" loading="lazy"><div><strong>'+x.name+'</strong><small>'+x.title+' · ATQ '+x.atk+' · VIDA '+x.hp+'</small></div></div><p>'+x.desc+'</p><p><b>Habilidade inicial:</b> '+x.skill+'</p>'+(x.id===state.classId?'<span class="tag tiny">EM USO</span>':'<span class="tag tiny">Selecionar personagem</span>')+'</div>').join('');
@@ -3050,7 +3092,7 @@ document.querySelector('#skillBtn').addEventListener('click',()=>{state.autoSkil
 document.querySelector('#refreshLeaderboardBtn').addEventListener('click',loadLeaderboard);
 document.querySelector('#bossChallenge').addEventListener('click',()=>{
  if(state.bossActive){toast('Seu personagem já está enfrentando o chefe.');goto('battle');return}
- const required=5+(state.bossKills||0)*5;if(state.stage<required){toast('Continue avançando: este chefe desbloqueia no estágio '+required+'.');return}state.bossActive=true;state.pendingRespawnAt=0;state.enemyHp=enemyMaxHp();state.energy=Math.max(state.energy,20);goto('battle');render();save();toast('Desafio de chefe iniciado: '+enemy().name+'.');
+ const required=5+(state.bossKills||0)*5;if(state.stage<required){toast('Continue avançando: este chefe desbloqueia no estágio '+required+'.');return}state.bossActive=true;state.pendingRespawnAt=0;state.enemyHp=enemyMaxHp();state.enemyAttackMeter=0;state.energy=Math.max(state.energy,20);goto('battle');render();save();toast('Desafio de chefe iniciado: '+enemy().name+'.');
 });
 document.querySelector('#clearLog').addEventListener('click',()=>{const feed=document.querySelector('#combatLog');if(feed)feed.innerHTML='<div class="feeditem">Registro limpo. A caçada continua…</div>'});
 document.querySelector('#claimQuest').addEventListener('click',()=>claimQuest('purify10'));
@@ -3084,35 +3126,40 @@ function updateCombatHUD(){
  textOf('currentZoneTitle',zone.name);textOf('currentZoneNumber',zone.id==='desert'?1:zone.id==='ruins'?2:zone.id==='forest'?3:zone.id==='rift'?4:5);textOf('zoneTitle',state.bossActive?'Desafio de chefe':zone.subtitle);textOf('enemyName',e.name);textOf('enemyLevel',state.bossActive?'CHEFE · Nível '+state.stage+' · ameaça extrema':'Nível '+state.stage+' · '+zone.name+' · '+(state.stage<3?'comum':'elite'));
  textOf('enemyHpText',Math.max(0,Math.ceil(state.enemyHp)).toLocaleString('pt-BR')+' / '+enemyMax.toLocaleString('pt-BR'));
  widthOf('enemyHpBar',hpPct);widthOf('enemyLeftHpFill',hpPct);widthOf('enemyMainHpFill',hpPct);widthOf('enemyRightHpFill',hpPct);
- textOf('battleStatus',state.pendingRespawnAt>Date.now()?'Próxima leva chegando…':state.bossActive?'Chefe de elite em combate automático.':'Combate 100% automático: ataques, habilidades e progressão seguem sozinhos.');
- textOf('liveStatusText',state.pendingRespawnAt>Date.now()?'PRÓXIMA LEVA':state.bossActive?'CHEFE EM COMBATE':'COMBATE ATIVO');
+ textOf('battleStatus',state.playerDownUntil>Date.now()?'Você foi derrotado. Recuperação em '+Math.ceil((state.playerDownUntil-Date.now())/1000)+'s.':state.pendingRespawnAt>Date.now()?'Próxima leva chegando…':state.bossActive?'Chefe de elite em combate automático.':'Combate automático: você ataca, recebe dano e pode ser derrotado.');
+ textOf('liveStatusText',state.playerDownUntil>Date.now()?'DERROTADO · '+Math.ceil((state.playerDownUntil-Date.now())/1000)+'s':state.pendingRespawnAt>Date.now()?'PRÓXIMA LEVA':state.bossActive?'CHEFE EM COMBATE':'COMBATE ATIVO');
  textOf('idleStatus','⚡ FULL AFK · '+(state.autoSkill?'AUTO SKILLS ON':'AUTO SKILLS OFF')+' · '+(state.settings.speed||1)+'×');
  const skill=activeSkill();textOf('activeSkillName',skill.name);textOf('activeSkillIcon',skill.icon);textOf('activeSkillInfo','Dano ×'+skill.multiplier+' · Custo '+skill.cost+' · Recarga '+(skill.cooldown/1000)+'s');
  const skillBtn=document.querySelector('#skillBtn');if(skillBtn){const remain=Math.max(0,Math.ceil(((state.skillReadyAt||0)-Date.now())/1000));skillBtn.classList.toggle('skill-auto-off',!state.autoSkill);skillBtn.setAttribute('aria-pressed',String(state.autoSkill));skillBtn.title=skill.name+' · custo '+skill.cost+' · recarga '+(skill.cooldown/1000)+'s';skillBtn.style.setProperty('--ready-pct',Math.max(0,Math.min(100,100-(remain/skill.cooldown*100)))+'%');const small=skillBtn.querySelector('small');if(small)small.textContent=state.autoSkill?'AUTO ON':'AUTO OFF';textOf('skillCooldown',remain>0?remain+'s':'')}
- widthOf('energyBar',state.energy/cls.energy*100);textOf('energyText',state.energy+' / '+cls.energy);widthOf('hpBar',100);textOf('hpText',maxHp()+' / '+maxHp());textOf('attackValue',power());textOf('classBadge',cls.name);
+ widthOf('energyBar',state.energy/cls.energy*100);textOf('energyText',state.energy+' / '+cls.energy);const playerMaxHp=maxHp();state.playerHp=Math.min(playerMaxHp,Math.max(0,Number(state.playerHp)||0));widthOf('hpBar',state.playerHp/playerMaxHp*100);textOf('hpText',Math.ceil(state.playerHp)+' / '+playerMaxHp);textOf('attackValue',power());textOf('classBadge',cls.name);
  widthOf('sideProgress',state.kills*10);textOf('sideKills',Math.min(10,state.kills)+' / 10 derrotados');widthOf('questBar',state.kills*10);textOf('questCount',Math.min(10,state.kills)+' / 10 derrotados');
  const claim=document.querySelector('#claimQuest');if(claim){claim.disabled=state.kills<10||!!state.questClaims.purify10;textOf('claimQuest',state.questClaims.purify10?'Recompensa resgatada':'Resgatar recompensa')}
  const sessionDamage=Math.max(0,(state.totalDamage||0)-sessionStartDamage),sessionKills=Math.max(0,state.kills-sessionStartKills);
  textOf('sessionDps',Math.floor(sessionDamage).toLocaleString('pt-BR'));textOf('sessionDpsLabel','DPS estimado: '+Math.floor(sessionDamage/elapsed).toLocaleString('pt-BR'));
  textOf('sessionKills',sessionKills.toLocaleString('pt-BR'));textOf('sessionKillsLabel','em '+formatDuration(elapsed));
- const milestone=(Math.floor(state.kills/6)+1)*6;textOf('nextMilestone',milestone+' derrotas');textOf('nextMilestoneLabel',Math.max(0,milestone-state.kills)+' até o avanço de estágio');
- const arena=document.querySelector('#battleArena');if(arena){arena.dataset.map=zone.id;arena.dataset.character=state.classId;arena.dataset.boss=state.bossActive?'true':'false';arena.classList.toggle('is-respawning',state.pendingRespawnAt>Date.now())}
+ const milestone=(Math.floor(state.kills/9)+1)*9;textOf('nextMilestone',milestone+' derrotas');textOf('nextMilestoneLabel',Math.max(0,milestone-state.kills)+' até o avanço de estágio');
+ const arena=document.querySelector('#battleArena');if(arena){arena.dataset.map=zone.id;arena.dataset.character=state.classId;arena.dataset.boss=state.bossActive?'true':'false';arena.classList.toggle('is-respawning',state.pendingRespawnAt>Date.now());arena.classList.toggle('is-player-defeated',state.playerDownUntil>Date.now())}
  const quickMap={crescent:'Q','flash-step':'W','bankai-wave':'E'};
  document.querySelectorAll('[data-skill-quick]').forEach(btn=>{const id=btn.dataset.skillQuick,sk=SKILLS.find(x=>x.id===id),unlocked=!!sk&&state.level>=sk.level;btn.disabled=!unlocked;btn.classList.toggle('is-selected',!!sk&&skill.id===id);btn.setAttribute('aria-pressed',String(!!sk&&skill.id===id));if(sk){btn.title=unlocked?sk.name+' · custo '+sk.cost+' · '+(sk.cooldown/1000)+'s recarga':'Desbloqueia no nível '+sk.level;const small=btn.querySelector('small');if(small)small.textContent=quickMap[id]+' · '+(unlocked?'NV. '+sk.level:'🔒 '+sk.level)}});
  const maps=document.querySelectorAll('.map-row'),thresholds=[1,11,21,31,41];maps.forEach((map,i)=>map.classList.toggle('locked',state.bestStage<thresholds[i]));renderSideGear();renderEvolution();
 }
 let yoruichiStrikeCounter=0;
 function idleTick(){
- const speed=Math.max(1,Math.min(3,Number(state.settings.speed)||1));
- const before={kills:state.kills,level:state.level,stage:state.stage,gold:state.gold,xp:state.xp,inventory:state.inventory.length,bossKills:state.bossKills,prestige:state.prestige,classId:state.classId};
+ const speed=Math.max(1,Math.min(3,Number(state.settings.speed)||1)),now=Date.now();
+ if(state.playerDownUntil&&now>=state.playerDownUntil)recoverPlayerIfReady(now);
+ const before={kills:state.kills,level:state.level,stage:state.stage,gold:state.gold,xp:state.xp,inventory:state.inventory.length,bossKills:state.bossKills,prestige:state.prestige,classId:state.classId,playerHp:state.playerHp,playerDownUntil:state.playerDownUntil};
+ if(state.playerDownUntil>now||state.playerHp<=0){updateCombatHUD();return}
  for(let i=0;i<speed;i++){
+  if(state.playerDownUntil>Date.now()||state.playerHp<=0)break;
+  const hpMax=maxHp();state.playerHp=Math.min(hpMax,state.playerHp+Math.max(.2,hpMax*.002));
   state.energy=Math.min(archetype().energy,(state.energy===undefined?archetype().energy:state.energy)+2);
   attack(false,true);
   if(state.classId==='step'&&++yoruichiStrikeCounter%2===0)attack(false,true);
   const sk=activeSkill();
   if(!state.pendingRespawnAt&&state.autoSkill&&Date.now()>=(state.skillReadyAt||0)&&state.energy>=sk.cost)useSkill(true,true);
+  advanceEnemyCombat(750);
  }
- const majorChange=before.kills!==state.kills||before.level!==state.level||before.stage!==state.stage||before.gold!==state.gold||before.xp!==state.xp||before.inventory!==state.inventory.length||before.bossKills!==state.bossKills||before.prestige!==state.prestige||before.classId!==state.classId;
+ const majorChange=before.kills!==state.kills||before.level!==state.level||before.stage!==state.stage||before.gold!==state.gold||before.xp!==state.xp||before.inventory!==state.inventory.length||before.bossKills!==state.bossKills||before.prestige!==state.prestige||before.classId!==state.classId||before.playerHp!==state.playerHp||before.playerDownUntil!==state.playerDownUntil;
  if(majorChange)render();else updateCombatHUD();
 }
 setInterval(idleTick,750);setInterval(()=>{if(document.querySelector('#skillBtn'))updateCombatHUD()},1000);setInterval(save,10000);window.addEventListener('pagehide',save);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden'){save();if(currentUser&&accountHydrated){clearTimeout(remoteSaveTimer);void saveRemote()}}});
