@@ -2071,6 +2071,9 @@ button.quick-skill.is-selected:before{content:"ATIVA";position:absolute;top:-7px
  display:block!important;opacity:1!important;visibility:visible!important;
 }
 
+
+#battleArena #combatFx .pop-player-hit{left:40%;top:58%;font-size:clamp(1.05rem,2.5vw,1.6rem);color:#ff9da7;border-color:#e34c70aa;background:#3b0b18e8;text-shadow:0 0 13px #ff1f4b}
+#battleArena.is-player-defeated:after{content:"VOCÊ FOI DERROTADO";position:absolute;z-index:95;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:18px;color:#ffd2d9;font-size:clamp(1.1rem,3.2vw,2rem);font-weight:1000;letter-spacing:.12em;background:radial-gradient(ellipse at center,#5c1329dd,#090710ee 72%);backdrop-filter:blur(3px);text-shadow:0 0 24px #ff234d}
 </style>
 </head>
 <body>
@@ -2184,30 +2187,30 @@ const SKILLS=[
 {id:'raijin-burst',name:'Rajada de Raijin',icon:'✧',level:20,cost:46,cooldown:17000,multiplier:7.0,desc:'Libera um arco de relâmpago espiritual devastador.',characterId:'step'}
 ];
 const ENEMIES=[
-{name:'Espírito Corrompido',icon:'👹',hp:145,xp:26,gold:9},
-{name:'Lobo do Véu',icon:'🐺',hp:175,xp:38,gold:14},
-{name:'Devorador de Ecos',icon:'👻',hp:210,xp:54,gold:20},
-{name:'Guardião Oco',icon:'💀',hp:250,xp:75,gold:28},
-{name:'Sentinela da Ruptura',icon:'👺',hp:300,xp:100,gold:38},
-{name:'Caçador de Reishi',icon:'🏹',hp:330,xp:112,gold:43},
-{name:'Hollow das Dunas',icon:'🦂',hp:360,xp:125,gold:49},
-{name:'Lanceiro de Cinzas',icon:'👹',hp:395,xp:140,gold:55},
-{name:'Espectro de Cristal',icon:'💠',hp:435,xp:155,gold:62},
-{name:'Predador da Névoa',icon:'🐺',hp:480,xp:172,gold:70},
-{name:'Guardião de Obsidiana',icon:'🛡️',hp:530,xp:190,gold:78},
-{name:'Cavaleiro do Vazio',icon:'⚔️',hp:585,xp:212,gold:88},
-{name:'Draco Espiritual',icon:'🐉',hp:645,xp:238,gold:99},
-{name:'Hollow Carmesim',icon:'🩸',hp:710,xp:266,gold:112},
-{name:'Arauto das Sombras',icon:'🌑',hp:780,xp:298,gold:126}
+{name:'Espírito Corrompido',icon:'👹',hp:350,xp:10,gold:9},
+{name:'Lobo do Véu',icon:'🐺',hp:420,xp:14,gold:14},
+{name:'Devorador de Ecos',icon:'👻',hp:510,xp:18,gold:20},
+{name:'Guardião Oco',icon:'💀',hp:610,xp:22,gold:28},
+{name:'Sentinela da Ruptura',icon:'👺',hp:720,xp:28,gold:38},
+{name:'Caçador de Reishi',icon:'🏹',hp:850,xp:34,gold:43},
+{name:'Hollow das Dunas',icon:'🦂',hp:1000,xp:40,gold:49},
+{name:'Lanceiro de Cinzas',icon:'👹',hp:1160,xp:48,gold:55},
+{name:'Espectro de Cristal',icon:'💠',hp:1340,xp:56,gold:62},
+{name:'Predador da Névoa',icon:'🐺',hp:1530,xp:64,gold:70},
+{name:'Guardião de Obsidiana',icon:'🛡️',hp:1740,xp:72,gold:78},
+{name:'Cavaleiro do Vazio',icon:'⚔️',hp:1970,xp:82,gold:88},
+{name:'Draco Espiritual',icon:'🐉',hp:2220,xp:92,gold:99},
+{name:'Hollow Carmesim',icon:'🩸',hp:2500,xp:104,gold:112},
+{name:'Arauto das Sombras',icon:'🌑',hp:2800,xp:116,gold:126}
 ];
 const ENEMY_ART=['/assets/hollow-skull.webp','/assets/hollow-beast.webp','/assets/hollow-winged.webp','/assets/hollow-gold.webp','/assets/hollow-lord.webp'];
 const BOSSES=[
-{name:'Grande Hollow',icon:'☠',hp:560,xp:180,gold:120,art:'/assets/hollow-lord.webp',skill:'Ruptura Abissal'},
-{name:'Carrasco do Véu',icon:'⚔',hp:1100,xp:320,gold:220,art:'/assets/hollow-gold.webp',skill:'Tempestade Espiritual'},
-{name:'Predador da Lua',icon:'🌑',hp:2100,xp:600,gold:400,art:'/assets/hollow-winged.webp',skill:'Eclipse Hollow'},
-{name:'Vasto da Noite',icon:'🌑',hp:3200,xp:850,gold:560,art:'/assets/hollow-lord.webp',skill:'Maré do Vazio'},
-{name:'Colosso Mascarado',icon:'💀',hp:4800,xp:1250,gold:820,art:'/assets/hollow-beast.webp',skill:'Impacto Abissal'},
-{name:'Arauto da Ruptura',icon:'👁️',hp:7200,xp:1900,gold:1250,art:'/assets/hollow-gold.webp',skill:'Chuva de Reiatsu'}
+{name:'Grande Hollow',icon:'☠',hp:850,xp:180,gold:120,art:'/assets/hollow-lord.webp',skill:'Ruptura Abissal'},
+{name:'Carrasco do Véu',icon:'⚔',hp:1800,xp:320,gold:220,art:'/assets/hollow-gold.webp',skill:'Tempestade Espiritual'},
+{name:'Predador da Lua',icon:'🌑',hp:3200,xp:600,gold:400,art:'/assets/hollow-winged.webp',skill:'Eclipse Hollow'},
+{name:'Vasto da Noite',icon:'🌑',hp:5200,xp:850,gold:560,art:'/assets/hollow-lord.webp',skill:'Maré do Vazio'},
+{name:'Colosso Mascarado',icon:'💀',hp:8000,xp:1250,gold:820,art:'/assets/hollow-beast.webp',skill:'Impacto Abissal'},
+{name:'Arauto da Ruptura',icon:'👁️',hp:12000,xp:1900,gold:1250,art:'/assets/hollow-gold.webp',skill:'Chuva de Reiatsu'}
 ];
 const LOOT=[
 {name:'Fragmento de Essência',icon:'💎',rarity:'rare',slot:'relic',bonus:1,hpBonus:0,sell:8,desc:'+1 poder · material espiritual'},
@@ -2231,7 +2234,7 @@ function accountSaveKey(userId){return SAVE_KEY+':account:'+String(userId||'')}
 function currentLocalSaveKey(){return currentUser&&accountHydrated?accountSaveKey(currentUser.id):GUEST_SAVE_KEY}
 const DEFAULT={
 version:3,level:1,xp:0,gold:0,kills:0,stage:1,classId:'blade',activeSkillId:'crescent',running:true,autoSkill:true,
-enemyHp:145,playerHp:100,playerDownUntil:0,enemyAttackMeter:0,pendingRespawnAt:0,inventory:[],claimed:false,attackBonus:0,weaponLevel:1,energy:55,skillReadyAt:0,lastSeen:Date.now(),
+enemyHp:350,playerHp:100,playerDownUntil:0,enemyAttackMeter:0,pendingRespawnAt:0,inventory:[],claimed:false,attackBonus:0,weaponLevel:1,energy:55,skillReadyAt:0,lastSeen:Date.now(),
 bossActive:false,bossKills:0,bestStage:1,prestige:0,lastDailyClaim:'',dailyStreak:0,skillUses:0,totalDamage:0,totalXp:0,totalGold:0,remoteSyncPending:false,
 equipmentSlots:{weapon:null,armor:null,accessory:null,relic:null},
 questClaims:{},achievementsClaimed:{},settings:{speed:1,showDamage:true,reducedMotion:false,compactLog:false,autoEquip:true}
@@ -2250,9 +2253,9 @@ function slotItems(st){const slots=st.equipmentSlots||{};return Object.entries(s
 function equipmentPowerFor(st){return slotItems(st).reduce((sum,x)=>sum+itemPower(x.item),0)}
 function equipmentHpFor(st){return slotItems(st).reduce((sum,x)=>sum+itemVitality(x.item),0)}
 function enemyAtStage(stage){return ENEMIES[Math.max(0,Math.floor((stage-1)/2))%ENEMIES.length]}
-function maxEnemyHpFor(st){const e=st.bossActive?BOSSES[Math.min(BOSSES.length-1,Math.floor((st.bossKills||0)/3))]:enemyAtStage(st.stage);return Math.round(e.hp*(st.bossActive?1+Math.max(0,st.stage-1)*.12:1+(st.stage-1)*.24))}
+function maxEnemyHpFor(st){const e=st.bossActive?BOSSES[Math.min(BOSSES.length-1,Math.floor((st.bossKills||0)/3))]:enemyAtStage(st.stage);return Math.round(e.hp*(st.bossActive?1+Math.max(0,st.stage-1)*.12:1+(st.stage-1)*.08))}
 function maxHpForState(st){const cls=getClassFor(st);return Math.round(cls.hp+(Math.max(1,Number(st.level)||1)-1)*5+equipmentHpFor(st))}
-function enemyAttackDamageFor(st){const stage=Math.max(1,Math.floor(Number(st.stage)||1)),base=5+stage*1.6+Math.floor((stage-1)/10)*2;return Math.max(st.bossActive?10:4,Math.round(base*(st.bossActive?1.55:1)))}
+function enemyAttackDamageFor(st){const stage=Math.max(1,Math.floor(Number(st.stage)||1)),base=3+stage*.7+Math.floor((stage-1)/10)*1.5;return Math.max(st.bossActive?8:3,Math.round(base*(st.bossActive?1.55:1)))}
 function enemyAttackIntervalFor(st){return st.bossActive?2700:2100}
 function normalizeState(raw){
  const src=raw&&typeof raw==='object'?raw:{};
@@ -2318,7 +2321,7 @@ function simulateOfflineState(st,elapsedMs){
    if(st.playerDownUntil>simulatedTime)continue;
   }
   if(st.enemyHp<=0){
-   const beforeKills=st.kills,e=enemyAtStage(st.stage),xpGain=e.xp*3,goldGain=e.gold*3;
+   const beforeKills=st.kills,e=enemyAtStage(st.stage),xpGain=Math.max(1,Math.round(e.xp*3*.35)),goldGain=e.gold*3;
    st.kills+=3;st.xp+=xpGain;st.gold+=goldGain;st.totalXp+=xpGain;st.totalGold+=goldGain;
    while(st.xp>=xpForLevel(st.level)){const oldMax=maxHpForState(st);st.xp-=xpForLevel(st.level);st.level++;st.gold+=30;st.totalGold+=30;st.playerHp=Math.min(maxHpForState(st),st.playerHp+(maxHpForState(st)-oldMax))}
    if(Math.floor(st.kills/6)>Math.floor(beforeKills/6)){st.stage++;st.gold+=15;st.totalGold+=15}
@@ -2375,7 +2378,7 @@ function stateFromRemote(profile,game){
 }
 function enemy(){return state.bossActive?BOSSES[Math.min(BOSSES.length-1,Math.floor(state.bossKills||0))]:enemyAtStage(state.stage)}
 function enemyMaxHp(){return maxEnemyHpFor(state)}
-function xpForLevel(level){return Math.round(70+Math.max(0,level-1)*28)}
+function xpForLevel(level){const n=Math.max(0,level-1);return Math.round(100+n*48+Math.pow(n,1.45)*10)}
 function maxXp(){return xpForLevel(state.level)}
 function archetype(){return getClassFor(state)}
 function power(){return Math.round((archetype().atk+(state.level-1)*2+state.attackBonus+equipmentPowerFor(state))*(1+(state.prestige||0)*.05))}
@@ -2670,7 +2673,7 @@ function awardXp(n){
 
 function defeat(){
  const e=enemy(),wasBoss=!!state.bossActive,beforeKills=state.kills,waveCount=wasBoss?1:3;
- const xpGain=e.xp*waveCount,goldGain=e.gold*waveCount;
+ const xpGain=Math.max(1,Math.round(e.xp*waveCount*.35)),goldGain=e.gold*waveCount;
  state.kills+=waveCount;state.gold+=goldGain;state.totalGold=(state.totalGold||0)+goldGain;
  awardXp(xpGain);
  if(wasBoss){
@@ -2689,8 +2692,8 @@ function defeat(){
    showFloatingText('ESTÁGIO '+state.stage+'!','pop-stage');
    toast('Estágio '+state.stage+' desbloqueado! ⚔️');
   }
-  const dropChance=state.kills<=18?.48:.32;
-  if(Math.random()<dropChance||state.kills%15===0){
+  const dropChance=state.kills<=18?.18:.12;
+  if(Math.random()<dropChance||state.kills%24===0){
    const item={...LOOT[Math.floor(Math.random()*LOOT.length)],id:'drop-'+Date.now()+'-'+Math.random(),equipped:false};
    state.inventory.push(item);log('🎁 <strong>DROP!</strong> '+item.name+'.');showFloatingText('ITEM ENCONTRADO!','pop-loot');toast('Item encontrado: '+item.name+' 🎁');
    if(state.settings.autoEquip&&isUpgradeForSlot(item))equipItem(state.inventory.length-1,true);
@@ -2953,7 +2956,7 @@ function render(){
  textOf('homeEnemyName',e.name);textOf('homeEnemyMeta',(state.bossActive?'CHEFE · ':'Estágio ')+state.stage+' · ameaça '+(state.stage<3?'baixa':state.stage<6?'média':'alta'));const homeImage=document.querySelector('#homeEnemyArt');if(homeImage)homeImage.alt=e.name+' em combate';const mainImage=document.querySelector('#enemyIconArt');if(mainImage)mainImage.alt=e.name;const leftImage=document.querySelector('#enemyLeftArt');if(leftImage)leftImage.alt='Hollow auxiliar da leva';const rightImage=document.querySelector('#enemyRightArt');if(rightImage)rightImage.alt='Hollow de apoio da leva';const bossImage=document.querySelector('#bossArtReal');if(bossImage)bossImage.alt=BOSSES[Math.min(BOSSES.length-1,Math.floor(state.bossKills||0))].name;
  const hs=document.querySelector('#homeEnemy');if(hs)hs.setAttribute('aria-label',e.name);
  textOf('stage',state.stage);textOf('sceneCharacterName',cls.name);textOf('sceneCharacterRole',cls.title.split(' · ')[0]);textOf('sceneLevel',state.level);textOf('sideLevel',state.level);textOf('currentZoneTitle',zone.name);textOf('currentZoneNumber',zone.id==='desert'?1:zone.id==='ruins'?2:zone.id==='forest'?3:zone.id==='rift'?4:5);textOf('sideGold',state.gold.toLocaleString('pt-BR'));textOf('sidePower',power());textOf('sideForce',power());textOf('sideAgility',Math.round(cls.atk*.7+state.level));textOf('sideSpirit',Math.round(cls.energy*.2+state.level));textOf('sideVitality',maxHp());widthOf('sideXpBar',xpPct);
- const arena=document.querySelector('#battleArena');if(arena){arena.dataset.map=zone.id;arena.dataset.character=state.classId;arena.dataset.boss=state.bossActive?'true':'false'}
+ const arena=document.querySelector('#battleArena');if(arena){arena.dataset.map=zone.id;arena.dataset.character=state.classId;arena.dataset.boss=state.bossActive?'true':'false';arena.classList.toggle('is-player-defeated',state.playerDownUntil>Date.now())}
  textOf('currentZoneTitle',zone.name);textOf('currentZoneNumber',zone.id==='desert'?1:zone.id==='ruins'?2:zone.id==='forest'?3:zone.id==='rift'?4:5);textOf('zoneTitle',state.bossActive?'Desafio de chefe':zone.subtitle);textOf('enemyName',e.name);textOf('enemyLevel',state.bossActive?'CHEFE · Nível '+state.stage+' · ameaça extrema':'Nível '+state.stage+' · '+zone.name+' · '+(state.stage<3?'comum':'elite'));
  const mainMob=document.querySelector('#enemyIcon');if(mainMob)mainMob.setAttribute('aria-label',e.name);
  const leftMob=document.querySelector('#enemyLeft');if(leftMob)leftMob.setAttribute('aria-label','Hollow secundário');const rightMob=document.querySelector('#enemyRight');if(rightMob)rightMob.setAttribute('aria-label','Hollow de elite');
@@ -3115,7 +3118,7 @@ function updateCombatHUD(){
  textOf('enemyHpText',Math.max(0,Math.ceil(state.enemyHp)).toLocaleString('pt-BR')+' / '+enemyMax.toLocaleString('pt-BR'));
  widthOf('enemyHpBar',hpPct);widthOf('enemyLeftHpFill',hpPct);widthOf('enemyMainHpFill',hpPct);widthOf('enemyRightHpFill',hpPct);
  textOf('battleStatus',state.playerDownUntil>Date.now()?'Você foi derrotado. Recuperação em '+Math.ceil((state.playerDownUntil-Date.now())/1000)+'s.':state.pendingRespawnAt>Date.now()?'Próxima leva chegando…':state.bossActive?'Chefe de elite em combate automático.':'Combate automático: você ataca, recebe dano e pode ser derrotado.');
- textOf('liveStatusText',state.pendingRespawnAt>Date.now()?'PRÓXIMA LEVA':state.bossActive?'CHEFE EM COMBATE':'COMBATE ATIVO');
+ textOf('liveStatusText',state.playerDownUntil>Date.now()?'DERROTADO · '+Math.ceil((state.playerDownUntil-Date.now())/1000)+'s':state.pendingRespawnAt>Date.now()?'PRÓXIMA LEVA':state.bossActive?'CHEFE EM COMBATE':'COMBATE ATIVO');
  textOf('idleStatus','⚡ FULL AFK · '+(state.autoSkill?'AUTO SKILLS ON':'AUTO SKILLS OFF')+' · '+(state.settings.speed||1)+'×');
  const skill=activeSkill();textOf('activeSkillName',skill.name);textOf('activeSkillIcon',skill.icon);textOf('activeSkillInfo','Dano ×'+skill.multiplier+' · Custo '+skill.cost+' · Recarga '+(skill.cooldown/1000)+'s');
  const skillBtn=document.querySelector('#skillBtn');if(skillBtn){const remain=Math.max(0,Math.ceil(((state.skillReadyAt||0)-Date.now())/1000));skillBtn.classList.toggle('skill-auto-off',!state.autoSkill);skillBtn.setAttribute('aria-pressed',String(state.autoSkill));skillBtn.title=skill.name+' · custo '+skill.cost+' · recarga '+(skill.cooldown/1000)+'s';skillBtn.style.setProperty('--ready-pct',Math.max(0,Math.min(100,100-(remain/skill.cooldown*100)))+'%');const small=skillBtn.querySelector('small');if(small)small.textContent=state.autoSkill?'AUTO ON':'AUTO OFF';textOf('skillCooldown',remain>0?remain+'s':'')}
