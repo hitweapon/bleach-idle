@@ -2077,6 +2077,8 @@ button.quick-skill.is-selected:before{content:"ATIVA";position:absolute;top:-7px
 </style>
  <link rel="stylesheet" href="/assets/combat-topdown.css">
  <script src="/assets/combat-topdown.js" defer></script>
+ <link rel="stylesheet" href="/assets/combat-powers.css">
+ <script src="/assets/combat-powers.js" defer></script>
 </head>
 <body>
 <a class="skip-link" href="#main-content">Pular para o jogo</a>
@@ -2444,14 +2446,14 @@ function showXBleachSkillEffect(skillName){
  setTimeout(()=>{bubble.remove();wave.remove()},720);
 }
 
-function combatVisual(kind,amount,critical=false){
+function combatVisual(kind,amount,critical=false,effectMeta={}){
  const arena=document.querySelector('#battleArena');
  const hero=arena?.querySelector('.hero-art-real.is-loaded')||arena?.querySelector('.hero-art-fallback:not(.asset-hidden)')||arena?.querySelector('.hero-art');
  const enemyPack=document.querySelector('#enemyPack'),fx=document.querySelector('#combatFx');
  if(hero&&arena){
   /* Ichigo stays in his forward-walking loop; attacks are shown as travelling energy, not body-shake. */
   hero.classList.remove('is-attacking','is-skill','is-critical');
-  if(kind==='skill')showXBleachSkillEffect(activeSkill().name);
+  if(kind==='skill'&&!window.xbCombatPowerVisual)showXBleachSkillEffect(activeSkill().name);
   else if(kind==='defeat'||critical||Math.random()<.32){
    const wave=document.createElement('div');wave.className='xb-spell-wave';wave.style.top=(40+Math.random()*12)+'%';wave.style.animationDuration='.34s';arena.appendChild(wave);
    setTimeout(()=>wave.remove(),380);
@@ -2469,6 +2471,7 @@ function combatVisual(kind,amount,critical=false){
   if(kind==='skill')showFloatingText('✦ '+activeSkill().name,'pop-skill');
   if(kind==='defeat')showFloatingText('PURIFICADO!','pop-finisher');
  }
+ if(window.xbCombatPowerVisual)window.xbCombatPowerVisual(kind,amount,critical,effectMeta);
 }
 
 function useSkill(silent=false,quiet=false){
@@ -2476,7 +2479,7 @@ function useSkill(silent=false,quiet=false){
  const skill=activeSkill();if((state.energy===undefined?archetype().energy:state.energy)<skill.cost)return false;
  state.energy-=skill.cost;state.skillReadyAt=now+skill.cooldown;state.skillUses=(state.skillUses||0)+1;
  const cls=archetype(),critical=Math.random()<(cls.critChance||.12),damage=Math.round(power()*skill.multiplier*(cls.skillMultiplier||1)*(critical?1.7:1));state.enemyHp-=damage;state.totalDamage=(state.totalDamage||0)+damage;
- combatVisual(state.enemyHp<=0?'defeat':'skill',damage,critical);
+ combatVisual(state.enemyHp<=0?'defeat':'skill',damage,critical,{source:'skill',skill});
  log('✦ <strong>'+skill.name+'</strong> causou '+damage+' de dano espiritual!');
  if(state.enemyHp<=0)defeat();
  if(!quiet){render();save()}
@@ -2743,7 +2746,7 @@ function attack(manual=false,quiet=false){
  if(state.pendingRespawnAt&&now>=state.pendingRespawnAt){state.pendingRespawnAt=0;state.enemyHp=enemyMaxHp();state.enemyAttackMeter=0}
  if(!Number.isFinite(state.enemyHp)||state.enemyHp<=0)state.enemyHp=enemyMaxHp();
  const cls=archetype(),critical=Math.random()<(cls.critChance||.12),damage=Math.max(1,Math.round(power()*(manual?2:1.35)*(cls.basicMultiplier||1)*(critical?1.75:1)));
- state.enemyHp-=damage;state.totalDamage=(state.totalDamage||0)+damage;const killed=state.enemyHp<=0;combatVisual(killed?'defeat':'hit',damage,critical);
+ state.enemyHp-=damage;state.totalDamage=(state.totalDamage||0)+damage;const killed=state.enemyHp<=0;combatVisual(killed?'defeat':'hit',damage,critical,{source:'basic'});
  if(killed)defeat();if(!quiet){render();save()}
 }
 const QUESTS=[

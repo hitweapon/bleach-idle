@@ -1,0 +1,181 @@
+/* Spectacle de combat spirituel original pour XBleach */
+#battleArena.xb-topdown-combat{isolation:isolate}
+#battleArena.xb-topdown-combat .xb-power-layer{
+  position:absolute;inset:0;z-index:56;overflow:hidden;pointer-events:none;contain:layout paint;
+}
+#battleArena.xb-topdown-combat .xb-power-projectile{
+  position:absolute;left:0;top:0;height:26px;width:100px;opacity:0;
+  transform-origin:left center;transform:rotate(var(--power-angle,0deg)) scaleX(.02);
+  animation:xbPowerTravel .43s cubic-bezier(.14,.77,.17,1) forwards;
+  filter:drop-shadow(0 0 5px var(--power-glow,#5bd8ff)) drop-shadow(0 0 14px var(--power-glow,#258bff));
+}
+#battleArena.xb-topdown-combat .xb-power-projectile:before{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(180deg,transparent 0%,var(--power-edge,#54caff) 24%,#ffffff 48%,var(--power-core,#89e8ff) 57%,var(--power-edge,#54caff) 72%,transparent 100%);
+  clip-path:polygon(0 46%,13% 38%,66% 0,100% 48%,68% 100%,16% 61%);
+}
+#battleArena.xb-topdown-combat .xb-power-projectile:after{
+  content:"";position:absolute;left:6%;right:12%;top:42%;height:15%;
+  background:#fff;filter:blur(2px);box-shadow:0 0 12px #fff;
+}
+#battleArena.xb-topdown-combat .xb-power-projectile.xb-vfx-basic{
+  height:20px;--power-edge:#dcecff;--power-core:#f9ffff;--power-glow:#369dff;
+}
+#battleArena.xb-topdown-combat .xb-power-projectile.xb-vfx-basic:before{
+  clip-path:polygon(0 48%,18% 36%,75% 4%,100% 48%,73% 95%,18% 60%);
+}
+#battleArena.xb-topdown-combat .xb-power-projectile.xb-vfx-heavy{
+  height:44px;--power-edge:#319eff;--power-core:#d9faff;--power-glow:#146dff;
+  filter:drop-shadow(0 0 12px #248fff) drop-shadow(0 0 28px #1b58ff);
+}
+#battleArena.xb-topdown-combat .xb-power-projectile.xb-vfx-blackwave{
+  height:64px;--power-edge:#10121c;--power-core:#ff4f65;--power-glow:#f32243;
+  filter:drop-shadow(0 0 13px #f52243) drop-shadow(0 0 38px #9c102b);
+}
+#battleArena.xb-topdown-combat .xb-power-projectile.xb-vfx-blackwave:before{
+  inset:-7px 0;
+  background:linear-gradient(180deg,transparent,#12111c 19%,#090a13 36%,#ff4758 47%,#fff5e9 52%,#d31e3d 57%,#17121b 76%,transparent);
+  clip-path:polygon(0 48%,9% 36%,21% 39%,34% 8%,42% 29%,56% 0,66% 35%,83% 15%,100% 48%,83% 74%,67% 62%,55% 100%,42% 72%,31% 93%,20% 60%,8% 62%);
+}
+#battleArena.xb-topdown-combat .xb-power-projectile.xb-vfx-arrow{
+  height:12px;--power-edge:#79dbff;--power-core:#fff;--power-glow:#168dff;
+}
+#battleArena.xb-topdown-combat .xb-power-projectile.xb-vfx-lance{
+  height:9px;--power-edge:#80eeff;--power-core:#fff;--power-glow:#1dbdff;
+  filter:drop-shadow(0 0 8px #65dfff) drop-shadow(0 0 23px #1299ff);
+}
+#battleArena.xb-topdown-combat .xb-power-projectile.xb-vfx-purple{
+  height:34px;--power-edge:#c3a0ff;--power-core:#fff;--power-glow:#923dff;
+  filter:drop-shadow(0 0 10px #9a50ff) drop-shadow(0 0 26px #6a32ff);
+}
+#battleArena.xb-topdown-combat .xb-power-projectile.xb-vfx-gold{
+  height:35px;--power-edge:#ffab43;--power-core:#fff8c9;--power-glow:#ff6b17;
+  filter:drop-shadow(0 0 9px #ff8b25) drop-shadow(0 0 22px #ff431f);
+}
+#battleArena.xb-topdown-combat .xb-power-projectile.xb-vfx-lightning{
+  height:44px;background:transparent;filter:drop-shadow(0 0 6px #a2edff) drop-shadow(0 0 18px #408cff);
+}
+#battleArena.xb-topdown-combat .xb-power-projectile.xb-vfx-lightning:before{
+  inset:-10px 0;background:linear-gradient(180deg,transparent,#fff 20%,#70eaff 38%,#fff 52%,#3297ff 70%,transparent);
+  clip-path:polygon(0 40%,17% 28%,31% 48%,43% 10%,55% 43%,67% 22%,79% 52%,100% 40%,83% 65%,70% 56%,56% 90%,44% 58%,29% 79%,16% 52%);
+}
+#battleArena.xb-topdown-combat .xb-power-projectile.xb-vfx-arrow:after{
+  left:auto;right:-3px;top:0;width:22px;height:100%;background:linear-gradient(90deg,transparent,#e9fdff,#65cfff);
+  clip-path:polygon(0 30%,100% 50%,0 70%);
+}
+#battleArena.xb-topdown-combat .xb-power-impact{
+  position:absolute;width:76px;height:76px;left:0;top:0;border-radius:50%;
+  transform:translate(-50%,-50%) scale(.18);opacity:0;
+  background:radial-gradient(circle,#fff 0 4%,#e4fcff 7%,var(--impact-core,#65d8ff) 17%,transparent 35%,var(--impact-glow,#1789ff) 44%,transparent 70%);
+  filter:drop-shadow(0 0 12px var(--impact-glow,#39aaff)) drop-shadow(0 0 25px var(--impact-glow,#267aff));
+  animation:xbPowerImpact .48s cubic-bezier(.11,.8,.22,1) forwards;
+}
+#battleArena.xb-topdown-combat .xb-power-impact:before,
+#battleArena.xb-topdown-combat .xb-power-impact:after{
+  content:"";position:absolute;inset:14%;border:3px solid #f2fdff;border-radius:50%;
+  transform:scaleX(1.5) rotate(25deg);animation:xbPowerRing .46s ease-out forwards;
+}
+#battleArena.xb-topdown-combat .xb-power-impact:after{
+  inset:0;border:2px solid var(--impact-core,#65d8ff);transform:scaleX(1.8) rotate(-35deg);animation-delay:.045s;
+}
+#battleArena.xb-topdown-combat .xb-power-impact.xb-vfx-purple{--impact-core:#dfc2ff;--impact-glow:#8e35ff}
+#battleArena.xb-topdown-combat .xb-power-impact.xb-vfx-gold{--impact-core:#fff0a3;--impact-glow:#ff782b}
+#battleArena.xb-topdown-combat .xb-power-impact.xb-vfx-red{--impact-core:#ff9aa3;--impact-glow:#ed1738}
+#battleArena.xb-topdown-combat .xb-power-impact.xb-vfx-blackwave{width:145px;height:145px;--impact-core:#ff4c5c;--impact-glow:#c10e35}
+#battleArena.xb-topdown-combat .xb-power-impact.xb-vfx-lightning{--impact-core:#e0fbff;--impact-glow:#338fff}
+#battleArena.xb-topdown-combat .xb-power-impact.xb-vfx-heavy{width:104px;height:104px}
+#battleArena.xb-topdown-combat .xb-power-slash{
+  position:absolute;width:118px;height:92px;left:0;top:0;opacity:0;
+  transform:translate(-50%,-50%) rotate(-25deg) scale(.25);
+  border:0;border-radius:50%;
+  background:radial-gradient(ellipse at center,transparent 40%,#fff 43%,var(--slash-color,#75ddff) 47%,transparent 56%);
+  filter:drop-shadow(0 0 8px var(--slash-color,#49bfff)) drop-shadow(0 0 22px var(--slash-glow,#287bff));
+  animation:xbPowerSlash .34s ease-out forwards;
+}
+#battleArena.xb-topdown-combat .xb-power-slash:after{
+  content:"";position:absolute;inset:17% 3%;border-radius:50%;
+  border:3px solid #f8ffff;border-left-color:transparent;border-bottom-color:transparent;
+  transform:rotate(20deg);
+}
+#battleArena.xb-topdown-combat .xb-power-slash.xb-vfx-critical{--slash-color:#ffe19b;--slash-glow:#ff771c;width:145px;height:110px}
+#battleArena.xb-topdown-combat .xb-power-slash.xb-vfx-purple{--slash-color:#ddbcff;--slash-glow:#983dff;width:150px;height:125px}
+#battleArena.xb-topdown-combat .xb-power-slash.xb-vfx-red{--slash-color:#ff6374;--slash-glow:#e71135;width:165px;height:125px}
+#battleArena.xb-topdown-combat .xb-power-slash.xb-vfx-heavy{width:175px;height:135px;--slash-color:#fff;--slash-glow:#208dff}
+#battleArena.xb-topdown-combat .xb-power-callout{
+  position:absolute;z-index:5;left:50%;top:17%;max-width:72%;transform:translateX(-50%) translateY(8px) scale(.9);
+  opacity:0;padding:7px 13px;border:1px solid #9beeff;
+  background:linear-gradient(130deg,#071224ed,#17152beF);
+  color:#fff;font:1000 clamp(10px,1.3vw,16px)/1.15 ui-monospace,monospace;
+  letter-spacing:.075em;text-align:center;text-shadow:0 0 9px #6ddfff,0 2px #05060b;
+  box-shadow:0 0 16px #219cff88,inset 0 0 15px #75eaff22;
+  animation:xbPowerCallout .95s ease-out forwards;pointer-events:none;
+}
+#battleArena.xb-topdown-combat .xb-power-callout.xb-vfx-purple{border-color:#d8aaff;text-shadow:0 0 9px #b28aff;box-shadow:0 0 19px #922dff99}
+#battleArena.xb-topdown-combat .xb-power-callout.xb-vfx-gold{border-color:#ffc873;text-shadow:0 0 9px #ff972f;box-shadow:0 0 19px #ff6b2599}
+#battleArena.xb-topdown-combat .xb-power-callout.xb-vfx-red,
+#battleArena.xb-topdown-combat .xb-power-callout.xb-vfx-blackwave{border-color:#ff8793;text-shadow:0 0 9px #ff344d;box-shadow:0 0 25px #ee163eaa}
+#battleArena.xb-topdown-combat .xb-power-aura{
+  position:absolute;width:126px;height:146px;left:0;top:0;transform:translate(-50%,-42%);
+  border-radius:50%;opacity:0;background:radial-gradient(ellipse at center,transparent 20%,#75dfff22 45%,#238dff66 58%,transparent 73%);
+  filter:blur(2px);animation:xbPowerAura .64s ease-out forwards;
+}
+#battleArena.xb-topdown-combat .xb-power-aura.xb-vfx-purple{background:radial-gradient(ellipse at center,transparent 20%,#e3a8ff20 42%,#9435ff77 59%,transparent 73%)}
+#battleArena.xb-topdown-combat .xb-power-aura.xb-vfx-gold{background:radial-gradient(ellipse at center,transparent 20%,#fff2a322 42%,#ff6a2788 60%,transparent 73%)}
+#battleArena.xb-topdown-combat .xb-power-aura.xb-vfx-red{background:radial-gradient(ellipse at center,transparent 20%,#ff526322 42%,#d10a3588 60%,transparent 73%)}
+#battleArena.xb-topdown-combat .xb-power-flash{
+  position:absolute;inset:0;z-index:4;opacity:0;pointer-events:none;
+  background:radial-gradient(ellipse at 67% 43%,#e7faff3d 0%,#4aa6ff17 34%,transparent 72%);
+  animation:xbPowerFlash .32s ease-out forwards;
+}
+#battleArena.xb-topdown-combat .xb-power-flash.xb-vfx-red{background:radial-gradient(ellipse at 67% 43%,#ffeff53d 0%,#ff163d2b 28%,transparent 70%)}
+#battleArena.xb-topdown-combat .xb-power-flash.xb-vfx-blackwave{background:radial-gradient(ellipse at 67% 43%,#fff4ef66 0%,#ff233c66 22%,#170b1ac9 73%)}
+#battleArena.xb-topdown-combat #heroArtReal.xb-power-strike,
+#battleArena.xb-topdown-combat #heroArtFallback.xb-power-strike{
+  animation:xbPowerHeroStrike .39s cubic-bezier(.16,.78,.22,1)!important;
+  filter:drop-shadow(0 0 13px #6bdfff) drop-shadow(0 5px 5px #000b)!important;
+}
+#battleArena.xb-topdown-combat #heroArtReal.xb-power-cast,
+#battleArena.xb-topdown-combat #heroArtFallback.xb-power-cast{
+  animation:xbPowerHeroCast .68s ease-in-out!important;
+  filter:drop-shadow(0 0 20px #8ceeff) drop-shadow(0 0 35px #2e76ff)!important;
+}
+#battleArena.xb-topdown-combat #heroArtReal.xb-power-cast.xb-vfx-purple,
+#battleArena.xb-topdown-combat #heroArtFallback.xb-power-cast.xb-vfx-purple{filter:drop-shadow(0 0 20px #e2a8ff) drop-shadow(0 0 35px #8b24ff)!important}
+#battleArena.xb-topdown-combat #heroArtReal.xb-power-cast.xb-vfx-gold,
+#battleArena.xb-topdown-combat #heroArtFallback.xb-power-cast.xb-vfx-gold{filter:drop-shadow(0 0 20px #ffe3a0) drop-shadow(0 0 35px #ff6a19)!important}
+#battleArena.xb-topdown-combat #heroArtReal.xb-power-cast.xb-vfx-red,
+#battleArena.xb-topdown-combat #heroArtFallback.xb-power-cast.xb-vfx-red{filter:drop-shadow(0 0 24px #ff617b) drop-shadow(0 0 40px #c20c36)!important}
+#battleArena.xb-topdown-combat .xb-mob-pulse{animation:xbPowerMobHit .32s ease-out!important}
+@keyframes xbPowerTravel{
+  0%{opacity:0;transform:rotate(var(--power-angle,0deg)) scaleX(.025)}
+  12%{opacity:1}
+  74%{opacity:1;transform:rotate(var(--power-angle,0deg)) scaleX(1)}
+  100%{opacity:0;transform:rotate(var(--power-angle,0deg)) translateX(10px) scaleX(1.04)}
+}
+@keyframes xbPowerImpact{0%{opacity:0;transform:translate(-50%,-50%) scale(.12)}24%{opacity:1;transform:translate(-50%,-50%) scale(1.06)}100%{opacity:0;transform:translate(-50%,-50%) scale(1.8)}}
+@keyframes xbPowerRing{0%{opacity:0;scale:.25}25%{opacity:1}100%{opacity:0;scale:1.65}}
+@keyframes xbPowerSlash{0%{opacity:0;transform:translate(-50%,-50%) rotate(-44deg) scale(.2)}25%{opacity:1;transform:translate(-50%,-50%) rotate(-23deg) scale(1)}100%{opacity:0;transform:translate(-50%,-50%) rotate(13deg) scale(1.24)}}
+@keyframes xbPowerCallout{0%{opacity:0;transform:translateX(-50%) translateY(9px) scale(.8)}14%,65%{opacity:1;transform:translateX(-50%) translateY(0) scale(1)}100%{opacity:0;transform:translateX(-50%) translateY(-12px) scale(1.03)}}
+@keyframes xbPowerAura{0%{opacity:0;transform:translate(-50%,-42%) scale(.55)}24%{opacity:.95;transform:translate(-50%,-42%) scale(1.08)}100%{opacity:0;transform:translate(-50%,-42%) scale(1.28)}}
+@keyframes xbPowerFlash{0%{opacity:0}26%{opacity:1}100%{opacity:0}}
+@keyframes xbPowerHeroStrike{0%,100%{transform:translate(0,0) scale(1)}28%{transform:translate(11px,-5px) scale(1.04)}60%{transform:translate(18px,1px) scale(1.02)}}
+@keyframes xbPowerHeroCast{0%,100%{transform:translate(0,0) scale(1)}35%{transform:translate(0,-6px) scale(1.04)}68%{transform:translate(4px,-2px) scale(1.01)}}
+@keyframes xbPowerMobHit{0%,100%{filter:none;transform:translate(-50%,-50%) scale(1)}22%{filter:brightness(3) drop-shadow(0 0 14px #fff);transform:translate(-50%,-50%) scale(1.11)}56%{filter:brightness(1.8) drop-shadow(0 0 17px var(--impact-glow,#329dff));transform:translate(-50%,-50%) scale(.96)}}
+@media(max-width:520px){
+ #battleArena.xb-topdown-combat .xb-power-projectile{height:17px}
+ #battleArena.xb-topdown-combat .xb-power-projectile.xb-vfx-heavy{height:31px}
+ #battleArena.xb-topdown-combat .xb-power-projectile.xb-vfx-blackwave{height:43px}
+ #battleArena.xb-topdown-combat .xb-power-impact{width:54px;height:54px}
+ #battleArena.xb-topdown-combat .xb-power-impact.xb-vfx-blackwave{width:94px;height:94px}
+ #battleArena.xb-topdown-combat .xb-power-slash{width:80px;height:62px}
+ #battleArena.xb-topdown-combat .xb-power-callout{top:20%;max-width:82%;padding:5px 7px;font-size:10px}
+ #battleArena.xb-topdown-combat .xb-power-aura{width:88px;height:106px}
+}
+@media(prefers-reduced-motion:reduce){
+ #battleArena.xb-topdown-combat .xb-power-projectile,
+ #battleArena.xb-topdown-combat .xb-power-impact,
+ #battleArena.xb-topdown-combat .xb-power-slash,
+ #battleArena.xb-topdown-combat .xb-power-callout,
+ #battleArena.xb-topdown-combat .xb-power-aura,
+ #battleArena.xb-topdown-combat .xb-power-flash{animation-duration:.12s!important}
+}
