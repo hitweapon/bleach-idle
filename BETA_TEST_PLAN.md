@@ -30,6 +30,7 @@ Pull request: https://github.com/hitweapon/bleach-idle/pull/1
 - [ ] Criar/usar a conta B com progresso diferente; sair de A e entrar em B. B não pode herdar personagem, ouro, estágio ou inventário de A.
 - [ ] Sair da B e voltar para A. O estado original de A deve reaparecer.
 - [ ] Derrubar a conexão durante o jogo, continuar por alguns minutos e restaurar a conexão. Confirmar que a interface indica o estado real de sincronização e que o último estado acaba sendo enviado.
+- [ ] Em dispositivo A, manter um save local já sincronizado e antigo; depois avançar a mesma conta no dispositivo B. Ao retornar em A, confirmar que a nuvem mais recente prevalece. Repetir com alterações locais marcadas como pendentes para confirmar que elas são reenviadas.
 - [ ] Exportar/importar um save local e confirmar que a transferência não altera silenciosamente uma conta conectada.
 
 ### Recuperação de senha
