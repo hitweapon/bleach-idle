@@ -100,6 +100,15 @@ function item(key){
  else if(/sash|Mantle/i.test(key)){kind='cloth';p=/void/i.test(key)?P.purple:P.steel;}
  else if(/Amulet|accessory|ring/i.test(key)){kind='amulet';p=P.gold;}
  else if(/reiatsuCore|echoStone|spiritFragment|crystal/i.test(key)){kind='gem';p=P.blue;}
+ else if(/bag|inventory|pouch/i.test(key)){kind='bag';p=P.gold;}
+ else if(/trophy|rank/i.test(key)){kind='trophy';p=P.gold;}
+ else if(/shop/i.test(key)){kind='shop';p=P.red;}
+ else if(/guild|banner/i.test(key)){kind='banner';p=P.blue;}
+ else if(/map/i.test(key)){kind='map';p=P.blue;}
+ else if(/scroll|quest|mission|ticket|bossKey/i.test(key)){kind='scroll';p=P.gold;}
+ else if(/settings|gear/i.test(key)){kind='gear';p=P.steel;}
+ else if(/food|bento|ration|meat|bread/i.test(key)){kind='food';p=P.gold;}
+ else if(/helmet|armor|boots|cape|gloves|mask|coat|belt/i.test(key)){kind='armor';p=P.steel;}
  else if(/coin|gold/i.test(key)){kind='coin';p=P.gold;}
  else if(/chest/i.test(key)){kind='chest';p=P.gold;}
  else if(/potion|elixir/i.test(key)){kind='potion';p=P.red;}
@@ -109,6 +118,14 @@ function item(key){
  else if(kind==='gauntlet') art='<path d="M30 68L23 41Q22 34 29 33Q35 33 36 44L35 25Q35 18 41 19Q47 20 47 28L48 39 50 18Q51 13 57 16Q61 18 60 25L60 39 64 25Q66 20 71 23Q76 25 73 34L75 48 71 70 56 82 38 78Z" fill="url(#metal)" stroke="'+p.c+'" stroke-width="2"/><path d="M33 54L68 51M40 63L64 60" stroke="'+p.a+'" stroke-width="3"/>';
  else if(kind==='cloth') art='<path d="M33 21L43 14 53 20 64 14 73 24 68 42 79 76 61 69 49 87 36 69 17 76 29 43Z" fill="url(#cloth)" stroke="'+p.c+'" stroke-width="2"/><path d="M42 24L49 41 57 24M28 48L63 58" fill="none" stroke="#dbe8f5" stroke-opacity=".65" stroke-width="2"/>';
  else if(kind==='amulet') art='<circle cx="48" cy="52" r="25" fill="none" stroke="#cba45f" stroke-width="6"/><circle cx="48" cy="52" r="18" fill="none" stroke="#fff0b3" stroke-width="2"/><path d="M48 21L58 38 48 46 38 38Z" fill="'+p.c+'" stroke="#fff" stroke-width="2"/><path d="M48 46L62 60 48 76 34 60Z" fill="url(#energy)" stroke="'+p.c+'" stroke-width="1.5"/>';
+ else if(kind==='bag') art='<path d="M24 34L34 20 62 20 72 34 78 79 18 79Z" fill="url(#cloth)" stroke="'+p.c+'" stroke-width="3"/><path d="M34 20Q36 7 48 7Q60 7 62 20M38 38L38 73M58 38L58 73" fill="none" stroke="#d7bd8b" stroke-width="4"/><rect x="41" y="43" width="14" height="16" rx="3" fill="'+p.c+'" stroke="#fff" stroke-width="1.5"/>';
+ else if(kind==='trophy') art='<path d="M33 15H63V36Q63 54 48 58Q33 54 33 36Z" fill="url(#energy)" stroke="#fff0be" stroke-width="2.5"/><path d="M33 22H19Q18 45 38 45M63 22H77Q78 45 58 45" fill="none" stroke="#ffd46f" stroke-width="5"/><path d="M48 58V72M34 78H62" stroke="#ffd46f" stroke-width="5"/><path d="M48 21L52 31 62 32 54 39 56 48 48 43 40 48 42 39 34 32 44 31Z" fill="#fff6c8"/>';
+ else if(kind==='shop') art='<path d="M16 39L25 23H71L81 39Z" fill="url(#energy)" stroke="#f6c2ca" stroke-width="2"/><path d="M22 39H75V79H22Z" fill="url(#cloth)" stroke="'+p.c+'" stroke-width="3"/><path d="M33 79V53H49V79M58 53H68V63H58Z" fill="#10131d" stroke="#f7d4d6" stroke-width="2"/><path d="M20 39Q25 48 32 39Q39 48 46 39Q53 48 60 39Q67 48 76 39" fill="none" stroke="#ffe6a1" stroke-width="4"/>';
+ else if(kind==='banner') art='<path d="M26 14V84" stroke="url(#metal)" stroke-width="6"/><path d="M29 18H79L68 35 79 51H29Z" fill="url(#energy)" stroke="#f2f5ff" stroke-width="2"/><path d="M54 25L60 34 69 35 62 42 63 49 54 44 46 49 48 41 41 35 50 34Z" fill="#fff"/>';
+ else if(kind==='map') art='<path d="M13 25L34 16 62 24 83 14V72L61 81 34 72 13 81Z" fill="url(#cloth)" stroke="#d9e7fb" stroke-width="2.5"/><path d="M34 16V72M62 24V81" stroke="#d9e7fb" stroke-width="2"/><path d="M49 30L56 45 48 54 41 45Z" fill="'+p.c+'" stroke="#fff" stroke-width="2"/>';
+ else if(kind==='scroll') art='<path d="M27 17Q17 20 22 29L22 69Q18 80 29 81H72V22H30Q24 20 27 17Z" fill="#d9c7a1" stroke="#fff0ce" stroke-width="2.5"/><path d="M33 34H62M33 43H62M33 52H57M33 61H62" stroke="#70523a" stroke-width="2.5"/><circle cx="72" cy="22" r="7" fill="'+p.c+'" stroke="#fff0ce" stroke-width="2"/>';
+ else if(kind==='gear') art='<circle cx="48" cy="48" r="25" fill="url(#metal)" stroke="#dce5f3" stroke-width="2.5"/><circle cx="48" cy="48" r="11" fill="url(#panel)" stroke="'+p.c+'" stroke-width="3"/><path d="M44 8H52L56 19 65 22 75 16 81 22 76 32 80 40 91 44V52L80 56 76 65 81 74 75 81 65 75 56 79 52 90H44L40 79 31 75 21 81 15 74 20 65 16 56 5 52V44L16 40 20 32 15 22 21 16 31 22 40 19Z" fill="none" stroke="'+p.c+'" stroke-width="3"/>';
+ else if(kind==='food') art='<ellipse cx="48" cy="62" rx="34" ry="19" fill="#b9c9da" stroke="#f4f7ff" stroke-width="2.5"/><ellipse cx="48" cy="56" rx="28" ry="14" fill="#d89a54" stroke="#6a3225" stroke-width="2"/><path d="M27 58L38 49 46 60 57 49 69 60" fill="none" stroke="#7d3024" stroke-width="4"/><circle cx="36" cy="50" r="4" fill="#f7dd77"/><circle cx="58" cy="53" r="4" fill="#6cc578"/>';
  else if(kind==='coin') art='<circle cx="48" cy="48" r="31" fill="#6d3a11" stroke="#ffd46f" stroke-width="4"/><circle cx="48" cy="48" r="24" fill="url(#energy)" stroke="#fff0bb" stroke-width="2"/><path d="M48 29L56 43 69 48 56 54 48 68 41 54 28 48 41 43Z" fill="#a86312" stroke="#fff2c3" stroke-width="2"/>';
  else if(kind==='chest') art='<path d="M14 38L22 24 71 24 82 38Z" fill="url(#energy)" stroke="'+p.c+'" stroke-width="2"/><path d="M17 39L79 39 77 73 21 73Z" fill="url(#cloth)" stroke="'+p.c+'" stroke-width="3"/><path d="M43 38L43 73M54 38L54 73" stroke="#ffe6a1" stroke-width="3"/><rect x="42" y="49" width="14" height="14" rx="3" fill="#ffd875" stroke="#fff1bc" stroke-width="2"/>';
  else if(kind==='potion') art='<path d="M41 14L55 14 55 27 62 35 69 68Q70 77 60 79L37 79Q27 77 29 68L36 35 43 27Z" fill="url(#energy)" stroke="#dcecff" stroke-width="2"/><path d="M40 14L56 14 56 21 40 21Z" fill="#cfdae9"/><path d="M35 51Q48 42 64 51L67 67Q67 74 59 74L39 74Q32 74 33 67Z" fill="'+p.c+'" fill-opacity=".58"/><path d="M39 49L43 44 48 50 55 41" stroke="#fff" stroke-width="2" fill="none"/>';
@@ -148,7 +165,10 @@ const chests={};['common','rare','epic','legendary','mythic'].forEach(k=>chests[
 const characters={blade:{portrait:portrait('blade'),battle:battleSprite('blade')},kido:{portrait:portrait('kido'),battle:battleSprite('kido')},step:{portrait:portrait('step'),battle:battleSprite('step')}};
 const bosses=[0,1,2,3,4,5].map(boss);
 const equipment={weapon:item('wornBlade'),armor:item('studentSash'),accessory:item('karakuraAmulet'),relic:item('reiatsuCore')};
-const ui={inventory:item('studentSash'),character:portrait('blade'),skills:skill('crescent'),quests:item('echoStone'),ranking:item('goldCoin'),shop:item('goldChest'),guild:item('voidMantle'),map:item('crystal'),boss:hollow(4),settings:item('ring')};
+const ui={inventory:item('inventoryBag'),character:portrait('blade'),skills:skill('crescent'),quests:item('questScroll'),ranking:item('trophy'),shop:item('shop'),guild:item('guildBanner'),map:item('mapMarker'),boss:hollow(4),settings:item('settingsGear')};
+const consumables={healthPotion:item('healthPotion'),reiatsuPotion:item('reiatsuPotion'),elixir:item('elixir'),xpBoost:item('xpBoost'),foodBento:item('foodBento'),bossKey:item('bossKey'),teleportScroll:item('teleportScroll'),dailyTicket:item('dailyTicket')};
+const materials={hollowFragment:item('hollowFragment'),spiritCrystal:item('spiritCrystal'),reiatsuShard:item('reiatsuShard'),soulEssence:item('soulEssence'),vastoEssence:item('vastoEssence'),ashScale:item('ashScale'),voidCore:item('voidCore'),evolutionStone:item('evolutionStone')};
+const equipmentCatalog={helmet:item('helmet'),uniform:item('uniform'),gloves:item('gloves'),boots:item('boots'),cape:item('cape'),ring:item('ring'),necklace:item('necklace'),belt:item('belt'),mask:item('mask')};
 const zones={desert:zone('desert'),ruins:zone('ruins'),forest:zone('forest'),rift:zone('rift'),society:zone('society')};
-window.XBLEACH_ART={characters,mobs:mobPalette.map((_,i)=>hollow(i)),bosses,items,skills,rarity,chests,equipment,ui,zones};
+window.XBLEACH_ART={characters,mobs:mobPalette.map((_,i)=>hollow(i)),bosses,items,skills,rarity,chests,equipment,equipmentCatalog,consumables,materials,ui,zones};
 })();
