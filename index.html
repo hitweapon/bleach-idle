@@ -2512,14 +2512,17 @@ async function loadRemote(){
   const guestCandidate=normalizeState(JSON.parse(JSON.stringify(state)));
   const hasCloud=!!(p.data||g.data),cloudTime=Date.parse(g.data?.last_seen_at||g.data?.updated_at||0)||0;
   const localIsNewer=!!(accountLocal&&accountLocal.savedAt>cloudTime+1000);
-  if(hasCloud&&!localIsNewer){state=stateFromRemote(p.data,g.data);offlineSummary=null}
-  else if(accountLocal&&(localIsNewer||!hasCloud)){state=accountLocal.state;offlineSummary=accountLocal.summary}
-  else{
-   const takeGuest=hasMeaningfulProgress(guestCandidate)&&window.confirm(
-    'Esta conta ainda não tem uma jornada salva. Encontramos progresso de visitante neste navegador. Deseja transferir esse progresso para esta conta?\n\nSe escolher Cancelar, o progresso de visitante continuará salvo separadamente e esta conta começará do início.'
+  const askToTransferGuest=!accountLocal&&hasMeaningfulProgress(guestCandidate)&&(!hasCloud||!g.data);
+  if(hasCloud&&!localIsNewer&&!!g.data&&!askToTransferGuest){state=stateFromRemote(p.data,g.data);offlineSummary=null}
+  else if(accountLocal&&(localIsNewer||!hasCloud||!g.data)){state=accountLocal.state;offlineSummary=accountLocal.summary}
+  else if(askToTransferGuest){
+   const takeGuest=window.confirm(
+    'Esta conta ainda não tem uma jornada completa salva na nuvem. Encontramos progresso de visitante neste navegador. Deseja transferi-lo para esta conta?\n\nSe escolher Cancelar, o progresso de visitante continuará salvo separadamente e a conta usará os dados disponíveis na nuvem.'
    );
-   state=takeGuest?guestCandidate:normalizeState({...DEFAULT,lastSeen:Date.now()});offlineSummary=null;
-  }
+   state=takeGuest?guestCandidate:(hasCloud?stateFromRemote(p.data,g.data):normalizeState({...DEFAULT,lastSeen:Date.now()}));
+   offlineSummary=null;
+  }else if(hasCloud){state=stateFromRemote(p.data,g.data);offlineSummary=null}
+  else{state=normalizeState({...DEFAULT,lastSeen:Date.now()});offlineSummary=null}
   state=normalizeState({...state,lastSeen:Date.now(),bossActive:false,pendingRespawnAt:0});
   state.bestStage=Math.max(state.bestStage||1,state.stage);
   state.enemyHp=Math.max(1,Math.min(Number(state.enemyHp)||maxEnemyHpFor(state),maxEnemyHpFor(state)));
@@ -2947,9 +2950,19 @@ function importSaveFile(file){
  if(!file)return;const reader=new FileReader();reader.onload=()=>{try{const payload=JSON.parse(String(reader.result||'')),incoming=payload.state||payload;if(!incoming||typeof incoming.level!=='number'||(!payload.state&&payload.format&&payload.format!=='bleach-idle-save'))throw new Error('Arquivo de salvamento não reconhecido');incoming.lastSeen=Date.now();state=normalizeState(incoming);offlineSummary=null;render();save();if(currentUser)saveRemote();toast('Salvamento importado.')}catch(e){console.error(e);toast('Arquivo inválido. O progresso atual foi mantido.')}};reader.onerror=()=>toast('Não foi possível ler o arquivo.');reader.readAsText(file);
 }
 function resetProgress(){
- if(!window.confirm('Reiniciar toda a jornada deste navegador? Essa ação não pode ser desfeita sem um arquivo exportado.'))return;
- try{localStorage.removeItem(SAVE_KEY)}catch(e){}
- state=normalizeState({...DEFAULT,lastSeen:Date.now()});offlineSummary=null;render();save();if(currentUser)saveRemote();log('🌱 <strong>Uma nova jornada começou.</strong>');toast('Progresso reiniciado.');
+ const resettingAccount=!!currentUser&&accountHydrated;
+ const message=resettingAccount
+  ?'Reiniciar TODA a jornada desta CONTA? O progresso zerado será sincronizado e substituirá o progresso dessa conta em outros dispositivos. Exporte uma cópia antes de continuar.'
+  :'Reiniciar a jornada de visitante neste navegador? O progresso atual será substituído. Exporte uma cópia antes de continuar.';
+ if(!window.confirm(message))return;
+ state=normalizeState({...DEFAULT,lastSeen:Date.now()});offlineSummary=null;render();save();log('🌱 <strong>Uma nova jornada começou.</strong>');
+ if(resettingAccount){
+  clearTimeout(remoteSaveTimer);
+  void saveRemote().then(ok=>{
+   if(ok)toast('Jornada da conta reiniciada e sincronizada.');
+   else toast('Jornada reiniciada localmente; a nuvem não confirmou. O jogo tentará sincronizar no próximo salvamento.');
+  });
+ }else toast('Jornada de visitante reiniciada.');
 }
 document.addEventListener('keydown',ev=>{
  if(ev.ctrlKey||ev.metaKey||ev.altKey||ev.repeat)return;
