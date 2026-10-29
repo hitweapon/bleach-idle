@@ -77,6 +77,7 @@
     node.style.width = distance + 'px';
     node.style.height = (extra.height || 26) + 'px';
     node.style.setProperty('--power-angle', angle + 'deg');
+    node.style.animationDuration = (extra.duration || 500) + 'ms';
     if (extra.delay) node.style.animationDelay = extra.delay + 'ms';
     powerLayer.appendChild(node);
     removeLater(node, (extra.delay || 0) + (extra.duration || 500));
