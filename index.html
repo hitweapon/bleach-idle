@@ -2501,7 +2501,7 @@ async function saveRemote(){
 }
 async function loadRemote(){
  if(!currentUser||!supabaseClient)return false;
- const user=currentUser,userId=user.id,guestCandidate=normalizeState(JSON.parse(JSON.stringify(state)));
+ const user=currentUser,userId=user.id;
  const accountLocal=readStoredSave(accountSaveKey(userId));let didHydrate=false;
  try{
   const [p,g]=await Promise.all([
@@ -2509,6 +2509,7 @@ async function loadRemote(){
    supabaseClient.from('player_game_state').select('*').eq('player_id',userId).maybeSingle()
   ]);
   if(p.error)throw p.error;if(g.error)throw g.error;if(!currentUser||currentUser.id!==userId)return false;
+  const guestCandidate=normalizeState(JSON.parse(JSON.stringify(state)));
   const hasCloud=!!(p.data||g.data),cloudTime=Date.parse(g.data?.last_seen_at||g.data?.updated_at||0)||0;
   const localIsNewer=!!(accountLocal&&accountLocal.savedAt>cloudTime+1000);
   if(hasCloud&&!localIsNewer){state=stateFromRemote(p.data,g.data);offlineSummary=null}
@@ -2543,7 +2544,17 @@ document.querySelector('#signUpBtn').addEventListener('click',async()=>{if(!supa
 document.querySelector('#signInBtn').addEventListener('click',async()=>{if(!supabaseClient){document.querySelector('#authMessage').textContent='Login indisponível agora; a batalha local continua funcionando.';return}const email=document.querySelector('#authEmail').value.trim(),password=document.querySelector('#authPassword').value;document.querySelector('#authMessage').textContent='Entrando…';const {data,error}=await supabaseClient.auth.signInWithPassword({email,password});if(error){document.querySelector('#authMessage').textContent=error.message;return}currentUser=data.user;accountHydrated=false;setAuthUI();await loadRemote()});
 document.querySelector('#signOutBtn').addEventListener('click',async()=>{
  if(!currentUser)return;
- if(!accountHydrated){document.querySelector('#authMessage').textContent='A conta ainda está carregando. Aguarde a sincronização antes de sair.';return}
+ if(!accountHydrated){
+  clearTimeout(remoteSaveTimer);
+  const {error}=await supabaseClient.auth.signOut();
+  if(error){document.querySelector('#authMessage').textContent='Não foi possível desconectar: '+error.message;return}
+  currentUser=null;accountHydrated=true;remoteSaveRequested=false;clearTimeout(remoteSaveTimer);
+  const guest=readStoredSave(GUEST_SAVE_KEY);offlineSummary=guest?.summary||null;
+  state=guest?.state||normalizeState({...DEFAULT,lastSeen:Date.now()});
+  setAuthUI();render();save({syncRemote:false});
+  document.querySelector('#authMessage').textContent='Conta desconectada sem alterar o progresso dela. O progresso de visitante continua separado.';
+  return;
+ }
  clearTimeout(remoteSaveTimer);const saved=await saveRemote();
  if(!saved){document.querySelector('#authMessage').textContent='A nuvem não confirmou o salvamento. Você continua conectado para evitar perder progresso.';return}
  const {error}=await supabaseClient.auth.signOut();
