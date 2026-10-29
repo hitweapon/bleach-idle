@@ -7,6 +7,7 @@ Atualizado em 29/10/2026.
 - [x] Carregamento remoto reconstrói o estado da conta, sem mesclar silenciosamente o estado de visitante.
 - [x] Transferência de progresso de visitante para uma conta nova exige confirmação explícita.
 - [x] Fila de salvamento remoto repete a gravação quando o estado muda durante uma operação em andamento.
+- [x] Marcador explícito de sincronização pendente: o progresso local só sobrepõe a nuvem quando uma alteração ainda não foi confirmada, evitando usar apenas timestamps para escolher o vencedor.
 - [x] Logout aguarda a confirmação do salvamento; se a nuvem falhar antes de carregar a conta, é possível sair sem enviar o progresso de visitante.
 - [x] Reinício informa quando vai zerar a conta inteira e sincronizar a alteração para outros dispositivos.
 - [x] Front-end de recuperação de senha: pedido por e-mail, formulário de nova senha, confirmação dos dois campos e atualização via Supabase Auth.
@@ -38,6 +39,7 @@ Atualizado em 29/10/2026.
 - [ ] Testar falha/offline da nuvem para garantir que o jogo continua jogável localmente.
 - [ ] Testar recuperação de senha com conta real: receber o e-mail, abrir o link, definir senha nova e entrar de novo.
 - [ ] Entrar em duas contas reais, alternar entre elas e verificar que cada uma restaura só o próprio progresso.
+- [ ] Simular um segundo dispositivo com progresso de nuvem mais novo e verificar que um save local já sincronizado não substitui esse progresso; confirmar que alterações locais pendentes são reenviadas.
 - [ ] Testar link de recuperação expirado/ inválido e confirmar uma mensagem útil sem expor se um e-mail está cadastrado.
 - [ ] Testar login e cadastro em sessão limpa, incluindo confirmação de e-mail, erro de senha e rede indisponível.
 
