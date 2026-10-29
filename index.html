@@ -2232,7 +2232,7 @@ function currentLocalSaveKey(){return currentUser&&accountHydrated?accountSaveKe
 const DEFAULT={
 version:3,level:1,xp:0,gold:0,kills:0,stage:1,classId:'blade',activeSkillId:'crescent',running:true,autoSkill:true,
 enemyHp:38,pendingRespawnAt:0,inventory:[],claimed:false,attackBonus:0,weaponLevel:1,energy:55,skillReadyAt:0,lastSeen:Date.now(),
-bossActive:false,bossKills:0,bestStage:1,prestige:0,lastDailyClaim:'',dailyStreak:0,skillUses:0,totalDamage:0,totalXp:0,totalGold:0,
+bossActive:false,bossKills:0,bestStage:1,prestige:0,lastDailyClaim:'',dailyStreak:0,skillUses:0,totalDamage:0,totalXp:0,totalGold:0,remoteSyncPending:false,
 equipmentSlots:{weapon:null,armor:null,accessory:null,relic:null},
 questClaims:{},achievementsClaimed:{},settings:{speed:1,showDamage:true,reducedMotion:false,compactLog:false,autoEquip:true}
 };
@@ -2254,6 +2254,7 @@ function maxEnemyHpFor(st){const e=st.bossActive?BOSSES[Math.min(BOSSES.length-1
 function normalizeState(raw){
  const src=raw&&typeof raw==='object'?raw:{};
  const out={...DEFAULT,...src,version:3};
+ out.remoteSyncPending=src.remoteSyncPending===true;
  out.level=Math.floor(safeNumber(src.level,1,1,100000));
  out.xp=safeNumber(src.xp,0,0,1e12);out.gold=Math.floor(safeNumber(src.gold,0,0,1e12));
  out.kills=Math.floor(safeNumber(src.kills,0,0,1e12));out.stage=Math.floor(safeNumber(src.stage,1,1,100000));
@@ -2325,7 +2326,7 @@ function readStoredSave(key){
   const loaded=normalizeState(raw),savedAt=Number(raw.lastSeen)||0,elapsed=Math.max(0,Date.now()-savedAt);
   simulateOfflineState(loaded,elapsed);const summary=offlineSummary;
   loaded.lastSeen=Date.now();loaded.enemyHp=Math.max(1,Math.min(loaded.enemyHp,maxEnemyHpFor(loaded)));
-  offlineSummary=previousSummary;return {state:loaded,summary,savedAt};
+  offlineSummary=previousSummary;return {state:loaded,summary,savedAt,hasSyncMarker:typeof raw.remoteSyncPending==='boolean'};
  }catch(e){console.warn('Salvamento local inválido em '+key,e);offlineSummary=previousSummary;return null}
 }
 function loadState(){
@@ -2456,7 +2457,9 @@ function useSkill(silent=false,quiet=false){
  return true;
 }
 function save(options={}){
- state.lastSeen=Date.now();localSaveRevision++;
+ state.lastSeen=Date.now();
+ if(currentUser&&accountHydrated){if(options.syncRemote!==false)state.remoteSyncPending=true}else state.remoteSyncPending=false;
+ localSaveRevision++;
  try{
   localStorage.setItem(currentLocalSaveKey(),JSON.stringify({...state,running:true}));
   const status=document.querySelector('#saveStatus');
@@ -2466,7 +2469,13 @@ function save(options={}){
 }
 async function saveRemote(){
  if(!currentUser||!supabaseClient||!accountHydrated)return false;
- remoteSaveRequested=true;if(remoteSavePromise)return remoteSavePromise;
+ remoteSaveRequested=true;
+ if(state.remoteSyncPending!==true){
+  state.remoteSyncPending=true;localSaveRevision++;
+  try{localStorage.setItem(accountSaveKey(currentUser.id),JSON.stringify({...state,running:true}))}
+  catch(e){console.warn('Não foi possível registrar a sincronização pendente localmente.',e)}
+ }
+ if(remoteSavePromise)return remoteSavePromise;
  remoteSavePromise=(async()=>{
   let allSaved=true;
   try{
@@ -2490,8 +2499,12 @@ async function saveRemote(){
     if(!currentUser||currentUser.id!==user.id){allSaved=false;break}
     const g=await supabaseClient.from('player_game_state').upsert(game,{onConflict:'player_id'});if(g.error)throw g.error;
     if(!currentUser||currentUser.id!==user.id){allSaved=false;break}
+    if(localSaveRevision===revision){
+     state.remoteSyncPending=false;
+     try{localStorage.setItem(accountSaveKey(user.id),JSON.stringify({...state,running:true}))}
+     catch(e){console.warn('Nuvem salva, mas não foi possível atualizar o marcador local.',e)}
+    }else remoteSaveRequested=true;
     const status=document.querySelector('#saveStatus');if(status)status.textContent='Salvo na nuvem';
-    if(localSaveRevision!==revision)remoteSaveRequested=true;
    }
   }catch(e){console.error('Falha ao salvar no Supabase',e);const status=document.querySelector('#saveStatus');if(status)status.textContent='Erro na nuvem · progresso local preservado';remoteSaveRequested=false;allSaved=false}
   finally{remoteSavePromise=null;if(remoteSaveRequested&&currentUser&&accountHydrated){clearTimeout(remoteSaveTimer);remoteSaveTimer=setTimeout(()=>{void saveRemote()},300)}}
@@ -2510,11 +2523,12 @@ async function loadRemote(){
   ]);
   if(p.error)throw p.error;if(g.error)throw g.error;if(!currentUser||currentUser.id!==userId)return false;
   const guestCandidate=normalizeState(JSON.parse(JSON.stringify(state)));
-  const hasCloud=!!(p.data||g.data),cloudTime=Date.parse(g.data?.last_seen_at||g.data?.updated_at||0)||0;
-  const localIsNewer=!!(accountLocal&&accountLocal.savedAt>cloudTime+1000);
-  const askToTransferGuest=!accountLocal&&hasMeaningfulProgress(guestCandidate)&&(!hasCloud||!g.data);
-  if(hasCloud&&!localIsNewer&&!!g.data&&!askToTransferGuest){state=stateFromRemote(p.data,g.data);offlineSummary=null}
-  else if(accountLocal&&(localIsNewer||!hasCloud||!g.data)){state=accountLocal.state;offlineSummary=accountLocal.summary}
+  const hasCloudProfile=!!p.data,hasCloudGame=!!g.data,hasCloud=hasCloudProfile||hasCloudGame;
+  const hasCompleteCloud=hasCloudProfile&&hasCloudGame;
+  const localSyncPending=!!(accountLocal&&accountLocal.state.remoteSyncPending===true);
+  const askToTransferGuest=!accountLocal&&!hasCompleteCloud&&hasMeaningfulProgress(guestCandidate);
+  if(hasCompleteCloud&&!localSyncPending){state=stateFromRemote(p.data,g.data);offlineSummary=null}
+  else if(accountLocal&&(localSyncPending||!hasCompleteCloud)){state=accountLocal.state;offlineSummary=accountLocal.summary}
   else if(askToTransferGuest){
    const takeGuest=window.confirm(
     'Esta conta ainda não tem uma jornada completa salva na nuvem. Encontramos progresso de visitante neste navegador. Deseja transferi-lo para esta conta?\n\nSe escolher Cancelar, o progresso de visitante continuará salvo separadamente e a conta usará os dados disponíveis na nuvem.'
@@ -2527,7 +2541,7 @@ async function loadRemote(){
   state.bestStage=Math.max(state.bestStage||1,state.stage);
   state.enemyHp=Math.max(1,Math.min(Number(state.enemyHp)||maxEnemyHpFor(state),maxEnemyHpFor(state)));
   accountHydrated=true;didHydrate=true;render();save({syncRemote:false});
-  const needsCloudWrite=!hasCloud||localIsNewer||!p.data||!g.data;
+  const needsCloudWrite=!hasCompleteCloud||localSyncPending;
   if(needsCloudWrite){
    const ok=await saveRemote();
    if(!ok){const status=document.querySelector('#saveStatus');if(status)status.textContent='Salvo neste dispositivo · falha ao sincronizar';const message=document.querySelector('#authMessage');if(message)message.textContent='A conta carregou, mas a nuvem não confirmou o salvamento. Seu progresso continua salvo localmente nesta conta.';return false}
