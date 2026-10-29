@@ -5,34 +5,31 @@
   arena.dataset.topdownReady = '1';
   arena.classList.add('xb-topdown-combat');
 
-  // Original tile field: ruins, cracks and spiritual crystals are CSS-drawn.
-  const rows = 12, cols = 18;
-  const map = document.createElement('div');
-  map.className = 'xb-tilemap';
-  map.setAttribute('aria-hidden', 'true');
-  const decorations = new Map([
-    ['1,1','pillar'], ['1,5','rubble'], ['1,15','pillar'],
-    ['2,3','crack'], ['2,12','rubble'], ['3,16','crack'],
-    ['4,1','rubble'], ['7,2','pillar'], ['8,5','spirit-crystal'],
-    ['8,14','rubble'], ['9,16','pillar'], ['10,3','crack'],
-    ['10,12','spirit-crystal'], ['5,16','moss'], ['9,8','moss'],
-    ['3,8','crack'], ['6,3','rubble']
-  ]);
-  const protectedTiles = new Set([
-    '3,4','4,4','5,4','6,4','7,4','8,4','3,9','4,9','5,9','6,9','7,9',
-    '4,10','5,10','6,10','4,11','5,11','6,11','7,11'
-  ]);
-  for (let row = 0; row < rows; row++) {
-    for (let col = 0; col < cols; col++) {
-      const tile = document.createElement('div');
-      const key = row + ',' + col;
-      tile.className = 'xb-tile ' + ((row + col) % 2 ? 'tone-a' : 'tone-b');
-      if (row === 0 || col === 0 || row === rows - 1 || col === cols - 1) tile.classList.add('xb-edge');
-      if (!protectedTiles.has(key) && decorations.has(key)) tile.classList.add('xb-' + decorations.get(key));
-      map.appendChild(tile);
+  // Use an illustrated environment instead of a repetitive tile grid.
+  const applyScene = () => {
+    const scenes = window.XBLEACH_ART && window.XBLEACH_ART.zones;
+    const art = scenes && (scenes[arena.dataset.map || 'desert'] || scenes.desert);
+    if (art) {
+      arena.style.setProperty(
+        'background',
+        'linear-gradient(180deg,#06081250 0%,transparent 25%,transparent 68%,#05060c88 100%), url("' + art + '") center / cover no-repeat',
+        'important'
+      );
     }
-  }
-  arena.insertBefore(map, arena.firstChild);
+    const oldTiles = arena.querySelector('.xb-tilemap');
+    if (oldTiles) oldTiles.remove();
+    if (!arena.querySelector('.xb-edge-vignette')) {
+      const vignette = document.createElement('div');
+      vignette.className = 'xb-edge-vignette';
+      vignette.setAttribute('aria-hidden','true');
+      arena.appendChild(vignette);
+    }
+  };
+  applyScene();
+  const sceneObserver = new MutationObserver(records => {
+    if (records.some(record => record.attributeName === 'data-map')) applyScene();
+  });
+  sceneObserver.observe(arena, { attributes:true, attributeFilter:['data-map'] });
 
   const pack = document.getElementById('enemyPack');
   if (pack) {
