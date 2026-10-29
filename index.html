@@ -2560,7 +2560,7 @@ document.querySelector('#accountToggle').addEventListener('click',()=>document.q
 document.querySelector('#forgotPasswordBtn').addEventListener('click',async()=>{
  if(!supabaseClient){document.querySelector('#authMessage').textContent='Recuperação de senha indisponível agora. Tente novamente mais tarde.';return}
  const email=document.querySelector('#authEmail').value.trim();
- if(!email||!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email)){document.querySelector('#authMessage').textContent='Digite o e-mail da sua conta para receber o link de recuperação.';return}
+ if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){document.querySelector('#authMessage').textContent='Digite o e-mail da sua conta para receber o link de recuperação.';return}
  const button=document.querySelector('#forgotPasswordBtn');button.disabled=true;document.querySelector('#authMessage').textContent='Solicitando recuperação…';
  try{
   const redirectTo=window.location.origin+window.location.pathname;
