@@ -112,7 +112,7 @@
     void hero.getBoundingClientRect();
     hero.classList.add(className);
     if (variant) hero.classList.add(variant);
-    removeLater({ remove: () => hero.classList.remove(className, variant) }, source === 'skill' ? 760 : 470);
+    removeLater({ remove: () => { hero.classList.remove(className); if (variant) hero.classList.remove(variant); } }, source === 'skill' ? 760 : 470);
   }
 
   function addEnemyCounterattack(variant = 'xb-vfx-red') {
