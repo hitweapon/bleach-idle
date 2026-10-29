@@ -38,3 +38,18 @@
  .quick-skill>span:first-child{width:38px!important;height:38px!important;flex-basis:38px!important}
  .skill-option-icon{width:44px!important;height:44px!important;flex-basis:44px!important}
 }
+/* In-world iconography */
+.ui-art-icon{display:block;width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 2px 5px #0009)}
+.nav button{display:flex!important;align-items:center!important;gap:10px!important;text-align:left!important}
+.nav-art-icon{width:26px!important;height:26px!important;flex:0 0 26px!important;object-fit:contain!important}
+.nav-art-label{flex:1;min-width:0}
+.daily-reward-icon{display:flex!important;align-items:center!important;justify-content:center!important;overflow:hidden!important}
+.daily-reward-icon .reward-chest-art{width:86px;height:86px;object-fit:contain}
+.live-stat-icon{display:flex!important;align-items:center!important;justify-content:center!important;overflow:hidden!important}
+.live-stat-icon .ui-art-icon{width:34px;height:34px;object-fit:contain}
+.quest-icon{display:flex!important;align-items:center!important;justify-content:center!important;overflow:hidden!important}
+.quest-icon .ui-art-icon{width:38px;height:38px;object-fit:contain}
+.achievement-icon{display:flex!important;align-items:center!important;justify-content:center!important;overflow:hidden!important}
+.achievement-icon .ui-art-icon{width:46px;height:46px;object-fit:contain}
+.rarity{display:inline-flex!important;align-items:center!important;gap:4px!important}
+.rarity-gem{width:23px!important;height:23px!important;flex:0 0 23px!important;object-fit:contain!important;vertical-align:middle!important;filter:drop-shadow(0 1px 4px #0008)}
