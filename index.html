@@ -2228,6 +2228,15 @@ const LOOT=[
 {name:'Manoplas Shunkō',icon:'⚡',rarity:'epic',slot:'weapon',bonus:14,hpBonus:15,sell:175,desc:'+14 poder e +15 vitalidade'},
 {name:'Zangetsu Desperta',icon:'🌌',rarity:'epic',slot:'weapon',bonus:28,hpBonus:12,sell:340,desc:'+28 poder e +12 vitalidade · lâmina lendária'}
 ];
+function rollLoot(boss=false){
+ const common=LOOT.filter(x=>x.rarity==='common'),rare=LOOT.filter(x=>x.rarity==='rare'),epic=LOOT.filter(x=>x.rarity==='epic');
+ let pool;
+ if(boss)pool=Math.random()<.72?epic:rare;
+ else{const r=Math.random();pool=r<.68?common:r<.95?rare:epic}
+ if(!pool||!pool.length)pool=LOOT;
+ return {...pool[Math.floor(Math.random()*pool.length)]};
+}
+
 const SAVE_KEY='xigoSoulRiftV1';
 const GUEST_SAVE_KEY=SAVE_KEY+':guest';
 function accountSaveKey(userId){return SAVE_KEY+':account:'+String(userId||'')}
@@ -2324,9 +2333,9 @@ function simulateOfflineState(st,elapsedMs){
    const beforeKills=st.kills,e=enemyAtStage(st.stage),xpGain=Math.max(1,Math.round(e.xp*3*.35)),goldGain=e.gold*3;
    st.kills+=3;st.xp+=xpGain;st.gold+=goldGain;st.totalXp+=xpGain;st.totalGold+=goldGain;
    while(st.xp>=xpForLevel(st.level)){const oldMax=maxHpForState(st);st.xp-=xpForLevel(st.level);st.level++;st.gold+=30;st.totalGold+=30;st.playerHp=Math.min(maxHpForState(st),st.playerHp+(maxHpForState(st)-oldMax))}
-   if(Math.floor(st.kills/6)>Math.floor(beforeKills/6)){st.stage++;st.gold+=15;st.totalGold+=15}
+   if(Math.floor(st.kills/9)>Math.floor(beforeKills/6)){st.stage++;st.gold+=15;st.totalGold+=15}
    st.bestStage=Math.max(st.bestStage,st.stage);
-   if(st.settings.autoEquip&&st.kills%3===0&&st.inventory.length<500){const item={...LOOT[Math.floor((st.kills/3)%LOOT.length)],id:'offline-'+st.kills};st.inventory.push(item);const slot=itemSlot(item),current=st.inventory.find(x=>String(x.id)===String(st.equipmentSlots[slot]));if(!current||itemPower(item)+itemVitality(item)>itemPower(current)+itemVitality(current)){st.equipmentSlots[slot]=item.id;item.equipped=true}}
+   if(st.settings.autoEquip&&st.kills%3===0&&st.inventory.length<500){const item={...rollLoot(),id:'offline-'+st.kills};st.inventory.push(item);const slot=itemSlot(item),current=st.inventory.find(x=>String(x.id)===String(st.equipmentSlots[slot]));if(!current||itemPower(item)+itemVitality(item)>itemPower(current)+itemVitality(current)){st.equipmentSlots[slot]=item.id;item.equipped=true}}
    st.playerHp=Math.min(maxHpForState(st),st.playerHp+Math.round(maxHpForState(st)*.1));st.enemyHp=maxEnemyHpFor(st);st.pendingRespawnAt=0;st.enemyAttackMeter=0;
   }
  }
@@ -2680,13 +2689,13 @@ function defeat(){
   state.bossKills=(state.bossKills||0)+1;state.bossActive=false;state.stage++;state.gold+=20;state.totalGold=(state.totalGold||0)+20;
   log('🏆 <strong>CHEFE DERROTADO: '+e.name+'!</strong> +'+xpGain+' EXP · +'+(goldGain+20)+' ouro.');
   toast('CHEFE DERROTADO! Recompensa épica! 🏆');
-  const guaranteed=LOOT[state.bossKills%LOOT.length],drop={...guaranteed,id:'boss-'+Date.now()+'-'+Math.random()};
+  const drop={...rollLoot(true),id:'boss-'+Date.now()+'-'+Math.random()};
   state.inventory.push(drop);log('👑 <strong>Drop de chefe:</strong> '+drop.name+'.');
   showFloatingText('DROP DE CHEFE!','pop-loot');
   if(state.settings.autoEquip&&isUpgradeForSlot(drop))equipItem(state.inventory.length-1,true);
  }else{
   log('☯ <strong>3 Hollows purificados!</strong> +'+xpGain+' EXP · +'+goldGain+' ouro.');
-  if(Math.floor(state.kills/6)>Math.floor(beforeKills/6)){
+  if(Math.floor(state.kills/9)>Math.floor(beforeKills/6)){
    state.stage++;state.gold+=15;state.totalGold=(state.totalGold||0)+15;
    log('🧭 <strong>NOVO ESTÁGIO '+state.stage+'!</strong> +15 ouro por avanço.');
    showFloatingText('ESTÁGIO '+state.stage+'!','pop-stage');
@@ -2694,7 +2703,7 @@ function defeat(){
   }
   const dropChance=state.kills<=18?.18:.12;
   if(Math.random()<dropChance||state.kills%24===0){
-   const item={...LOOT[Math.floor(Math.random()*LOOT.length)],id:'drop-'+Date.now()+'-'+Math.random(),equipped:false};
+   const item={...rollLoot(),id:'drop-'+Date.now()+'-'+Math.random(),equipped:false};
    state.inventory.push(item);log('🎁 <strong>DROP!</strong> '+item.name+'.');showFloatingText('ITEM ENCONTRADO!','pop-loot');toast('Item encontrado: '+item.name+' 🎁');
    if(state.settings.autoEquip&&isUpgradeForSlot(item))equipItem(state.inventory.length-1,true);
   }
@@ -3128,7 +3137,7 @@ function updateCombatHUD(){
  const sessionDamage=Math.max(0,(state.totalDamage||0)-sessionStartDamage),sessionKills=Math.max(0,state.kills-sessionStartKills);
  textOf('sessionDps',Math.floor(sessionDamage).toLocaleString('pt-BR'));textOf('sessionDpsLabel','DPS estimado: '+Math.floor(sessionDamage/elapsed).toLocaleString('pt-BR'));
  textOf('sessionKills',sessionKills.toLocaleString('pt-BR'));textOf('sessionKillsLabel','em '+formatDuration(elapsed));
- const milestone=(Math.floor(state.kills/6)+1)*6;textOf('nextMilestone',milestone+' derrotas');textOf('nextMilestoneLabel',Math.max(0,milestone-state.kills)+' até o avanço de estágio');
+ const milestone=(Math.floor(state.kills/9)+1)*9;textOf('nextMilestone',milestone+' derrotas');textOf('nextMilestoneLabel',Math.max(0,milestone-state.kills)+' até o avanço de estágio');
  const arena=document.querySelector('#battleArena');if(arena){arena.dataset.map=zone.id;arena.dataset.character=state.classId;arena.dataset.boss=state.bossActive?'true':'false';arena.classList.toggle('is-respawning',state.pendingRespawnAt>Date.now());arena.classList.toggle('is-player-defeated',state.playerDownUntil>Date.now())}
  const quickMap={crescent:'Q','flash-step':'W','bankai-wave':'E'};
  document.querySelectorAll('[data-skill-quick]').forEach(btn=>{const id=btn.dataset.skillQuick,sk=SKILLS.find(x=>x.id===id),unlocked=!!sk&&state.level>=sk.level;btn.disabled=!unlocked;btn.classList.toggle('is-selected',!!sk&&skill.id===id);btn.setAttribute('aria-pressed',String(!!sk&&skill.id===id));if(sk){btn.title=unlocked?sk.name+' · custo '+sk.cost+' · '+(sk.cooldown/1000)+'s recarga':'Desbloqueia no nível '+sk.level;const small=btn.querySelector('small');if(small)small.textContent=quickMap[id]+' · '+(unlocked?'NV. '+sk.level:'🔒 '+sk.level)}});
