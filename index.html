@@ -2254,6 +2254,19 @@ function applyInterfaceArt(){
  document.querySelectorAll('.nav button[data-page]').forEach(btn=>{if(btn.querySelector('.nav-art-icon'))return;const key=btn.dataset.page;if(!navKeys[key])return;btn.innerHTML=uiArtHTML(navKeys[key],'nav-art-icon')+'<span class="nav-art-label">'+navLabels[key]+'</span>'});
  const daily=document.querySelector('.daily-reward-icon');if(daily&&!daily.querySelector('img'))daily.innerHTML='<img class="ui-art-icon reward-chest-art" src="'+XBLEACH_ART.chests.epic+'" alt="" loading="lazy">';
  const stats=[...document.querySelectorAll('.live-stat-icon')];stats.forEach((node,i)=>{if(node.querySelector('img'))return;node.innerHTML=uiArtHTML(i===0?'skills':'boss','ui-art-icon')});
+ const mapKeys=['desert','ruins','forest','rift','society'];
+ document.querySelectorAll('.map-row').forEach((row,i)=>{
+  const thumb=row.querySelector('.map-thumb'),zone=XBLEACH_ART.zones[mapKeys[i]];
+  if(!thumb||!zone)return;
+  thumb.textContent='';
+  thumb.classList.add('has-zone-art');
+  thumb.style.backgroundImage='linear-gradient(180deg,#03071016,#03071045),url("'+zone+'")';
+  thumb.style.backgroundPosition='center';
+  thumb.style.backgroundSize='cover';
+  thumb.setAttribute('aria-hidden','true');
+ });
+ const homeBox=document.querySelector('#page-home .battlebox');
+ if(homeBox){const zoneKey=mapKeys[Math.min(mapKeys.length-1,Math.floor((Math.max(1,state.stage)-1)/10))];homeBox.style.backgroundImage='linear-gradient(180deg,#05071125,#070a15c9),url("'+XBLEACH_ART.zones[zoneKey]+'")';homeBox.style.backgroundSize='cover';homeBox.style.backgroundPosition='center'}
 }
 
 function rollLoot(boss=false){
