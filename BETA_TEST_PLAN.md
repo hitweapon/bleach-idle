@@ -9,6 +9,7 @@ Pull request: https://github.com/hitweapon/bleach-idle/pull/1
 - O fluxo de recuperação de senha está implementado no front-end com Supabase Auth: enviar solicitação, tratar o evento `PASSWORD_RECOVERY`, confirmar a nova senha e chamar `updateUser({ password })`.
 - O JavaScript embutido passou na checagem sintática `node --check`.
 - Os testes anteriores, com um cliente Supabase simulado, passaram para separação de contas, transferência de visitante, fila de salvamento e saída durante falha de rede.
+- A resolução de conflito foi reforçada: a nuvem completa é a fonte de verdade por padrão; um salvamento local só ganha se carregar o marcador explícito de sincronização pendente. A comparação por timestamp local/remoto foi removida por poder favorecer um dispositivo antigo.
 - A consulta às tabelas reais em 29/10/2026 encontrou zero linhas em `player_profiles` e `player_game_state`. Portanto, ainda não foi realizado teste com uma conta real existente.
 - O Supabase Security Advisor não retornou findings de segurança. O Performance Advisor apontou cinco avisos `auth_rls_initplan` sobre a avaliação repetida de `auth.uid()`; são recomendações de desempenho, não erros de execução.
 - O Vercel reporta o preview como `READY`, mas a proteção SSO está ativada para todos os domínios `vercel.app`. READY não significa que testadores externos consigam abrir o jogo.
