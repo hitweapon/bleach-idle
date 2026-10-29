@@ -2333,7 +2333,7 @@ function simulateOfflineState(st,elapsedMs){
    const beforeKills=st.kills,e=enemyAtStage(st.stage),xpGain=Math.max(1,Math.round(e.xp*3*.35)),goldGain=e.gold*3;
    st.kills+=3;st.xp+=xpGain;st.gold+=goldGain;st.totalXp+=xpGain;st.totalGold+=goldGain;
    while(st.xp>=xpForLevel(st.level)){const oldMax=maxHpForState(st);st.xp-=xpForLevel(st.level);st.level++;st.gold+=30;st.totalGold+=30;st.playerHp=Math.min(maxHpForState(st),st.playerHp+(maxHpForState(st)-oldMax))}
-   if(Math.floor(st.kills/9)>Math.floor(beforeKills/6)){st.stage++;st.gold+=15;st.totalGold+=15}
+   if(Math.floor(st.kills/9)>Math.floor(beforeKills/9)){st.stage++;st.gold+=15;st.totalGold+=15}
    st.bestStage=Math.max(st.bestStage,st.stage);
    if(st.settings.autoEquip&&st.kills%3===0&&st.inventory.length<500){const item={...rollLoot(),id:'offline-'+st.kills};st.inventory.push(item);const slot=itemSlot(item),current=st.inventory.find(x=>String(x.id)===String(st.equipmentSlots[slot]));if(!current||itemPower(item)+itemVitality(item)>itemPower(current)+itemVitality(current)){st.equipmentSlots[slot]=item.id;item.equipped=true}}
    st.playerHp=Math.min(maxHpForState(st),st.playerHp+Math.round(maxHpForState(st)*.1));st.enemyHp=maxEnemyHpFor(st);st.pendingRespawnAt=0;st.enemyAttackMeter=0;
@@ -2695,7 +2695,7 @@ function defeat(){
   if(state.settings.autoEquip&&isUpgradeForSlot(drop))equipItem(state.inventory.length-1,true);
  }else{
   log('☯ <strong>3 Hollows purificados!</strong> +'+xpGain+' EXP · +'+goldGain+' ouro.');
-  if(Math.floor(state.kills/9)>Math.floor(beforeKills/6)){
+  if(Math.floor(state.kills/9)>Math.floor(beforeKills/9)){
    state.stage++;state.gold+=15;state.totalGold=(state.totalGold||0)+15;
    log('🧭 <strong>NOVO ESTÁGIO '+state.stage+'!</strong> +15 ouro por avanço.');
    showFloatingText('ESTÁGIO '+state.stage+'!','pop-stage');
