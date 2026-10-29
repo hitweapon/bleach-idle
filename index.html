@@ -2163,7 +2163,7 @@ button.quick-skill.is-selected:before{content:"ATIVA";position:absolute;top:-7px
 const SUPABASE_URL="https://wgluqovssnfhysqveaxd.supabase.co";
 const SUPABASE_KEY="sb_publishable_aeKXZrVJk5yVOYll4G3GsA_iBoXX5w0";
 const supabaseClient=window.supabase?.createClient?window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY):null;
-let currentUser=null, remoteSaveTimer=null, remoteSaveBusy=false;
+let currentUser=null, remoteSaveTimer=null, remoteSavePromise=null, remoteSaveRequested=false, localSaveRevision=0, accountHydrated=false;
 const CLASSES=[
 {id:'blade',name:'Ichigo Kurosaki',icon:'⚔️',title:'Shinigami · Zangetsu',desc:'Combatente equilibrado: golpes constantes, boa resistência e cortes de reiatsu.',atk:12,hp:100,energy:55,skill:'Corte Crescente',startSkill:'crescent',art:'/assets/ichigo-slash.webp',portrait:'/assets/ichigo-portrait.webp',basicMultiplier:1,skillMultiplier:1,critChance:.12},
 {id:'kido',name:'Uryū Ishida',icon:'🏹',title:'Quincy · Arco espiritual',desc:'Especialista em ataques de longo alcance. Suas habilidades causam 22% mais dano, mas tem menos vida.',atk:14,hp:78,energy:90,skill:'Flecha Quincy',startSkill:'quincy-arrow',art:'/assets/uryu-quincy.svg',portrait:'/assets/uryu-quincy.svg',basicMultiplier:1,skillMultiplier:1.22,critChance:.1},
@@ -2226,6 +2226,9 @@ const LOOT=[
 {name:'Zangetsu Desperta',icon:'🌌',rarity:'epic',slot:'weapon',bonus:28,hpBonus:12,sell:340,desc:'+28 poder e +12 vitalidade · lâmina lendária'}
 ];
 const SAVE_KEY='xigoSoulRiftV1';
+const GUEST_SAVE_KEY=SAVE_KEY+':guest';
+function accountSaveKey(userId){return SAVE_KEY+':account:'+String(userId||'')}
+function currentLocalSaveKey(){return currentUser&&accountHydrated?accountSaveKey(currentUser.id):GUEST_SAVE_KEY}
 const DEFAULT={
 version:3,level:1,xp:0,gold:0,kills:0,stage:1,classId:'blade',activeSkillId:'crescent',running:true,autoSkill:true,
 enemyHp:38,pendingRespawnAt:0,inventory:[],claimed:false,attackBonus:0,weaponLevel:1,energy:55,skillReadyAt:0,lastSeen:Date.now(),
@@ -2314,16 +2317,47 @@ function simulateOfflineState(st,elapsedMs){
  if(gainedKills>0)offlineSummary={seconds,kills:gainedKills,xp:gainedXp,gold:gainedGold};
  st.lastSeen=Date.now();st.bestStage=Math.max(st.bestStage,st.stage);
 }
-function loadState(){
+function readStoredSave(key){
+ const previousSummary=offlineSummary;offlineSummary=null;
  try{
-  const raw=JSON.parse(localStorage.getItem(SAVE_KEY)||'null');
-  if(raw&&typeof raw.level==='number'){
-   const loaded=normalizeState(raw);const elapsed=Math.max(0,Date.now()-(Number(raw.lastSeen)||Date.now()));
-   simulateOfflineState(loaded,elapsed);loaded.lastSeen=Date.now();loaded.enemyHp=Math.max(1,Math.min(loaded.enemyHp,maxEnemyHpFor(loaded)));
-   return loaded;
-  }
- }catch(e){console.warn('Save local inválido; iniciando com uma cópia segura.',e)}
- return normalizeState({...DEFAULT,lastSeen:Date.now()});
+  const text=localStorage.getItem(key);if(!text){offlineSummary=previousSummary;return null}
+  const raw=JSON.parse(text);if(!raw||typeof raw.level!=='number'){offlineSummary=previousSummary;return null}
+  const loaded=normalizeState(raw),savedAt=Number(raw.lastSeen)||0,elapsed=Math.max(0,Date.now()-savedAt);
+  simulateOfflineState(loaded,elapsed);const summary=offlineSummary;
+  loaded.lastSeen=Date.now();loaded.enemyHp=Math.max(1,Math.min(loaded.enemyHp,maxEnemyHpFor(loaded)));
+  offlineSummary=previousSummary;return {state:loaded,summary,savedAt};
+ }catch(e){console.warn('Salvamento local inválido em '+key,e);offlineSummary=previousSummary;return null}
+}
+function loadState(){
+ try{const guest=localStorage.getItem(GUEST_SAVE_KEY),legacy=localStorage.getItem(SAVE_KEY);if(!guest&&legacy)localStorage.setItem(GUEST_SAVE_KEY,legacy)}
+ catch(e){console.warn('Não foi possível migrar o salvamento local legado.',e)}
+ const saved=readStoredSave(GUEST_SAVE_KEY);if(saved){offlineSummary=saved.summary;return saved.state}
+ offlineSummary=null;return normalizeState({...DEFAULT,lastSeen:Date.now()});
+}
+function hasMeaningfulProgress(st){return !!st&&(st.level>1||st.xp>0||st.gold>0||st.kills>0||st.stage>1||st.inventory?.length>0||st.bossKills>0||st.prestige>0)}
+function stateFromRemote(profile,game){
+ const eq=game?.equipment&&typeof game.equipment==='object'?game.equipment:{};
+ const stage=safeNumber(game?.highest_stage,1,1,100000);
+ const source={
+  ...DEFAULT,level:safeNumber(profile?.level,1,1,100000),xp:safeNumber(profile?.experience,0,0,1e12),gold:safeNumber(profile?.gold,0,0,1e12),
+  classId:CLASSES.some(x=>x.id===game?.character_class)?game.character_class:'blade',stage,
+  bestStage:Math.max(stage,safeNumber(eq.bestStage,stage,1,100000)),
+  inventory:Array.isArray(game?.inventory)?game.inventory:[],
+  equipmentSlots:eq.equipmentSlots&&typeof eq.equipmentSlots==='object'?eq.equipmentSlots:{...DEFAULT.equipmentSlots},
+  attackBonus:safeNumber(eq.attackBonus,0,0,100000),weaponLevel:safeNumber(eq.weaponLevel,1,1,10000),
+  activeSkillId:typeof eq.activeSkillId==='string'?eq.activeSkillId:DEFAULT.activeSkillId,
+  prestige:safeNumber(eq.prestige,0,0,10000),lastDailyClaim:typeof eq.lastDailyClaim==='string'?eq.lastDailyClaim:'',
+  dailyStreak:safeNumber(eq.dailyStreak,0,0,100000),kills:safeNumber(eq.kills,0,0,1e12),claimed:!!eq.claimed,
+  questClaims:eq.questClaims&&typeof eq.questClaims==='object'?eq.questClaims:{},
+  achievementsClaimed:eq.achievementsClaimed&&typeof eq.achievementsClaimed==='object'?eq.achievementsClaimed:{},
+  bossKills:safeNumber(eq.bossKills,0,0,1e9),autoSkill:eq.autoSkill!==false,
+  settings:{...DEFAULT.settings,...(eq.settings&&typeof eq.settings==='object'?eq.settings:{})},
+  totalDamage:safeNumber(eq.totalDamage,0,0,1e15),totalXp:safeNumber(eq.totalXp,0,0,1e15),totalGold:safeNumber(eq.totalGold,0,0,1e15),
+  energy:eq.energy,skillReadyAt:safeNumber(eq.skillReadyAt,0,0,1e15),bossActive:false,pendingRespawnAt:0,lastSeen:Date.now()
+ };
+ const restored=normalizeState(source);restored.bestStage=Math.max(restored.bestStage,restored.stage);
+ restored.enemyHp=maxEnemyHpFor(restored);restored.energy=Math.min(getClassFor(restored).energy,safeNumber(eq.energy,getClassFor(restored).energy,0,getClassFor(restored).energy));
+ return restored;
 }
 function enemy(){return state.bossActive?BOSSES[Math.min(BOSSES.length-1,Math.floor(state.bossKills||0))]:enemyAtStage(state.stage)}
 function enemyMaxHp(){return maxEnemyHpFor(state)}
@@ -2421,15 +2455,106 @@ function useSkill(silent=false,quiet=false){
  if(!silent)toast(skill.name+'! −'+damage+' HP inimigo');
  return true;
 }
-function save(){state.lastSeen=Date.now();try{localStorage.setItem(SAVE_KEY,JSON.stringify({...state,running:true}));const status=document.querySelector('#saveStatus');if(status)status.textContent=currentUser?'Salvando…':'Salvo neste dispositivo';if(currentUser){clearTimeout(remoteSaveTimer);remoteSaveTimer=setTimeout(saveRemote,1200)}}catch(e){console.error('Falha ao gravar progresso local',e);const status=document.querySelector('#saveStatus');if(status)status.textContent='Armazenamento cheio'}}
-async function saveRemote(){if(!currentUser||!supabaseClient||remoteSaveBusy)return;remoteSaveBusy=true;try{const profile={id:currentUser.id,username:'shinigami_'+currentUser.id.replace(/-/g,'').slice(-8),display_name:(currentUser.user_metadata?.display_name||('Shinigami '+currentUser.id.replace(/-/g,'').slice(-4).toUpperCase())).toString().slice(0,40),level:state.level,experience:state.xp,gold:state.gold,updated_at:new Date().toISOString()};const game={player_id:currentUser.id,character_class:state.classId,current_zone:state.stage<11?'desert':state.stage<21?'ruins':state.stage<31?'forest':state.stage<41?'rift':'society',highest_stage:state.stage,inventory:state.inventory,equipment:{weapon:'training_blade',armor:'simple_mantle',prestige:state.prestige,lastDailyClaim:state.lastDailyClaim,dailyStreak:state.dailyStreak,activeSkillId:state.activeSkillId,equipmentSlots:state.equipmentSlots,attackBonus:state.attackBonus,weaponLevel:state.weaponLevel,kills:state.kills,claimed:state.claimed,questClaims:state.questClaims,achievementsClaimed:state.achievementsClaimed,bossKills:state.bossKills,autoSkill:state.autoSkill,settings:state.settings,totalDamage:state.totalDamage,totalXp:state.totalXp,totalGold:state.totalGold},last_seen_at:new Date().toISOString(),updated_at:new Date().toISOString()};const p=await supabaseClient.from('player_profiles').upsert(profile,{onConflict:'id'});if(p.error)throw p.error;const g=await supabaseClient.from('player_game_state').upsert(game,{onConflict:'player_id'});if(g.error)throw g.error;document.querySelector('#saveStatus').textContent='Salvo na nuvem'}catch(e){console.error('Falha ao salvar no Supabase',e);document.querySelector('#saveStatus').textContent='Erro no salvamento online'}finally{remoteSaveBusy=false}} 
-async function loadRemote(){if(!currentUser||!supabaseClient)return;try{const [p,g]=await Promise.all([supabaseClient.from('player_profiles').select('*').eq('id',currentUser.id).maybeSingle(),supabaseClient.from('player_game_state').select('*').eq('player_id',currentUser.id).maybeSingle()]);if(p.error)throw p.error;if(g.error)throw g.error;if(p.data||g.data){if(p.data){state.level=p.data.level||1;state.xp=p.data.experience||0;state.gold=p.data.gold||0}if(g.data){state.classId=CLASSES.some(x=>x.id===g.data.character_class)?g.data.character_class:'blade';state.stage=g.data.highest_stage||1;state.inventory=Array.isArray(g.data.inventory)?g.data.inventory:[];const eq=g.data.equipment||{};state.attackBonus=eq.attackBonus||0;state.weaponLevel=eq.weaponLevel||1;state.activeSkillId=SKILLS.some(sk=>sk.id===eq.activeSkillId&&sk.level<=state.level&&(!sk.characterId||sk.characterId===state.classId))?eq.activeSkillId:getClassFor(state).startSkill;state.prestige=eq.prestige||0;state.lastDailyClaim=eq.lastDailyClaim||state.lastDailyClaim;state.dailyStreak=eq.dailyStreak||state.dailyStreak;state.kills=eq.kills||0;state.claimed=!!eq.claimed;state.questClaims=eq.questClaims&&typeof eq.questClaims==='object'?eq.questClaims:state.questClaims;state.achievementsClaimed=eq.achievementsClaimed&&typeof eq.achievementsClaimed==='object'?eq.achievementsClaimed:state.achievementsClaimed;state.bossKills=eq.bossKills||0;state.autoSkill=eq.autoSkill!==false;state.settings={...state.settings,...(eq.settings||{})};state.equipmentSlots=eq.equipmentSlots&&typeof eq.equipmentSlots==='object'?eq.equipmentSlots:state.equipmentSlots;state.totalDamage=eq.totalDamage||state.totalDamage;state.totalXp=eq.totalXp||state.totalXp;state.totalGold=eq.totalGold||state.totalGold;state.bossActive=false;state.enemyHp=enemyMaxHp()}render();save();log('☁️ <strong>Jornada sincronizada com a nuvem.</strong>')}else{await saveRemote();log('☁️ <strong>Perfil criado.</strong> Sua jornada agora será salva na nuvem.')}document.querySelector('#saveStatus').textContent='Sincronizado com Supabase'}catch(e){console.error('Falha ao carregar Supabase',e);document.querySelector('#authMessage').textContent='Não foi possível sincronizar: '+(e.message||'erro de conexão');document.querySelector('#saveStatus').textContent='Falha na nuvem'}} 
+function save(options={}){
+ state.lastSeen=Date.now();localSaveRevision++;
+ try{
+  localStorage.setItem(currentLocalSaveKey(),JSON.stringify({...state,running:true}));
+  const status=document.querySelector('#saveStatus');
+  if(status)status.textContent=currentUser&&!accountHydrated?'Carregando conta…':currentUser?'Salvando…':'Salvo neste dispositivo';
+ }catch(e){console.error('Falha ao gravar progresso local',e);const status=document.querySelector('#saveStatus');if(status)status.textContent='Falha no salvamento local'}
+ if(options.syncRemote!==false&&currentUser&&accountHydrated){clearTimeout(remoteSaveTimer);remoteSaveTimer=setTimeout(()=>{void saveRemote()},1200)}
+}
+async function saveRemote(){
+ if(!currentUser||!supabaseClient||!accountHydrated)return false;
+ remoteSaveRequested=true;if(remoteSavePromise)return remoteSavePromise;
+ remoteSavePromise=(async()=>{
+  let allSaved=true;
+  try{
+   while(remoteSaveRequested&&currentUser&&accountHydrated){
+    remoteSaveRequested=false;const user=currentUser,revision=localSaveRevision;
+    const snapshot=normalizeState(JSON.parse(JSON.stringify(state))),timestamp=new Date().toISOString();
+    const profile={id:user.id,username:'shinigami_'+user.id.replace(/-/g,'').slice(-8),
+     display_name:(user.user_metadata?.display_name||('Shinigami '+user.id.replace(/-/g,'').slice(-4).toUpperCase())).toString().slice(0,40),
+     level:snapshot.level,experience:snapshot.xp,gold:snapshot.gold,updated_at:timestamp};
+    const eq={weapon:'training_blade',armor:'simple_mantle',prestige:snapshot.prestige,
+     lastDailyClaim:snapshot.lastDailyClaim,dailyStreak:snapshot.dailyStreak,activeSkillId:snapshot.activeSkillId,
+     equipmentSlots:snapshot.equipmentSlots,attackBonus:snapshot.attackBonus,weaponLevel:snapshot.weaponLevel,
+     kills:snapshot.kills,bestStage:snapshot.bestStage,claimed:snapshot.claimed,questClaims:snapshot.questClaims,
+     achievementsClaimed:snapshot.achievementsClaimed,bossKills:snapshot.bossKills,autoSkill:snapshot.autoSkill,
+     settings:snapshot.settings,totalDamage:snapshot.totalDamage,totalXp:snapshot.totalXp,totalGold:snapshot.totalGold,
+     energy:snapshot.energy,skillReadyAt:snapshot.skillReadyAt};
+    const game={player_id:user.id,character_class:snapshot.classId,
+     current_zone:snapshot.stage<11?'desert':snapshot.stage<21?'ruins':snapshot.stage<31?'forest':snapshot.stage<41?'rift':'society',
+     highest_stage:snapshot.stage,inventory:snapshot.inventory,equipment:eq,last_seen_at:timestamp,updated_at:timestamp};
+    const p=await supabaseClient.from('player_profiles').upsert(profile,{onConflict:'id'});if(p.error)throw p.error;
+    if(!currentUser||currentUser.id!==user.id){allSaved=false;break}
+    const g=await supabaseClient.from('player_game_state').upsert(game,{onConflict:'player_id'});if(g.error)throw g.error;
+    if(!currentUser||currentUser.id!==user.id){allSaved=false;break}
+    const status=document.querySelector('#saveStatus');if(status)status.textContent='Salvo na nuvem';
+    if(localSaveRevision!==revision)remoteSaveRequested=true;
+   }
+  }catch(e){console.error('Falha ao salvar no Supabase',e);const status=document.querySelector('#saveStatus');if(status)status.textContent='Erro na nuvem · progresso local preservado';remoteSaveRequested=false;allSaved=false}
+  finally{remoteSavePromise=null;if(remoteSaveRequested&&currentUser&&accountHydrated){clearTimeout(remoteSaveTimer);remoteSaveTimer=setTimeout(()=>{void saveRemote()},300)}}
+  return allSaved&&!remoteSaveRequested;
+ })();
+ return remoteSavePromise;
+}
+async function loadRemote(){
+ if(!currentUser||!supabaseClient)return false;
+ const user=currentUser,userId=user.id,guestCandidate=normalizeState(JSON.parse(JSON.stringify(state)));
+ const accountLocal=readStoredSave(accountSaveKey(userId));let didHydrate=false;
+ try{
+  const [p,g]=await Promise.all([
+   supabaseClient.from('player_profiles').select('*').eq('id',userId).maybeSingle(),
+   supabaseClient.from('player_game_state').select('*').eq('player_id',userId).maybeSingle()
+  ]);
+  if(p.error)throw p.error;if(g.error)throw g.error;if(!currentUser||currentUser.id!==userId)return false;
+  const hasCloud=!!(p.data||g.data),cloudTime=Date.parse(g.data?.last_seen_at||g.data?.updated_at||0)||0;
+  const localIsNewer=!!(accountLocal&&accountLocal.savedAt>cloudTime+1000);
+  if(hasCloud&&!localIsNewer){state=stateFromRemote(p.data,g.data);offlineSummary=null}
+  else if(accountLocal&&(localIsNewer||!hasCloud)){state=accountLocal.state;offlineSummary=accountLocal.summary}
+  else{
+   const takeGuest=hasMeaningfulProgress(guestCandidate)&&window.confirm(
+    'Esta conta ainda não tem uma jornada salva. Encontramos progresso de visitante neste navegador. Deseja transferir esse progresso para esta conta?\n\nSe escolher Cancelar, o progresso de visitante continuará salvo separadamente e esta conta começará do início.'
+   );
+   state=takeGuest?guestCandidate:normalizeState({...DEFAULT,lastSeen:Date.now()});offlineSummary=null;
+  }
+  state=normalizeState({...state,lastSeen:Date.now(),bossActive:false,pendingRespawnAt:0});
+  state.bestStage=Math.max(state.bestStage||1,state.stage);
+  state.enemyHp=Math.max(1,Math.min(Number(state.enemyHp)||maxEnemyHpFor(state),maxEnemyHpFor(state)));
+  accountHydrated=true;didHydrate=true;render();save({syncRemote:false});
+  const needsCloudWrite=!hasCloud||localIsNewer||!p.data||!g.data;
+  if(needsCloudWrite){
+   const ok=await saveRemote();
+   if(!ok){const status=document.querySelector('#saveStatus');if(status)status.textContent='Salvo neste dispositivo · falha ao sincronizar';const message=document.querySelector('#authMessage');if(message)message.textContent='A conta carregou, mas a nuvem não confirmou o salvamento. Seu progresso continua salvo localmente nesta conta.';return false}
+  }
+  const status=document.querySelector('#saveStatus');if(status)status.textContent='Conta sincronizada';
+  log('☁️ <strong>Jornada carregada com segurança para esta conta.</strong>');return true;
+ }catch(e){
+  if(!didHydrate)accountHydrated=false;
+  console.error('Falha ao carregar Supabase',e);
+  const message=document.querySelector('#authMessage');if(message)message.textContent=didHydrate?'A conta foi carregada, mas a nuvem falhou ao confirmar a sincronização. Seu progresso local da conta foi preservado.':'Não foi possível carregar a conta. O progresso de visitante foi mantido separado. Tente novamente quando a conexão voltar.';
+  const status=document.querySelector('#saveStatus');if(status)status.textContent=didHydrate?'Conta salva localmente · nuvem indisponível':'Nuvem indisponível · local preservado';return false;
+ }
+}
 function setAuthUI(){const signed=!!currentUser;document.querySelector('#authForm').classList.toggle('hidden',signed);document.querySelector('#signedInBox').classList.toggle('hidden',!signed);document.querySelector('#signedInEmail').textContent=signed?'Conectado como '+currentUser.email:'';document.querySelector('#accountToggle').textContent=signed?'Conta conectada':'Entrar / Criar conta';if(signed)document.querySelector('#authMessage').textContent='Conta conectada. A progressão será sincronizada entre dispositivos.'}
 document.querySelector('#accountToggle').addEventListener('click',()=>document.querySelector('#accountPanel').classList.toggle('hidden'));document.querySelector('#accountClose').addEventListener('click',()=>document.querySelector('#accountPanel').classList.add('hidden'));
-document.querySelector('#signUpBtn').addEventListener('click',async()=>{if(!supabaseClient){document.querySelector('#authMessage').textContent='Login indisponível agora; a batalha local continua funcionando.';return}const email=document.querySelector('#authEmail').value.trim(),password=document.querySelector('#authPassword').value;if(!email||password.length<6){document.querySelector('#authMessage').textContent='Informe um e-mail válido e senha com pelo menos 6 caracteres.';return}document.querySelector('#authMessage').textContent='Criando conta…';const {data,error}=await supabaseClient.auth.signUp({email,password});if(error){document.querySelector('#authMessage').textContent=error.message;return}if(data.session){currentUser=data.user;setAuthUI();await loadRemote()}else{document.querySelector('#authMessage').textContent='Conta criada. Confira seu e-mail para confirmar o cadastro e depois entre.'}});
-document.querySelector('#signInBtn').addEventListener('click',async()=>{if(!supabaseClient){document.querySelector('#authMessage').textContent='Login indisponível agora; a batalha local continua funcionando.';return}const email=document.querySelector('#authEmail').value.trim(),password=document.querySelector('#authPassword').value;document.querySelector('#authMessage').textContent='Entrando…';const {data,error}=await supabaseClient.auth.signInWithPassword({email,password});if(error){document.querySelector('#authMessage').textContent=error.message;return}currentUser=data.user;setAuthUI();await loadRemote()});
-document.querySelector('#signOutBtn').addEventListener('click',async()=>{await saveRemote();await supabaseClient.auth.signOut();currentUser=null;setAuthUI();save();document.querySelector('#authMessage').textContent='Você saiu da conta.'});
-if(supabaseClient)supabaseClient.auth.getSession().then(async({data})=>{if(data.session){currentUser=data.session.user;setAuthUI();await loadRemote()}else setAuthUI()});else setAuthUI();
+document.querySelector('#signUpBtn').addEventListener('click',async()=>{if(!supabaseClient){document.querySelector('#authMessage').textContent='Login indisponível agora; a batalha local continua funcionando.';return}const email=document.querySelector('#authEmail').value.trim(),password=document.querySelector('#authPassword').value;if(!email||password.length<8){document.querySelector('#authMessage').textContent='Informe um e-mail válido e senha com pelo menos 8 caracteres.';return}document.querySelector('#authMessage').textContent='Criando conta…';const {data,error}=await supabaseClient.auth.signUp({email,password});if(error){document.querySelector('#authMessage').textContent=error.message;return}if(data.session){currentUser=data.user;accountHydrated=false;setAuthUI();await loadRemote()}else{document.querySelector('#authMessage').textContent='Conta criada. Confira seu e-mail para confirmar o cadastro e depois entre.'}});
+document.querySelector('#signInBtn').addEventListener('click',async()=>{if(!supabaseClient){document.querySelector('#authMessage').textContent='Login indisponível agora; a batalha local continua funcionando.';return}const email=document.querySelector('#authEmail').value.trim(),password=document.querySelector('#authPassword').value;document.querySelector('#authMessage').textContent='Entrando…';const {data,error}=await supabaseClient.auth.signInWithPassword({email,password});if(error){document.querySelector('#authMessage').textContent=error.message;return}currentUser=data.user;accountHydrated=false;setAuthUI();await loadRemote()});
+document.querySelector('#signOutBtn').addEventListener('click',async()=>{
+ if(!currentUser)return;
+ if(!accountHydrated){document.querySelector('#authMessage').textContent='A conta ainda está carregando. Aguarde a sincronização antes de sair.';return}
+ clearTimeout(remoteSaveTimer);const saved=await saveRemote();
+ if(!saved){document.querySelector('#authMessage').textContent='A nuvem não confirmou o salvamento. Você continua conectado para evitar perder progresso.';return}
+ const {error}=await supabaseClient.auth.signOut();
+ if(error){document.querySelector('#authMessage').textContent='Não foi possível sair: '+error.message;return}
+ currentUser=null;accountHydrated=true;remoteSaveRequested=false;clearTimeout(remoteSaveTimer);
+ const guest=readStoredSave(GUEST_SAVE_KEY);offlineSummary=guest?.summary||null;
+ state=guest?.state||normalizeState({...DEFAULT,lastSeen:Date.now()});
+ setAuthUI();render();save({syncRemote:false});
+ document.querySelector('#authMessage').textContent='Você saiu da conta. A jornada de visitante foi mantida separada.';
+});
+if(supabaseClient)supabaseClient.auth.getSession().then(async({data,error})=>{if(error)console.warn('Falha ao verificar sessão Supabase',error);if(data.session){currentUser=data.session.user;accountHydrated=false;setAuthUI();await loadRemote()}else{currentUser=null;accountHydrated=true;setAuthUI()}}).catch(error=>{console.warn('Falha ao iniciar autenticação',error);accountHydrated=true;setAuthUI()});else{accountHydrated=true;setAuthUI()}
 function toast(msg){
  const el=document.querySelector('#toast');if(!el)return;
  const message=String(msg??'');
@@ -2914,7 +3039,6 @@ function idleTick(){
  const majorChange=before.kills!==state.kills||before.level!==state.level||before.stage!==state.stage||before.gold!==state.gold||before.xp!==state.xp||before.inventory!==state.inventory.length||before.bossKills!==state.bossKills||before.prestige!==state.prestige||before.classId!==state.classId;
  if(majorChange)render();else updateCombatHUD();
 }
-setInterval(idleTick,750);setInterval(()=>{if(document.querySelector('#skillBtn'))updateCombatHUD()},1000);setInterval(save,10000);window.addEventListener('pagehide',save);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')save()});
-</script>
+setInterval(idleTick,750);setInterval(()=>{if(document.querySelector('#skillBtn'))updateCombatHUD()},1000);setInterval(save,10000);window.addEventListener('pagehide',save);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden'){save();if(currentUser&&accountHydrated){clearTimeout(remoteSaveTimer);void saveRemote()}}});
 </script>
 </body></html>
