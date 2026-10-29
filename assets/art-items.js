@@ -158,7 +158,7 @@ const skillKeys=['crescent','astral-burst','flash-step','spirit-pierce','moon-fa
 const items={};itemKeys.forEach(k=>items[k]=item(k));
 const skills={};skillKeys.forEach(k=>skills[k]=skill(k));
 const rareColors=['#8b95a6','#50c798','#4b9fff','#b475ff','#ffc15e','#ff465b'];
-const rarity={};['common','uncommon','rare','epic','legendary','mythic'].forEach((key,i)=>{const col=rareColors[i];rarity[key]=uri(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 72 72">${defs(col,'#080b14',col)<rect x="2" y="2" width="68" height="68" rx="9" fill="url(#panel)" stroke="${col" stroke-width="2"/><path d="M36 9L56 25 50 51 36 63 22 51 16 25Z" fill="url(#energy)" stroke="#fff" stroke-width="1.5"/><path d="M36 9V63M16 25H56M22 51H50" stroke="#fff" stroke-opacity=".4" stroke-width="1.5"/></svg>`)});
+const rarity={};['common','uncommon','rare','epic','legendary','mythic'].forEach((key,i)=>{const col=rareColors[i];rarity[key]=uri(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 72 72">${defs(col,'#080b14',col)<rect x="2" y="2" width="68" height="68" rx="9" fill="url(#panel)" stroke="${col}" stroke-width="2"/><path d="M36 9L56 25 50 51 36 63 22 51 16 25Z" fill="url(#energy)" stroke="#fff" stroke-width="1.5"/><path d="M36 9V63M16 25H56M22 51H50" stroke="#fff" stroke-opacity=".4" stroke-width="1.5"/></svg>`)});
 const chests={};['common','rare','epic','legendary','mythic'].forEach((key,i)=>chests[key]=item('chest-'+key));
 const characters={blade:{portrait:portrait('blade'),battle:battleSprite('blade')},kido:{portrait:portrait('kido'),battle:battleSprite('kido')},step:{portrait:portrait('step'),battle:battleSprite('step')}};
 const bosses=[0,1,2,3,4,5].map(boss);
