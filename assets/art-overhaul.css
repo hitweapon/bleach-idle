@@ -53,3 +53,21 @@
 .achievement-icon .ui-art-icon{width:46px;height:46px;object-fit:contain}
 .rarity{display:inline-flex!important;align-items:center!important;gap:4px!important}
 .rarity-gem{width:23px!important;height:23px!important;flex:0 0 23px!important;object-fit:contain!important;vertical-align:middle!important;filter:drop-shadow(0 1px 4px #0008)}
+
+.map-thumb.has-zone-art{background-color:#070a12!important;background-repeat:no-repeat!important;background-position:center!important;background-size:cover!important;box-shadow:inset 0 0 0 1px #aebfdf33,0 2px 8px #0007}
+.loot-strip>span{display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:4px!important}
+.loot-strip .loot-art-icon{display:block!important;width:40px!important;height:40px!important;object-fit:contain!important;filter:drop-shadow(0 2px 5px #0009)}
+.side-resources>span{display:flex!important;align-items:center!important;gap:6px!important}
+.side-resource-art{width:21px!important;height:21px!important;flex:0 0 21px!important;object-fit:contain!important}
+.side-count-art{width:25px!important;height:25px!important;object-fit:contain!important;display:block!important}
+.equipment-grid>div{display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:3px!important;font-size:0!important;min-height:68px!important;overflow:hidden!important}
+.side-slot-art{display:block!important;width:42px!important;height:42px!important;object-fit:contain!important;margin:auto!important;filter:drop-shadow(0 2px 5px #0008)}
+.equipment-grid>div small{font-size:.62rem!important;line-height:1.2!important;text-align:center!important}
+.evolution-track .evolution-step>b{display:flex!important;align-items:center!important;justify-content:center!important;width:34px!important;height:34px!important;font-size:0!important}
+.evolution-art-icon{width:32px!important;height:32px!important;object-fit:contain!important;filter:drop-shadow(0 2px 6px #0008)}
+@media(max-width:560px){
+ .loot-strip .loot-art-icon{width:31px!important;height:31px!important}
+ .side-slot-art{width:34px!important;height:34px!important}
+ .evolution-track .evolution-step>b{width:28px!important;height:28px!important}
+ .evolution-art-icon{width:27px!important;height:27px!important}
+}
