@@ -245,3 +245,20 @@
  #battleArena.xb-topdown-combat #heroArtReal,#battleArena.xb-topdown-combat #heroArtFallback,
  #battleArena.xb-topdown-combat #enemyPack .enemy-art-real,#battleArena.xb-topdown-combat #enemyPack .enemy-art-fallback{animation:none!important}
 }
+/* More air between player and the enemy line */
+#battleArena.xb-topdown-combat #heroArtReal,#battleArena.xb-topdown-combat #heroArtFallback{left:3.5%!important;right:auto!important;bottom:8%!important}
+#battleArena.xb-topdown-combat #enemyPack .enemy-small:not(.enemy-right){left:63%!important;top:39%!important;right:auto!important}
+#battleArena.xb-topdown-combat #enemyPack .enemy-large{left:81%!important;top:43%!important;right:auto!important}
+#battleArena.xb-topdown-combat #enemyPack .enemy-right{left:69%!important;top:61%!important;right:auto!important}
+@media(max-width:800px){
+ #battleArena.xb-topdown-combat #heroArtReal,#battleArena.xb-topdown-combat #heroArtFallback{left:2%!important;bottom:9%!important}
+ #battleArena.xb-topdown-combat #enemyPack .enemy-small:not(.enemy-right){left:62%!important;top:38%!important}
+ #battleArena.xb-topdown-combat #enemyPack .enemy-large{left:80%!important;top:42%!important;width:100px!important;height:143px!important}
+ #battleArena.xb-topdown-combat #enemyPack .enemy-right{left:68%!important;top:61%!important}
+}
+@media(max-width:520px){
+ #battleArena.xb-topdown-combat #heroArtReal,#battleArena.xb-topdown-combat #heroArtFallback{left:1.5%!important;bottom:10%!important}
+ #battleArena.xb-topdown-combat #enemyPack .enemy-small:not(.enemy-right){left:63%!important;top:37%!important}
+ #battleArena.xb-topdown-combat #enemyPack .enemy-large{left:80%!important;top:42%!important;width:82px!important;height:125px!important}
+ #battleArena.xb-topdown-combat #enemyPack .enemy-right{left:69%!important;top:60%!important}
+}

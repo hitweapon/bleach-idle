@@ -179,3 +179,18 @@
  #battleArena.xb-topdown-combat .xb-power-aura,
  #battleArena.xb-topdown-combat .xb-power-flash{animation-duration:.12s!important}
 }
+/* Illustrated, character-specific power silhouettes: not just a generic ray */
+#battleArena.xb-topdown-combat .xb-power-layer .xb-power-drawing{position:absolute;inset:0;width:100%;height:100%;z-index:4;overflow:visible;pointer-events:none;opacity:0;animation:xbSignatureFade .78s ease-out forwards;filter:drop-shadow(0 5px 6px #03040b99)}
+#battleArena.xb-topdown-combat .xb-power-drawing .xb-art-crescent,#battleArena.xb-topdown-combat .xb-power-drawing .xb-art-orb,#battleArena.xb-topdown-combat .xb-power-drawing .xb-art-fist,#battleArena.xb-topdown-combat .xb-power-drawing .xb-art-thunder,#battleArena.xb-topdown-combat .xb-power-drawing .xb-art-impact,#battleArena.xb-topdown-combat .xb-power-drawing .xb-art-afterimage{transform-box:fill-box;transform-origin:center;animation:xbSignatureShape .64s cubic-bezier(.12,.78,.2,1) both}
+#battleArena.xb-topdown-combat .xb-power-drawing .xb-art-travel{stroke-dasharray:28 12;animation:xbSignatureTravel .64s ease-out both}
+#battleArena.xb-topdown-combat .xb-power-drawing .xb-art-arrow{animation:xbSignatureArrow .52s cubic-bezier(.12,.78,.2,1) both}
+#battleArena.xb-topdown-combat .xb-power-drawing .xb-art-rays{transform-box:fill-box;transform-origin:center;animation:xbSignatureRays .54s ease-out both}
+#battleArena.xb-topdown-combat .xb-power-drawing.xb-draw-blade .xb-art-crescent,#battleArena.xb-topdown-combat .xb-power-drawing.xb-draw-crescent .xb-art-crescent,#battleArena.xb-topdown-combat .xb-power-drawing.xb-draw-moon-fang .xb-art-crescent{filter:drop-shadow(0 0 8px #ff2347)}
+#battleArena.xb-topdown-combat .xb-power-drawing.xb-draw-kido .xb-art-arrow,#battleArena.xb-topdown-combat .xb-power-drawing.xb-draw-quincy-arrow .xb-art-arrow,#battleArena.xb-topdown-combat .xb-power-drawing.xb-draw-reishi-volley .xb-art-arrow{filter:drop-shadow(0 0 7px #4ecfff)}
+#battleArena.xb-topdown-combat .xb-power-drawing.xb-draw-step .xb-art-fist,#battleArena.xb-topdown-combat .xb-power-drawing.xb-draw-step .xb-art-thunder,#battleArena.xb-topdown-combat .xb-power-drawing.xb-draw-shunko-strike .xb-art-fist{filter:drop-shadow(0 0 9px #ffb12d)}
+@keyframes xbSignatureFade{0%{opacity:0}12%{opacity:1}68%{opacity:1}100%{opacity:0}}
+@keyframes xbSignatureShape{0%{opacity:0;scale:.45}24%{opacity:1;scale:1.09}70%{opacity:.98;scale:1}100%{opacity:0;scale:1.18}}
+@keyframes xbSignatureTravel{0%{stroke-dashoffset:230;opacity:0}18%{opacity:1}78%{stroke-dashoffset:0;opacity:1}100%{opacity:0}}
+@keyframes xbSignatureArrow{0%{translate:-24px 8px;opacity:0}17%{opacity:1}82%{opacity:1}100%{translate:17px -5px;opacity:0}}
+@keyframes xbSignatureRays{0%{rotate:-15deg;scale:.35;opacity:0}28%{opacity:1}100%{rotate:18deg;scale:1.12;opacity:0}}
+@media(prefers-reduced-motion:reduce){#battleArena.xb-topdown-combat .xb-power-layer .xb-power-drawing,#battleArena.xb-topdown-combat .xb-power-drawing *{animation-duration:.18s!important}}
