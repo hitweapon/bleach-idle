@@ -2224,7 +2224,7 @@ const ART_PORTRAITS={ichigo:'/assets/art/character-ichigo.webp',uryu:'/assets/ar
 const CLASSES=[
 {id:'blade',name:'Ichigo Kurosaki',icon:'⚔️',title:'Shinigami · Zangetsu',desc:'Build de sustentação: priorize Vitalidade e redução de dano; acessórios e relíquias de Zangetsu oferecem roubo de vida moderado.',atk:12,hp:100,energy:55,skill:'Corte Crescente',startSkill:'crescent',art:'/assets/art/character-ichigo.webp',portrait:ART_PORTRAITS.ichigo,basicMultiplier:1,skillMultiplier:1,critChance:.12},
 {id:'kido',name:'Uryū Ishida',icon:'🏹',title:'Quincy · Arco espiritual',desc:'Build de burst: priorize dano de técnica e crítico; o conjunto Quincy fortalece habilidades, mas sua Vitalidade é menor.',atk:14,hp:78,energy:90,skill:'Flecha Quincy',startSkill:'quincy-arrow',art:'/assets/art/character-uryu.webp',portrait:ART_PORTRAITS.uryu,basicMultiplier:1,skillMultiplier:1.22,critChance:.1},
-{id:'step',name:'Yoruichi Shihōin',icon:'⚡',title:'Mestra do Shunpo',desc:'Build ágil: crítico e dano crítico favorecem os golpes extras; o conjunto Shunkō acelera a eliminação, mas exige cuidado com a resistência.',atk:10,hp:92,energy:68,skill:'Faísca Shunkō',startSkill:'shunko-strike',art:'/assets/art/character-yoruichi.webp',portrait:ART_PORTRAITS.yoruichi,basicMultiplier:1.08,skillMultiplier:1,critChance:.22}
+{id:'step',name:'Yoruichi Shihōin',icon:'⚡',title:'Mestra do Shunpo',desc:'Build ágil: crítico e dano crítico favorecem os golpes extras; o conjunto Shunkō acelera a eliminação, mas exige cuidado com a resistência.',atk:10,hp:84,energy:68,skill:'Faísca Shunkō',startSkill:'shunko-strike',art:'/assets/art/character-yoruichi.webp',portrait:ART_PORTRAITS.yoruichi,basicMultiplier:1.08,skillMultiplier:1,critChance:.2}
 ];
 const SKILLS=[
 {id:'crescent',name:'Corte Crescente',icon:'🌙',level:1,cost:20,cooldown:8000,multiplier:3.2,desc:'Corte espiritual equilibrado para manter pressão constante.'},
@@ -2259,7 +2259,7 @@ const ENEMIES=[
 ];
 const ENEMY_ART=['/assets/art/hollow-common.webp','/assets/art/hollow-warrior.webp','/assets/art/hollow-gillian.webp','/assets/art/hollow-common.webp','/assets/art/hollow-warrior.webp','/assets/art/hollow-adjuchas.webp','/assets/art/hollow-gillian.webp','/assets/art/hollow-warrior.webp','/assets/art/hollow-adjuchas.webp','/assets/art/hollow-adjuchas.webp','/assets/art/hollow-gillian.webp','/assets/art/hollow-vasto-lorde.webp','/assets/art/hollow-adjuchas.webp','/assets/art/hollow-vasto-lorde.webp','/assets/art/hollow-vasto-lorde.webp'];
 const BOSSES=[
-{name:'Grande Hollow',icon:'☠',hp:1500,xp:180,gold:120,art:'/assets/art/hollow-gillian.webp',skill:'Ruptura Abissal'},
+{name:'Grande Hollow',icon:'☠',hp:2100,xp:180,gold:120,art:'/assets/art/hollow-gillian.webp',skill:'Ruptura Abissal'},
 {name:'Carrasco do Véu',icon:'⚔',hp:1800,xp:320,gold:220,art:'/assets/art/hollow-warrior.webp',skill:'Tempestade Espiritual'},
 {name:'Predador da Lua',icon:'🌑',hp:3200,xp:600,gold:400,art:'/assets/art/hollow-adjuchas.webp',skill:'Eclipse Hollow'},
 {name:'Vasto da Noite',icon:'🌑',hp:5200,xp:850,gold:560,art:'/assets/art/hollow-vasto-lorde.webp',skill:'Maré do Vazio'},
@@ -2600,7 +2600,7 @@ function simulateOfflineState(st,elapsedMs){
   st.energy=Math.min(cls.energy,safeNumber(st.energy,cls.energy,0,cls.energy)+2*speed);
   const basePower=(cls.atk+(st.level-1)*2+st.attackBonus+equipmentPowerFor(st))*(1+(st.prestige||0)*.05+(ranks.offense||0)*.04+equipmentAttackPctFor(st));
   let hit=Math.round(basePower*(cls.basicMultiplier||1))*speed;const offlineCritical=Math.random()<Math.min(.75,(cls.critChance||.12)+equipmentCritChanceFor(st));if(offlineCritical)hit=Math.round(hit*(1.75+equipmentCritDamageFor(st)));
-  if(cls.id==='step'&&tick%2===1)hit+=Math.max(1,Math.round(hit*.5));
+  if(cls.id==='step'&&tick%3===2)hit+=Math.max(1,Math.round(basePower*(cls.basicMultiplier||1))*speed);
   const hpBeforeBasic=Math.max(1,st.enemyHp);
   st.enemyHp-=hit;st.totalDamage+=hit;
   applyLifeStealForState(st,Math.min(hit,hpBeforeBasic),'basic');
@@ -3559,7 +3559,7 @@ function idleTick(){
   const hpMax=maxHp();state.playerHp=Math.min(hpMax,state.playerHp+Math.max(.05,hpMax*.00055));
   state.energy=Math.min(archetype().energy,(state.energy===undefined?archetype().energy:state.energy)+2);
   attack(false,true);
-  if(state.classId==='step'&&++yoruichiStrikeCounter%2===0)attack(false,true);
+  if(state.classId==='step'&&++yoruichiStrikeCounter%3===0)attack(false,true);
   const sk=activeSkill();
   if(!state.pendingRespawnAt&&state.autoSkill&&Date.now()>=(state.skillReadyAt||0)&&state.energy>=sk.cost)useSkill(true,true);
   advanceEnemyCombat(750);
