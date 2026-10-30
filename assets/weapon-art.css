@@ -1,0 +1,33 @@
+/* Artwork upgrade for the Zanpakutō panel */
+.weapon-panel .weapon-visual{
+  height:80px!important;
+  min-height:80px!important;
+  padding:2px 5px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  overflow:hidden!important;
+  border:1px solid #49303d!important;
+  background:
+    radial-gradient(ellipse at 50% 55%,#6b1c302c 0%,transparent 66%),
+    linear-gradient(120deg,#09090f,#11101a 52%,#0a0a10)!important;
+  box-shadow:inset 0 0 18px #0009,0 0 13px #ff40540b;
+}
+.weapon-panel .weapon-visual img{
+  display:block!important;
+  width:100%!important;
+  height:100%!important;
+  max-width:100%!important;
+  object-fit:contain!important;
+  object-position:center!important;
+  filter:drop-shadow(0 0 5px #7dbfff2b) drop-shadow(0 0 8px #f52f4725)!important;
+  transform:scale(1.02);
+  transition:filter .2s ease,transform .2s ease;
+}
+.weapon-panel:hover .weapon-visual img{
+  filter:drop-shadow(0 0 7px #7dbfff48) drop-shadow(0 0 12px #f52f4740)!important;
+  transform:scale(1.05);
+}
+@media(max-width:800px){
+  .weapon-panel .weapon-visual{height:78px!important;min-height:78px!important}
+}

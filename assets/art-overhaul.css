@@ -1,0 +1,138 @@
+/* XBleach — cohesive illustrated asset presentation */
+.art-item-wrap{
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;
+ flex:0 0 58px!important;width:58px!important;height:58px!important;min-width:58px!important;
+ overflow:hidden!important;background:transparent!important;border:0!important;border-radius:8px!important;
+}
+.art-item-icon{
+ display:block!important;width:100%!important;height:100%!important;max-width:100%!important;max-height:100%!important;
+ object-fit:contain!important;image-rendering:auto!important;filter:drop-shadow(0 2px 5px #0008);
+}
+.equipment-slot .art-item-wrap{width:54px!important;height:54px!important;flex-basis:54px!important;min-width:54px!important}
+.inventory-item .art-item-wrap{width:58px!important;height:58px!important;flex-basis:58px!important}
+.skill-art-icon{display:block!important;width:100%!important;height:100%!important;max-width:100%!important;max-height:100%!important;object-fit:contain!important;filter:drop-shadow(0 1px 5px #0008)}
+.quick-skill>span:first-child{
+ display:flex!important;align-items:center!important;justify-content:center!important;overflow:hidden!important;
+ width:46px!important;height:46px!important;flex:0 0 46px!important;font-size:0!important;
+}
+.quick-skill>span:first-child .skill-art-icon{width:100%!important;height:100%!important}
+.skill-option-icon{
+ display:flex!important;align-items:center!important;justify-content:center!important;overflow:hidden!important;
+ width:54px!important;height:54px!important;flex:0 0 54px!important;padding:2px!important;
+}
+.skill-option-icon .skill-art-icon{width:100%!important;height:100%!important}
+#activeSkillIcon{display:inline-flex!important;align-items:center!important;justify-content:center!important;width:38px!important;height:38px!important;overflow:hidden!important;font-size:0!important}
+#activeSkillIcon .skill-art-icon{width:100%!important;height:100%!important}
+.class-portrait{background:#080b13!important;border-color:#493e60!important;filter:drop-shadow(0 2px 6px #0009)}
+.item.inventory-item,.item.equipment-slot{gap:12px}
+.inventory-item .rarity,.equipment-slot .rarity{align-self:center}
+#battleArena.xb-topdown-combat .xb-tilemap{display:none!important}
+#battleArena.xb-topdown-combat{background-position:center 48%!important;background-size:cover!important;background-repeat:no-repeat!important}
+#battleArena.xb-topdown-combat .xb-edge-vignette{position:absolute;inset:0;pointer-events:none;z-index:2;background:linear-gradient(180deg,#05060b40 0%,transparent 26%,transparent 70%,#04050a78 100%)}
+#battleArena.xb-topdown-combat .scene-top,#battleArena.xb-topdown-combat .scene-bottom{z-index:80!important}
+#battleArena.xb-topdown-combat .xb-player-plate{z-index:55!important}
+.classcard .class-portrait{object-fit:cover!important;object-position:center top!important}
+@media(max-width:560px){
+ .art-item-wrap{width:48px!important;height:48px!important;flex-basis:48px!important;min-width:48px!important}
+ .inventory-item .art-item-wrap{width:48px!important;height:48px!important;flex-basis:48px!important}
+ .quick-skill>span:first-child{width:38px!important;height:38px!important;flex-basis:38px!important}
+ .skill-option-icon{width:44px!important;height:44px!important;flex-basis:44px!important}
+}
+/* In-world iconography */
+.ui-art-icon{display:block;width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 2px 5px #0009)}
+.nav button{display:flex!important;align-items:center!important;gap:10px!important;text-align:left!important}
+.nav-art-icon{width:26px!important;height:26px!important;flex:0 0 26px!important;object-fit:contain!important}
+.nav-art-label{flex:1;min-width:0}
+.daily-reward-icon{display:flex!important;align-items:center!important;justify-content:center!important;overflow:hidden!important}
+.daily-reward-icon .reward-chest-art{width:86px;height:86px;object-fit:contain}
+.live-stat-icon{display:flex!important;align-items:center!important;justify-content:center!important;overflow:hidden!important}
+.live-stat-icon .ui-art-icon{width:34px;height:34px;object-fit:contain}
+.quest-icon{display:flex!important;align-items:center!important;justify-content:center!important;overflow:hidden!important}
+.quest-icon .ui-art-icon{width:38px;height:38px;object-fit:contain}
+.achievement-icon{display:flex!important;align-items:center!important;justify-content:center!important;overflow:hidden!important}
+.achievement-icon .ui-art-icon{width:46px;height:46px;object-fit:contain}
+.rarity{display:inline-flex!important;align-items:center!important;gap:4px!important}
+.rarity-gem{width:23px!important;height:23px!important;flex:0 0 23px!important;object-fit:contain!important;vertical-align:middle!important;filter:drop-shadow(0 1px 4px #0008)}
+
+.map-thumb.has-zone-art{background-color:#070a12!important;background-repeat:no-repeat!important;background-position:center!important;background-size:cover!important;box-shadow:inset 0 0 0 1px #aebfdf33,0 2px 8px #0007}
+.loot-strip>span{display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:4px!important}
+.loot-strip .loot-art-icon{display:block!important;width:40px!important;height:40px!important;object-fit:contain!important;filter:drop-shadow(0 2px 5px #0009)}
+.side-resources>span{display:flex!important;align-items:center!important;gap:6px!important}
+.side-resource-art{width:21px!important;height:21px!important;flex:0 0 21px!important;object-fit:contain!important}
+.side-count-art{width:25px!important;height:25px!important;object-fit:contain!important;display:block!important}
+.equipment-grid>div{display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:3px!important;font-size:0!important;min-height:68px!important;overflow:hidden!important}
+.side-slot-art{display:block!important;width:42px!important;height:42px!important;object-fit:contain!important;margin:auto!important;filter:drop-shadow(0 2px 5px #0008)}
+.equipment-grid>div small{font-size:.62rem!important;line-height:1.2!important;text-align:center!important}
+.evolution-track .evolution-step>b{display:flex!important;align-items:center!important;justify-content:center!important;width:34px!important;height:34px!important;font-size:0!important}
+.evolution-art-icon{width:32px!important;height:32px!important;object-fit:contain!important;filter:drop-shadow(0 2px 6px #0008)}
+@media(max-width:560px){
+ .loot-strip .loot-art-icon{width:31px!important;height:31px!important}
+ .side-slot-art{width:34px!important;height:34px!important}
+ .evolution-track .evolution-step>b{width:28px!important;height:28px!important}
+ .evolution-art-icon{width:27px!important;height:27px!important}
+}
+
+/* Final polish after visual QA: use transparent, painted character and Hollow assets. */
+.class-portrait{
+  object-fit:contain!important;
+  object-position:center center!important;
+  padding:0!important;
+  background:radial-gradient(ellipse at 50% 58%,#37243b55,transparent 68%),#080b13!important;
+}
+.player-panel .portrait-real,
+.inline-portrait img,
+#miniPortraitReal,
+#playerPortraitReal{
+  object-fit:contain!important;
+  object-position:center center!important;
+  background:transparent!important;
+  image-rendering:auto!important;
+}
+#battleArena.xb-topdown-combat #heroArtReal,
+#battleArena.xb-topdown-combat #heroArtFallback{
+  object-fit:contain!important;
+  object-position:center bottom!important;
+  background:transparent!important;
+  border:0!important;
+  image-rendering:auto!important;
+}
+#battleArena.xb-topdown-combat #enemyPack .enemy-art-real,
+#battleArena.xb-topdown-combat #enemyPack .enemy-art-fallback{
+  object-fit:contain!important;
+  object-position:center bottom!important;
+  background:transparent!important;
+  border:0!important;
+  image-rendering:auto!important;
+}
+.evolution-track .evolution-step>b{
+  width:36px!important;height:36px!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  overflow:hidden!important;font-size:0!important;
+}
+.evolution-art-icon{
+  display:block!important;width:100%!important;height:100%!important;
+  object-fit:contain!important;object-position:center!important;
+  filter:drop-shadow(0 2px 5px #0009);
+}
+.loot-art-icon{display:block;width:44px;height:40px;object-fit:contain;flex:0 0 44px;filter:drop-shadow(0 2px 5px #0009)}
+.loot-strip>span{display:flex!important;align-items:center!important;justify-content:center!important;gap:5px!important;font-size:0!important;min-width:0!important}
+.loot-strip>span small{font-size:.6rem!important;align-self:flex-end!important}
+.side-resource-art{width:21px;height:21px;object-fit:contain;flex:0 0 21px}
+.side-resources>span{display:inline-flex!important;align-items:center!important;gap:5px!important}
+.side-count-art{width:22px;height:22px;object-fit:contain;vertical-align:middle}
+.side-slot-art{width:38px;height:38px;object-fit:contain;display:block;margin:0 auto 3px;filter:drop-shadow(0 2px 4px #0008)}
+.equipment-grid>div{display:flex!important;align-items:center!important;justify-content:center!important;flex-direction:column!important;gap:3px!important;font-size:0!important}
+.equipment-grid>div small{font-size:.58rem!important;line-height:1.15!important;text-align:center!important}
+.skill-icon .skill-art-icon,
+.quick-skill .skill-art-icon,
+.skill-option-icon .skill-art-icon,
+#activeSkillIcon .skill-art-icon{
+  image-rendering:auto!important;
+}
+.skill-icon small{display:block!important;position:relative!important;z-index:2!important;white-space:nowrap!important}
+.map-thumb.has-zone-art{font-size:0!important;box-shadow:inset 0 0 0 1px #ffffff1e,0 2px 8px #0008!important}
+@media(max-width:560px){
+ .evolution-track .evolution-step>b{width:30px!important;height:30px!important}
+ .loot-art-icon{width:35px;height:33px;flex-basis:35px}
+ .side-slot-art{width:30px;height:30px}
+}
