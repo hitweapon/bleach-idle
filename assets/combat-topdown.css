@@ -459,3 +459,14 @@ button{transition:transform .16s ease,border-color .16s ease,background .16s eas
  .hunt-reward-pills span{font-size:.56rem;padding:4px 5px}
  #battleArena.xb-topdown-combat{border-radius:12px!important}
 }
+
+/* Survival: clear green life-steal feedback and dedicated leech talent */
+#battleArena.xb-topdown-combat #combatFx .pop-heal{left:44%!important;top:49%!important;color:#9affd2!important;border:1px solid #58e9b2a8!important;background:#082d21e8!important;text-shadow:0 0 14px #20ffa080!important;box-shadow:0 4px 18px #00e79b1c!important}
+#page-character .talent-tree-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+#page-character .talent-node:has([data-talent-upgrade="leech"]){background:linear-gradient(145deg,#102018,#0b0a11);border-color:#2c5746}
+#page-character .talent-node:has([data-talent-upgrade="leech"]) .talent-node-icon{color:#a0f5ce;background:#102d22;border-color:#326f55}
+#page-character .talent-node:has([data-talent-upgrade="leech"]) .talent-rank-bar span.filled{background:linear-gradient(90deg,#1b9a69,#8cf3bf);box-shadow:0 0 8px #27c98744}
+#page-character .side-stat:has(#sideLifesteal){border-color:#2d5b48;background:linear-gradient(90deg,#10231b,#0b0a11)}
+#sideLifesteal{color:#a0f5ce!important}
+@media(max-width:1050px){#page-character .talent-tree-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){#page-character .talent-tree-grid{grid-template-columns:1fr}}
