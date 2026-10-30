@@ -2131,6 +2131,16 @@ button.quick-skill.is-selected:before{content:"ATIVA";position:absolute;top:-7px
  <div class="hunt-wave-track"><span id="huntWaveProgress" style="width:10%"></span></div>
  <div class="hunt-wave-foot"><span id="huntWaveDescription">Derrote os Hollows e avance pelas ondas.</span><strong id="huntCycleCount">CICLO 0</strong></div>
 </div>
+<section class="hunt-reward-preview" id="huntRewardPreview" aria-live="polite">
+ <div class="hunt-reward-art"><img id="huntRewardArt" src="/assets/hollow-gillian.webp" alt="Chefe da próxima caçada" loading="lazy" decoding="async"></div>
+ <div class="hunt-reward-copy">
+  <small id="huntRewardStatus">PRÓXIMO ALVO DE ELITE</small>
+  <strong id="huntRewardName">Grande Hollow</strong>
+  <span id="huntRewardMeta">Derrote o chefe para concluir a caçada espiritual.</span>
+  <div class="hunt-reward-pills"><span id="huntRewardXp">+180 EXP</span><span id="huntRewardGold">+120 ouro</span><span id="huntRewardDrop">1 drop garantido</span></div>
+ </div>
+ <div class="hunt-reward-seal"><span>☠</span><small>RECOMPENSA<br>DE CHEFE</small></div>
+</section>
 <div class="battle-scene" id="battleArena" data-map="ruins">
 <div class="scene-top"><div class="scene-location"><span class="scene-emblem">卍</span><div><small>CAMPO DE BATALHA</small><strong id="currentZoneTitle">Ruínas de Karakura</strong><span>Zona <b id="currentZoneNumber">1</b> · Estágio <b id="stage">1</b></span></div></div><div class="scene-stage"><span>☠</span><div><small>ESTÁGIO ATUAL</small><strong id="zoneTitle">Ruínas sob a lua</strong><span id="enemyLevel">Nível 1 · inimigo comum</span></div></div></div>
 <div class="scene-moon"></div><div class="scene-gate gate-one"></div><div class="scene-gate gate-two"></div><div class="scene-ground"></div>
@@ -3323,6 +3333,16 @@ function updateCombatHUD(){
  textOf('huntWaveBadge',state.bossActive?(state.bossChallengeMode?'CHEFE EXTRA':'CHEFE FINAL'):wave>=8?'QUASE LÁ':'CAÇADA AFK');
  textOf('huntWaveDescription',state.bossActive?(state.bossChallengeMode?'Desafio extra: vença e retome sua onda.':'Derrote o chefe para concluir o ciclo espiritual.'):'Mais '+Math.max(0,10-wave)+' '+(Math.max(0,10-wave)===1?'onda':'ondas')+' até o chefe desta caçada.');
  textOf('huntCycleCount','CICLO '+(state.huntCycles||0));widthOf('huntWaveProgress',wave*10);
+ const featuredBoss=state.bossActive?enemy():BOSSES[Math.min(BOSSES.length-1,Math.floor(state.bossKills||0))];
+ const rewardArt=document.getElementById('huntRewardArt');
+ if(rewardArt&&featuredBoss?.art){if(rewardArt.getAttribute('src')!==featuredBoss.art)rewardArt.setAttribute('src',featuredBoss.art);rewardArt.alt=featuredBoss.name;}
+ textOf('huntRewardName',featuredBoss?.name||'Chefe espiritual');
+ textOf('huntRewardStatus',state.bossActive?(state.bossChallengeMode?'DESAFIO EXTRA ATIVO':'CHEFE EM COMBATE'):'PRÓXIMO ALVO DE ELITE');
+ textOf('huntRewardMeta',state.bossActive?'Derrote este chefe para receber suas recompensas.':'Chegue à onda 10 para enfrentar o chefe e garantir um item.');
+ textOf('huntRewardXp','+'+Number(featuredBoss?.xp||0).toLocaleString('pt-BR')+' EXP');
+ textOf('huntRewardGold','+'+Number(featuredBoss?.gold||0).toLocaleString('pt-BR')+' ouro');
+ textOf('huntRewardDrop','1 drop garantido');
+ document.getElementById('huntRewardPreview')?.classList.toggle('is-boss-active',!!state.bossActive);
  const arena=document.querySelector('#battleArena');if(arena){arena.dataset.map=zone.id;arena.dataset.character=state.classId;arena.dataset.boss=state.bossActive?'true':'false';arena.classList.toggle('is-respawning',state.pendingRespawnAt>Date.now());arena.classList.toggle('is-player-defeated',state.playerDownUntil>Date.now())}
  const quickMap={crescent:'Q','astral-burst':'Q','flash-step':'W','spirit-pierce':'W','moon-fang':'E','bankai-wave':'E','quincy-arrow':'Q','reishi-volley':'W','blue-lance':'E','shunko-strike':'Q','thunderclap':'W','raijin-burst':'E'};
  document.querySelectorAll('[data-skill-quick]').forEach(btn=>{const id=btn.dataset.skillQuick,sk=SKILLS.find(x=>x.id===id),unlocked=!!sk&&state.level>=sk.level;btn.disabled=!unlocked;btn.classList.toggle('is-selected',!!sk&&skill.id===id);btn.setAttribute('aria-pressed',String(!!sk&&skill.id===id));if(sk){btn.title=unlocked?sk.name+' · custo '+sk.cost+' · '+(sk.cooldown/1000)+'s recarga':'Desbloqueia no nível '+sk.level;const small=btn.querySelector('small');if(small)small.textContent=quickMap[id]+' · '+(unlocked?'NV. '+sk.level:'🔒 '+sk.level)}});
