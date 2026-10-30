@@ -262,3 +262,23 @@
  #battleArena.xb-topdown-combat #enemyPack .enemy-large{left:80%!important;top:42%!important;width:82px!important;height:125px!important}
  #battleArena.xb-topdown-combat #enemyPack .enemy-right{left:69%!important;top:60%!important}
 }
+
+/* Baiak-inspired hunt report: compact progression metrics without altering saves */
+#page-battle .hunt-analyzer{border:1px solid #3c2731;border-radius:9px;background:linear-gradient(135deg,#110d15,#09090f);overflow:hidden}
+#page-battle .hunt-analyzer>summary{display:flex;align-items:center;justify-content:space-between;gap:12px;list-style:none;cursor:pointer;padding:12px 14px;color:#f8eaf0}
+#page-battle .hunt-analyzer>summary::-webkit-details-marker{display:none}
+#page-battle .hunt-analyzer>summary>span:first-child{display:grid;gap:3px;min-width:0}
+#page-battle .hunt-analyzer>summary b{font-size:.73rem;letter-spacing:.1em;color:#ff9aa5}
+#page-battle .hunt-analyzer>summary small{font-size:.72rem;color:#a99aa7;font-weight:500;letter-spacing:0}
+#page-battle .hunt-analyzer-open{font-size:.64rem;font-weight:900;letter-spacing:.07em;color:#f9bdc6;white-space:nowrap}
+#page-battle .hunt-analyzer[open] .hunt-analyzer-open{font-size:0}
+#page-battle .hunt-analyzer[open] .hunt-analyzer-open:after{content:"FECHAR −";font-size:.64rem}
+#page-battle .hunt-analyzer-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding:0 12px 12px}
+#page-battle .hunt-metric{min-width:0;padding:10px 11px;border:1px solid #30242e;background:#0d0b12;border-radius:7px}
+#page-battle .hunt-metric small,#page-battle .hunt-metric em{display:block;color:#9e90a0;font-size:.59rem;letter-spacing:.065em;font-style:normal;font-weight:800}
+#page-battle .hunt-metric strong{display:block;margin:5px 0 3px;font:700 1.15rem/1.15 Georgia,serif;color:#fff;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
+#page-battle .hunt-metric em{letter-spacing:0;font-size:.68rem;font-weight:600;color:#ffb8c0}
+#page-battle .hunt-analyzer-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;border-top:1px solid #2b2029;padding:9px 12px;color:#8d818c;font-size:.68rem;line-height:1.45}
+#page-battle .hunt-analyzer-foot button{flex:0 0 auto;font-size:.67rem;min-height:32px;padding:6px 9px}
+@media(max-width:1000px){#page-battle .hunt-analyzer-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:520px){#page-battle .hunt-analyzer>summary{align-items:flex-start;padding:11px}#page-battle .hunt-analyzer-foot{align-items:flex-start;flex-direction:column}#page-battle .hunt-analyzer-foot button{width:100%}}

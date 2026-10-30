@@ -2109,6 +2109,18 @@ button.quick-skill.is-selected:before{content:"ATIVA";position:absolute;top:-7px
  <div class="live-stat"><span class="live-stat-icon">🎯</span><div><small>PRÓXIMO MARCO</small><strong id="nextMilestone">5 derrotas</strong><em id="nextMilestoneLabel">recompensa de estágio</em></div></div>
  <div class="live-status" id="liveStatus" role="status" aria-live="polite"><span class="live-status-dot"></span><span id="liveStatusText">COMBATE ATIVO</span></div>
 </div>
+<details class="hunt-analyzer" id="huntAnalyzer">
+ <summary><span><b>📊 ANALISADOR DE CAÇADA</b><small>Rendimento, derrotas e itens desta sessão</small></span><span class="hunt-analyzer-open">ABRIR ＋</span></summary>
+ <div class="hunt-analyzer-grid">
+  <div class="hunt-metric"><small>TEMPO DE CAÇADA</small><strong id="huntElapsed">0s</strong><em>nesta sessão</em></div>
+  <div class="hunt-metric"><small>INIMIGOS DERROTADOS</small><strong id="huntKills">0</strong><em id="huntKillsRate">0 inimigos/h</em></div>
+  <div class="hunt-metric"><small>EXPERIÊNCIA OBTIDA</small><strong id="huntXp">0</strong><em id="huntXpRate">0 EXP/h</em></div>
+  <div class="hunt-metric"><small>OURO OBTIDO</small><strong id="huntGold">0</strong><em id="huntGoldRate">0 ouro/h</em></div>
+  <div class="hunt-metric"><small>ITENS ENCONTRADOS</small><strong id="huntDrops">0</strong><em>drops desta caçada</em></div>
+  <div class="hunt-metric"><small>DERROTAS DO JOGADOR</small><strong id="huntDeaths">0</strong><em>recuperações necessárias</em></div>
+ </div>
+ <div class="hunt-analyzer-foot"><span>O relatório recomeça ao recarregar a página ou quando você reinicia a análise; seu progresso salvo não é alterado.</span><button id="resetHuntAnalyzer" type="button">↻ Reiniciar análise</button></div>
+</details>
 <div class="battle-scene" id="battleArena" data-map="ruins">
 <div class="scene-top"><div class="scene-location"><span class="scene-emblem">卍</span><div><small>CAMPO DE BATALHA</small><strong id="currentZoneTitle">Ruínas de Karakura</strong><span>Zona <b id="currentZoneNumber">1</b> · Estágio <b id="stage">1</b></span></div></div><div class="scene-stage"><span>☠</span><div><small>ESTÁGIO ATUAL</small><strong id="zoneTitle">Ruínas sob a lua</strong><span id="enemyLevel">Nível 1 · inimigo comum</span></div></div></div>
 <div class="scene-moon"></div><div class="scene-gate gate-one"></div><div class="scene-gate gate-two"></div><div class="scene-ground"></div>
@@ -2306,6 +2318,7 @@ questClaims:{},achievementsClaimed:{},settings:{speed:1,showDamage:true,reducedM
 let offlineSummary=null;
 let state=loadState(),toastTimer,premiumIchigoUrl='';
 let sessionStartedAt=Date.now(),sessionStartKills=state.kills||0,sessionStartDamage=state.totalDamage||0;
+let sessionHuntXp=0,sessionHuntGold=0,sessionLootDrops=0,sessionDeaths=0;
 function safeNumber(value,fallback=0,min=0,max=1e9){const n=Number(value);return Number.isFinite(n)?Math.min(max,Math.max(min,n)):fallback}
 function itemSlot(item){if(item&&['weapon','armor','accessory','relic'].includes(item.slot))return item.slot;const n=String(item?.name||'').toLowerCase();if(n.includes('lâmina'))return 'weapon';if(n.includes('faixa')||n.includes('manto'))return 'armor';if(n.includes('amuleto'))return 'accessory';return 'relic'}
 function itemPower(item){return safeNumber(item?.bonus, item?.name?.includes('Lâmina')?3:item?.name?.includes('Pedra')?4:item?.name?.includes('Amuleto')?2:item?.name?.includes('Fragmento')?1:0,0,100000)}
@@ -2739,20 +2752,22 @@ function awardXp(n){
 function defeat(){
  const e=enemy(),wasBoss=!!state.bossActive,beforeKills=state.kills,waveCount=wasBoss?1:3;
  const xpGain=e.xp*waveCount,goldGain=e.gold*waveCount;
+ sessionHuntXp+=xpGain;sessionHuntGold+=goldGain;
  state.kills+=waveCount;state.gold+=goldGain;state.totalGold=(state.totalGold||0)+goldGain;
  awardXp(xpGain);
  if(wasBoss){
-  state.bossKills=(state.bossKills||0)+1;state.bossActive=false;state.stage++;state.gold+=20;state.totalGold=(state.totalGold||0)+20;
+  state.bossKills=(state.bossKills||0)+1;state.bossActive=false;state.stage++;state.gold+=20;state.totalGold=(state.totalGold||0)+20;sessionHuntGold+=20;
   log('🏆 <strong>CHEFE DERROTADO: '+e.name+'!</strong> +'+xpGain+' EXP · +'+(goldGain+20)+' ouro.');
   toast('CHEFE DERROTADO! Recompensa épica! 🏆');
   const drop={...rollLoot(true),id:'boss-'+Date.now()+'-'+Math.random()};
+  sessionLootDrops++;
   state.inventory.push(drop);log('👑 <strong>Drop de chefe:</strong> '+drop.name+'.');
   showFloatingText('DROP DE CHEFE!','pop-loot');
   if(state.settings.autoEquip&&isUpgradeForSlot(drop))equipItem(state.inventory.length-1,true);
  }else{
   log('☯ <strong>3 Hollows purificados!</strong> +'+xpGain+' EXP · +'+goldGain+' ouro.');
   if(Math.floor(state.kills/9)>Math.floor(beforeKills/9)){
-   state.stage++;state.gold+=15;state.totalGold=(state.totalGold||0)+15;
+   state.stage++;state.gold+=15;state.totalGold=(state.totalGold||0)+15;sessionHuntGold+=15;
    log('🧭 <strong>NOVO ESTÁGIO '+state.stage+'!</strong> +15 ouro por avanço.');
    showFloatingText('ESTÁGIO '+state.stage+'!','pop-stage');
    toast('Estágio '+state.stage+' desbloqueado! ⚔️');
@@ -2760,6 +2775,7 @@ function defeat(){
   const dropChance=state.kills<=18?.18:.12;
   if(Math.random()<dropChance||state.kills%24===0){
    const item={...rollLoot(),id:'drop-'+Date.now()+'-'+Math.random(),equipped:false};
+   sessionLootDrops++;
    state.inventory.push(item);log('🎁 <strong>DROP!</strong> '+item.name+'.');showFloatingText('ITEM ENCONTRADO!','pop-loot');toast('Item encontrado: '+item.name+' 🎁');
    if(state.settings.autoEquip&&isUpgradeForSlot(item))equipItem(state.inventory.length-1,true);
   }
@@ -2771,7 +2787,7 @@ function defeat(){
 }
 
 function playerDefeated(now=Date.now()){
- const wasBoss=!!state.bossActive;state.playerHp=0;state.playerDownUntil=now+6500;state.pendingRespawnAt=0;
+ const wasBoss=!!state.bossActive;sessionDeaths++;state.playerHp=0;state.playerDownUntil=now+6500;state.pendingRespawnAt=0;
  state.bossActive=false;state.enemyHp=maxEnemyHpFor(state);state.enemyAttackMeter=0;showFloatingText('DERROTADO','pop-player-hit');
  log('💀 <strong>VOCÊ FOI DERROTADO.</strong> '+(wasBoss?'O desafio do chefe falhou; ele precisa ser iniciado novamente.':'Nenhuma recompensa desta leva. Você se recupera em alguns segundos.'));
  toast(wasBoss?'Você perdeu o desafio do chefe. Recupere-se e tente novamente.':'Você foi derrotado! Recuperação em 6 segundos.');
@@ -3152,6 +3168,7 @@ document.querySelector('#bossChallenge').addEventListener('click',()=>{
  const required=5+(state.bossKills||0)*5;if(state.stage<required){toast('Continue avançando: este chefe desbloqueia no estágio '+required+'.');return}state.bossActive=true;state.pendingRespawnAt=0;state.enemyHp=enemyMaxHp();state.enemyAttackMeter=0;state.energy=Math.max(state.energy,20);goto('battle');render();save();toast('Desafio de chefe iniciado: '+enemy().name+'.');
 });
 document.querySelector('#clearLog').addEventListener('click',()=>{const feed=document.querySelector('#combatLog');if(feed)feed.innerHTML='<div class="feeditem">Registro limpo. A caçada continua…</div>'});
+document.querySelector('#resetHuntAnalyzer')?.addEventListener('click',()=>{sessionStartedAt=Date.now();sessionStartKills=state.kills||0;sessionStartDamage=state.totalDamage||0;sessionHuntXp=0;sessionHuntGold=0;sessionLootDrops=0;sessionDeaths=0;updateCombatHUD();toast('Análise reiniciada. Seu progresso continua intacto.')});
 document.querySelector('#claimQuest').addEventListener('click',()=>claimQuest('purify10'));
 document.querySelector('#inventorySearch').addEventListener('input',()=>renderEquipment());
 document.querySelector('#inventoryTypeFilter').addEventListener('change',()=>renderEquipment());
@@ -3194,6 +3211,15 @@ function updateCombatHUD(){
  const sessionDamage=Math.max(0,(state.totalDamage||0)-sessionStartDamage),sessionKills=Math.max(0,state.kills-sessionStartKills);
  textOf('sessionDps',Math.floor(sessionDamage).toLocaleString('pt-BR'));textOf('sessionDpsLabel','DPS estimado: '+Math.floor(sessionDamage/elapsed).toLocaleString('pt-BR'));
  textOf('sessionKills',sessionKills.toLocaleString('pt-BR'));textOf('sessionKillsLabel','em '+formatDuration(elapsed));
+ textOf('huntElapsed',formatDuration(elapsed));
+ textOf('huntKills',sessionKills.toLocaleString('pt-BR'));
+ textOf('huntKillsRate',Math.floor(sessionKills*3600/elapsed).toLocaleString('pt-BR')+' inimigos/h');
+ textOf('huntXp',Math.floor(sessionHuntXp).toLocaleString('pt-BR'));
+ textOf('huntXpRate',Math.floor(sessionHuntXp*3600/elapsed).toLocaleString('pt-BR')+' EXP/h');
+ textOf('huntGold',Math.floor(sessionHuntGold).toLocaleString('pt-BR'));
+ textOf('huntGoldRate',Math.floor(sessionHuntGold*3600/elapsed).toLocaleString('pt-BR')+' ouro/h');
+ textOf('huntDrops',sessionLootDrops.toLocaleString('pt-BR'));
+ textOf('huntDeaths',sessionDeaths.toLocaleString('pt-BR'));
  const milestone=(Math.floor(state.kills/9)+1)*9;textOf('nextMilestone',milestone+' derrotas');textOf('nextMilestoneLabel',Math.max(0,milestone-state.kills)+' até o avanço de estágio');
  const arena=document.querySelector('#battleArena');if(arena){arena.dataset.map=zone.id;arena.dataset.character=state.classId;arena.dataset.boss=state.bossActive?'true':'false';arena.classList.toggle('is-respawning',state.pendingRespawnAt>Date.now());arena.classList.toggle('is-player-defeated',state.playerDownUntil>Date.now())}
  const quickMap={crescent:'Q','astral-burst':'Q','flash-step':'W','spirit-pierce':'W','moon-fang':'E','bankai-wave':'E','quincy-arrow':'Q','reishi-volley':'W','blue-lance':'E','shunko-strike':'Q','thunderclap':'W','raijin-burst':'E'};
