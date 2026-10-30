@@ -115,12 +115,17 @@
 #battleArena.xb-topdown-combat #enemyPack .enemy-large .enemy-art-wrap{height:144px!important;flex-basis:144px!important}
 #battleArena.xb-topdown-combat #enemyPack .enemy-art-real,
 #battleArena.xb-topdown-combat #enemyPack .enemy-art-fallback{
-  position:relative!important;display:block!important;visibility:visible!important;opacity:1!important;
-  width:78px!important;height:112px!important;min-width:0!important;max-width:none!important;max-height:none!important;
+  position:absolute!important;left:50%!important;bottom:0!important;transform:translateX(-50%)!important;
+  display:block!important;width:78px!important;height:112px!important;min-width:0!important;max-width:none!important;max-height:none!important;
   object-fit:contain!important;object-position:center bottom!important;overflow:visible!important;
   filter:drop-shadow(0 6px 5px #000a) drop-shadow(0 0 6px #c4b4ff36)!important;
   animation:xbTileMobIdle 2.4s ease-in-out infinite!important;
+  pointer-events:none!important;
 }
+#battleArena.xb-topdown-combat #enemyPack .enemy-art-real:not(.is-loaded){visibility:hidden!important;opacity:0!important}
+#battleArena.xb-topdown-combat #enemyPack .enemy-art-real.is-loaded{z-index:4!important;visibility:visible!important;opacity:1!important}
+#battleArena.xb-topdown-combat #enemyPack .enemy-art-fallback{z-index:2!important}
+#battleArena.xb-topdown-combat #enemyPack .enemy-art-fallback.asset-hidden{display:none!important;visibility:hidden!important;opacity:0!important}
 #battleArena.xb-topdown-combat #enemyPack .enemy-large .enemy-art-real,
 #battleArena.xb-topdown-combat #enemyPack .enemy-large .enemy-art-fallback{width:112px!important;height:145px!important;filter:drop-shadow(0 7px 6px #000c) drop-shadow(0 0 10px #d9bbff66)!important}
 #battleArena.xb-topdown-combat #enemyPack .enemy-health{
