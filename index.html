@@ -2391,7 +2391,7 @@ function normalizeState(raw){
  out.playerDownUntil=safeNumber(src.playerDownUntil,0,0,1e15);out.enemyAttackMeter=safeNumber(src.enemyAttackMeter,0,0,100000);
  out.enemyHp=safeNumber(src.enemyHp,maxEnemyHpFor(out),0,1e12);
  if(typeof src.playerHp!=="number")out.enemyHp=maxEnemyHpFor(out);
- if(out.huntWave===10&&!out.bossChallengeMode&&!src.bossActive)out.bossActive=true;
+ if(out.huntWave===10&&!out.bossChallengeMode&&!src.bossActive){out.bossActive=true;out.enemyHp=maxEnemyHpFor(out)}
  if(out.playerHp<=0&&out.playerDownUntil<=Date.now())out.playerHp=Math.max(1,Math.round(playerHpLimit*.55));
  out.lastSeen=safeNumber(src.lastSeen,Date.now(),0,1e15);
  return out;
@@ -2465,7 +2465,7 @@ function simulateOfflineState(st,elapsedMs){
   }
  }
  const gainedKills=st.kills-startKills,gainedXp=st.totalXp-startXp,gainedGold=st.totalGold-startGold;
- if(gainedKills>0||gainedXp>0||gainedGold>0||st.inventory.length>startInventory){
+ if(gainedKills>0||gainedXp>0||gainedGold>0||st.inventory.length>startInventory||offlineDeaths>0){
   offlineSummary={seconds,kills:gainedKills,xp:gainedXp,gold:gainedGold,drops:Math.max(0,st.inventory.length-startInventory),bosses:Math.max(0,(st.bossKills||0)-startBossKills),deaths:offlineDeaths,cycles:Math.max(0,(st.huntCycles||0)-startCycles)};
  }
  st.lastSeen=Date.now();st.bestStage=Math.max(st.bestStage,st.stage);
@@ -3100,7 +3100,7 @@ function renderBestiary(){
 }
 function renderOfflineReport(){
  const panel=document.querySelector('#offlineReportPanel');if(!panel)return;
- if(!offlineSummary||(!offlineSummary.kills&&!offlineSummary.xp&&!offlineSummary.gold&&!offlineSummary.drops)){panel.hidden=true;return}
+ if(!offlineSummary||(!offlineSummary.kills&&!offlineSummary.xp&&!offlineSummary.gold&&!offlineSummary.drops&&!offlineSummary.deaths)){panel.hidden=true;return}
  panel.hidden=false;textOf('offlineDuration','Simulação de até 8 horas · tempo calculado: '+formatDuration(offlineSummary.seconds||0));
  textOf('offlineKills',Number(offlineSummary.kills||0).toLocaleString('pt-BR'));textOf('offlineXp',Number(offlineSummary.xp||0).toLocaleString('pt-BR'));
  textOf('offlineGold',Number(offlineSummary.gold||0).toLocaleString('pt-BR'));textOf('offlineDrops',Number(offlineSummary.drops||0).toLocaleString('pt-BR'));
