@@ -493,3 +493,126 @@ button{transition:transform .16s ease,border-color .16s ease,background .16s eas
 #resumeProgressBtn:disabled{opacity:.45;cursor:not-allowed}
 @media(max-width:720px){.farm-control{grid-template-columns:1fr}.farm-control-actions{grid-template-columns:1fr 1fr}}
 @media(max-width:430px){.farm-control-actions{grid-template-columns:1fr}}
+
+
+/* Live battle-art correction: larger, class-correct hero and separated enemies. */
+#battleArena.xb-topdown-combat:before{
+  background:
+    linear-gradient(180deg,#05071366 0%,#07091422 28%,#07091410 55%,#03050bbd 100%),
+    radial-gradient(ellipse at 18% 78%,#287bc536 0%,transparent 38%),
+    radial-gradient(ellipse at 77% 72%,#ce3f5b34 0%,transparent 42%) !important;
+}
+#battleArena.xb-topdown-combat #heroArtReal,
+#battleArena.xb-topdown-combat #heroArtFallback{
+  left:3.2%!important;
+  right:auto!important;
+  top:auto!important;
+  bottom:3.5%!important;
+  width:clamp(132px,17vw,202px)!important;
+  min-width:0!important;
+  max-width:none!important;
+  height:clamp(180px,29vw,270px)!important;
+  min-height:0!important;
+  max-height:none!important;
+  object-fit:contain!important;
+  object-position:center bottom!important;
+  overflow:visible!important;
+  filter:drop-shadow(0 10px 10px #000d) drop-shadow(0 0 16px #8bbdff38)!important;
+}
+#battleArena.xb-topdown-combat #heroArtReal.is-loaded{
+  display:block!important;
+  visibility:visible!important;
+  opacity:1!important;
+  z-index:36!important;
+}
+#battleArena.xb-topdown-combat #heroArtFallback.asset-hidden{
+  display:none!important;
+  visibility:hidden!important;
+  opacity:0!important;
+}
+#battleArena.xb-topdown-combat #enemyPack .enemy-small:not(.enemy-right){
+  left:51.5%!important;
+  top:56%!important;
+  right:auto!important;
+  bottom:auto!important;
+  width:92px!important;
+  height:126px!important;
+}
+#battleArena.xb-topdown-combat #enemyPack .enemy-large{
+  left:66%!important;
+  top:39%!important;
+  right:auto!important;
+  bottom:auto!important;
+  width:144px!important;
+  height:184px!important;
+}
+#battleArena.xb-topdown-combat #enemyPack .enemy-right{
+  left:84%!important;
+  top:55%!important;
+  right:auto!important;
+  bottom:auto!important;
+  width:92px!important;
+  height:126px!important;
+}
+#battleArena.xb-topdown-combat #enemyPack .enemy-small .enemy-art-wrap{
+  width:100%!important;
+  height:118px!important;
+  flex-basis:118px!important;
+}
+#battleArena.xb-topdown-combat #enemyPack .enemy-large .enemy-art-wrap{
+  width:100%!important;
+  height:154px!important;
+  flex-basis:154px!important;
+}
+#battleArena.xb-topdown-combat #enemyPack .enemy-art-real,
+#battleArena.xb-topdown-combat #enemyPack .enemy-art-fallback{
+  filter:drop-shadow(0 9px 8px #000d) drop-shadow(0 0 12px #d3c1ff4d)!important;
+}
+#battleArena.xb-topdown-combat #enemyPack .enemy-large .enemy-art-real,
+#battleArena.xb-topdown-combat #enemyPack .enemy-large .enemy-art-fallback{
+  width:132px!important;
+  height:160px!important;
+}
+#battleArena.xb-topdown-combat #enemyPack .enemy-small .enemy-health{
+  width:78px!important;
+}
+#battleArena.xb-topdown-combat #enemyPack .enemy-large .enemy-health{
+  width:92px!important;
+}
+#battleArena.xb-topdown-combat .xb-player-plate{
+  left:9%!important;
+  bottom:42%!important;
+  width:clamp(118px,15vw,154px)!important;
+  transform:none!important;
+  border-color:#f4a3bf99!important;
+  box-shadow:0 6px 18px #0009,0 0 14px #bf4e7c23!important;
+}
+#battleArena.xb-topdown-combat .xb-world-caption{
+  border-color:#e28bb688!important;
+  background:linear-gradient(90deg,#120c1aeb,#080a10d9)!important;
+}
+@media(max-width:800px){
+  #battleArena.xb-topdown-combat #heroArtReal,
+  #battleArena.xb-topdown-combat #heroArtFallback{
+    left:2.5%!important;
+    bottom:4%!important;
+    width:clamp(112px,20vw,158px)!important;
+    height:clamp(158px,30vw,210px)!important;
+  }
+  #battleArena.xb-topdown-combat #enemyPack .enemy-small:not(.enemy-right){
+    left:49%!important;top:57%!important;width:74px!important;height:106px!important;
+  }
+  #battleArena.xb-topdown-combat #enemyPack .enemy-large{
+    left:65%!important;top:42%!important;width:116px!important;height:158px!important;
+  }
+  #battleArena.xb-topdown-combat #enemyPack .enemy-right{
+    left:83%!important;top:57%!important;width:74px!important;height:106px!important;
+  }
+  #battleArena.xb-topdown-combat #enemyPack .enemy-large .enemy-art-real,
+  #battleArena.xb-topdown-combat #enemyPack .enemy-large .enemy-art-fallback{
+    width:108px!important;height:132px!important;
+  }
+  #battleArena.xb-topdown-combat .xb-player-plate{
+    left:5%!important;bottom:39%!important;width:116px!important;
+  }
+}
