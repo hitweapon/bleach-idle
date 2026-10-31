@@ -470,3 +470,26 @@ button{transition:transform .16s ease,border-color .16s ease,background .16s eas
 #sideLifesteal{color:#a0f5ce!important}
 @media(max-width:1050px){#page-character .talent-tree-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:560px){#page-character .talent-tree-grid{grid-template-columns:1fr}}
+
+/* XBleach gear progression: readable attributes, independent class builds, set synergy and farm controls */
+#page-inventory .inventory-item{align-items:flex-start}
+#page-inventory .item-score{color:#a6e9cf;font-weight:650;line-height:1.5}
+#page-inventory .item-comparison{display:block;margin-top:5px;padding:5px 7px;border-left:2px solid #7b5f8e;background:#100c19;color:#d5c9e5;border-radius:0 5px 5px 0;line-height:1.45}
+#page-inventory .inventory-item.is-class-locked{border-color:#4d385c;background:linear-gradient(110deg,#171124,#0c0a12)}
+#page-inventory .equipped-mark{color:#9ff4cf}
+#page-inventory .rarity.legendary{color:#ffc780;border-color:#9f6a2b;background:#39240d}
+#page-inventory .rarity.mythic{color:#ff9dca;border-color:#ae4b8d;background:#35102b;box-shadow:inset 0 0 12px #ff54b21a}
+.gear-set-bonuses{grid-column:1/-1;padding:12px;border:1px solid #44304f;background:linear-gradient(120deg,#17101f,#0b0a12);border-radius:9px;display:grid;gap:7px}
+.gear-set-bonuses>strong{color:#f2d8ff;font-size:.85rem}.gear-set-bonuses>small{color:#bcaac8;line-height:1.45}
+.gear-set-progress{padding:8px;border:1px solid #3d3048;background:#100d17;border-radius:6px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:5px 12px}
+.gear-set-progress strong{font-size:.8rem}.gear-set-progress span{font-size:.76rem;color:#d1b5ef}.gear-set-progress small{grid-column:1/-1;color:#8d8298;font-size:.72rem;line-height:1.45}.gear-set-progress small.active{color:#a0f5ce}
+.farm-control{display:grid;grid-template-columns:minmax(0,1fr) minmax(220px,300px);gap:18px;align-items:center;margin:14px 0!important;border-color:#4c3b5b!important;background:linear-gradient(120deg,#17101e,#0d0b14 72%)!important}
+.farm-control-copy h3{margin:5px 0 7px;color:#f5eaf9}.farm-control-copy p{margin:0 0 8px;max-width:740px;color:#b9adbf;font-size:.85rem;line-height:1.5}
+#farmStageStatus{display:block;color:#d1b5ef;font-size:.76rem;line-height:1.4}
+.farm-control-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;align-items:end}
+.farm-control-actions label{grid-column:1/-1;color:#c8b8d2;font-size:.72rem;text-transform:uppercase;letter-spacing:.07em}
+.farm-control-actions input{display:block;width:100%;margin-top:5px;min-height:38px;border:1px solid #51415f;border-radius:6px;background:#090810;color:#fff;padding:8px 10px;font:inherit}
+.farm-control-actions button{min-height:37px;font-size:.78rem}
+#resumeProgressBtn:disabled{opacity:.45;cursor:not-allowed}
+@media(max-width:720px){.farm-control{grid-template-columns:1fr}.farm-control-actions{grid-template-columns:1fr 1fr}}
+@media(max-width:430px){.farm-control-actions{grid-template-columns:1fr}}
