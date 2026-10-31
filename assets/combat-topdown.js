@@ -5,6 +5,41 @@
   arena.dataset.topdownReady = '1';
   arena.classList.add('xb-topdown-combat');
 
+  const classArt = {
+    blade: { src:'/assets/art/character-ichigo.webp', name:'Ichigo Kurosaki' },
+    kido: { src:'/assets/art/character-uryu.webp', name:'Uryu Ishida' },
+    step: { src:'/assets/art/character-yoruichi.webp', name:'Yoruichi Shihōin' }
+  };
+  const applyClassArt = () => {
+    const classId = arena.dataset.character || 'blade';
+    const selected = classArt[classId] || classArt.blade;
+    const img = document.getElementById('heroArtReal');
+    const fallback = document.getElementById('heroArtFallback');
+    if (!img) return;
+    img.alt = selected.name + ' em combate';
+    if (img.getAttribute('src') !== selected.src) {
+      img.classList.remove('is-loaded');
+      img.style.setProperty('visibility','hidden','important');
+      img.setAttribute('src', selected.src);
+    }
+    const reveal = () => {
+      if (!img.complete || !img.naturalWidth) return;
+      img.classList.add('is-loaded');
+      img.style.setProperty('display','block','important');
+      img.style.setProperty('visibility','visible','important');
+      img.style.setProperty('opacity','1','important');
+      if (fallback) {
+        fallback.classList.add('asset-hidden');
+        fallback.style.setProperty('display','none','important');
+        fallback.style.setProperty('visibility','hidden','important');
+        fallback.style.setProperty('opacity','0','important');
+      }
+    };
+    if (img.complete && img.naturalWidth > 0) reveal();
+    else img.addEventListener('load', reveal, { once:true });
+  };
+  applyClassArt();
+
   // Use an illustrated environment instead of a repetitive tile grid.
   const applyScene = () => {
     const scenes = window.XBLEACH_ART && window.XBLEACH_ART.zones;
@@ -27,9 +62,16 @@
   };
   applyScene();
   const sceneObserver = new MutationObserver(records => {
-    if (records.some(record => record.attributeName === 'data-map')) applyScene();
+    const attributes = records.map(record => record.attributeName);
+    if (attributes.includes('data-map')) applyScene();
+    if (attributes.includes('data-character')) applyClassArt();
   });
-  sceneObserver.observe(arena, { attributes:true, attributeFilter:['data-map'] });
+  sceneObserver.observe(arena, { attributes:true, attributeFilter:['data-map','data-character'] });
+  // Re-apply after all deferred scripts have initialized their art catalog.
+  document.addEventListener('DOMContentLoaded', () => {
+    applyScene();
+    applyClassArt();
+  }, { once:true });
 
   const pack = document.getElementById('enemyPack');
   if (pack) {

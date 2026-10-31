@@ -2079,8 +2079,8 @@ button.quick-skill.is-selected:before{content:"ATIVA";position:absolute;top:-7px
 .equipment-guide{padding:10px 12px;margin-top:10px;border-left:2px solid #ff5968;background:linear-gradient(90deg,#1d1118,#0c0b11);line-height:1.65}
 .equipment-guide strong{color:#ffbdc2}
 </style>
- <link rel="stylesheet" href="/assets/combat-topdown.css?v=gear-safe-20261031">
- <script src="/assets/combat-topdown.js" defer></script>
+ <link rel="stylesheet" href="/assets/combat-topdown.css?v=arena-safe-20261031-2">
+ <script src="/assets/combat-topdown.js?v=arena-safe-20261031-2" defer></script>
  <link rel="stylesheet" href="/assets/combat-powers.css">
  <script src="/assets/combat-powers.js" defer></script>
  <link rel="stylesheet" href="/assets/weapon-art.css">
@@ -2350,6 +2350,7 @@ function equipItemForState(st,item,classId,force=false){
 }
 function isEquippedForState(st,item,classId){return Object.values(equipmentSlotsFor(st,classId)).some(id=>id!==null&&id!==undefined&&String(id)===String(item&&item.id))}
 function isEquippedAnywhereState(st,item){return CLASSES.some(cls=>isEquippedForState(st,item,cls.id))}
+function isEquippedAnywhere(item){return isEquippedAnywhereState(state,item)}
 function lootClassForState(st){
  const scores=CLASSES.map(cls=>({id:cls.id,score:classEquipmentScore(st,cls.id)})),min=Math.min(...scores.map(x=>x.score));
  const active=scores.find(x=>x.id===st.classId);
@@ -2795,12 +2796,13 @@ function combatVisual(kind,amount,critical=false,effectMeta={}){
  if(window.xbCombatPowerVisual)window.xbCombatPowerVisual(kind,amount,critical,effectMeta);
 }
 
+function safeCombatVisual(kind,amount,critical=false,meta={}){try{combatVisual(kind,amount,critical,meta)}catch(error){if(!window.__xbleachCombatVisualWarning){window.__xbleachCombatVisualWarning=true;console.warn('Efeito visual falhou; o combate continua.',error)}}}
 function useSkill(silent=false,quiet=false){
  const now=Date.now();if((state.pendingRespawnAt||0)>now||(state.playerDownUntil||0)>now||state.playerHp<=0||now<(state.skillReadyAt||0))return false;
  const skill=activeSkill();if((state.energy===undefined?archetype().energy:state.energy)<skill.cost)return false;
  state.energy-=skill.cost;state.skillReadyAt=now+skill.cooldown;state.skillUses=(state.skillUses||0)+1;
  const cls=archetype(),ranks=state.talentRanks?.[state.classId]||{},critical=Math.random()<Math.min(.75,(cls.critChance||.12)+equipmentCritChanceFor(state)),damage=Math.round(power()*skill.multiplier*(cls.skillMultiplier||1)*(1+(ranks.technique||0)*.06+equipmentSkillPctFor(state))*(critical?(1.7+equipmentCritDamageFor(state)):1)),hpBeforeSkill=Math.max(1,state.enemyHp);state.enemyHp-=damage;state.totalDamage=(state.totalDamage||0)+damage;const healed=applyLifeStealForState(state,Math.min(damage,hpBeforeSkill),'skill');if(healed>0)showLifeStealPopup(healed,'skill');
- combatVisual(state.enemyHp<=0?'defeat':'skill',damage,critical,{source:'skill',skill});
+ safeCombatVisual(state.enemyHp<=0?'defeat':'skill',damage,critical,{source:'skill',skill});
  log('✦ <strong>'+skill.name+'</strong> causou '+damage+' de dano espiritual!');
  if(state.enemyHp<=0)defeat();
  if(!quiet){render();save()}
@@ -3080,7 +3082,7 @@ function attack(manual=false,quiet=false){
  if(state.pendingRespawnAt&&now>=state.pendingRespawnAt){state.pendingRespawnAt=0;state.enemyHp=enemyMaxHp();state.enemyAttackMeter=0}
  if(!Number.isFinite(state.enemyHp)||state.enemyHp<=0)state.enemyHp=enemyMaxHp();
  const cls=archetype(),critical=Math.random()<Math.min(.75,(cls.critChance||.12)+equipmentCritChanceFor(state)),damage=Math.max(1,Math.round(power()*(manual?2:1.35)*(cls.basicMultiplier||1)*(critical?(1.75+equipmentCritDamageFor(state)):1))),hpBeforeBasic=Math.max(1,state.enemyHp);
- state.enemyHp-=damage;state.totalDamage=(state.totalDamage||0)+damage;const healed=applyLifeStealForState(state,Math.min(damage,hpBeforeBasic),'basic');if(healed>0)showLifeStealPopup(healed,'basic');const killed=state.enemyHp<=0;combatVisual(killed?'defeat':'hit',damage,critical,{source:'basic'});
+ state.enemyHp-=damage;state.totalDamage=(state.totalDamage||0)+damage;const healed=applyLifeStealForState(state,Math.min(damage,hpBeforeBasic),'basic');if(healed>0)showLifeStealPopup(healed,'basic');const killed=state.enemyHp<=0;safeCombatVisual(killed?'defeat':'hit',damage,critical,{source:'basic'});
  if(killed)defeat();if(!quiet){render();save()}
 }
 const QUESTS=[
@@ -3179,11 +3181,24 @@ function currentZone(){if(state.stage<11)return{id:'desert',name:'Deserto Espiri
 function currentQuestValue(q){return q.metric==='kills'?state.kills:q.metric==='level'?state.level:q.metric==='stage'?state.bestStage:state.bossKills}
 function questComplete(q){return currentQuestValue(q)>=q.goal}
 function renderQuestList(){const el=document.querySelector('#questList');if(!el)return;el.innerHTML=QUESTS.map(q=>{const val=Math.min(q.goal,currentQuestValue(q)),claimed=!!state.questClaims[q.id],done=questComplete(q);return '<div class="quest"><div class="quest-icon">'+uiArtHTML(q.metric==='stage'?'map':q.metric==='level'?'skills':'boss')+'</div><div class="quest-copy"><strong>'+escapeHTML(q.name)+'</strong><p>'+escapeHTML(q.desc)+'</p><div class="bar"><span style="width:'+Math.round(val/q.goal*100)+'%"></span></div><small class="muted">'+val+' / '+q.goal+' · Recompensa: '+q.gold+' ouro + '+q.xp+' EXP</small></div><button class="'+(done&&!claimed?'primary':'')+'" data-quest-claim="'+q.id+'" '+(!done||claimed?'disabled':'')+'>'+(claimed?'Resgatada':done?'Resgatar':'Em andamento')+'</button></div>'}).join('')}
-function isEquipped(item){return Object.values(state.equipmentSlots||{}).some(id=>id!==null&&String(id)===String(item?.id))}
-function equippedForSlot(slot){const id=state.equipmentSlots?.[slot];return state.inventory.find(it=>id!==null&&id!==undefined&&String(it.id)===String(id))}
-function isUpgradeForSlot(item){const current=equippedForSlot(itemSlot(item));return !current||itemPower(item)+itemVitality(item)>itemPower(current)+itemVitality(current)}
-function equipItem(index,silent=false){const item=state.inventory[Number(index)];if(!item)return false;const slot=itemSlot(item),wasEquipped=isEquipped(item);if(wasEquipped){state.equipmentSlots[slot]=null;item.equipped=false;if(!silent)toast('Item removido do slot '+slot+'.')}else{const prev=equippedForSlot(slot);if(prev)prev.equipped=false;state.equipmentSlots[slot]=item.id;item.equipped=true;state.inventory.forEach(other=>{if(String(other.id)!==String(item.id)&&itemSlot(other)===slot)other.equipped=false});if(!silent)toast('Equipado: '+item.name+' · bônus aplicado.')}if(!silent){render();save()}return true}
-function sellItem(index){const item=state.inventory[Number(index)];if(!item)return;if(item.favorite){toast('Este item está protegido. Remova a estrela antes de vender.');return}if(isEquipped(item)){state.equipmentSlots[itemSlot(item)]=null;item.equipped=false}const value=Math.max(1,Number(item.sell)||4);state.gold+=value;state.inventory.splice(Number(index),1);render();save();toast('Item vendido por '+value+' ouro.')}
+function isEquipped(item){return isEquippedForState(state,item,state.classId)}
+function equippedForSlot(slot,classId=state.classId){const slots=equipmentSlotsFor(state,classId),id=slots?.[slot];return state.inventory.find(it=>id!==null&&id!==undefined&&String(it.id)===String(id)&&(!it.classId||it.classId===classId))||null}
+function isUpgradeForSlot(item){return isUpgradeForClass(item,state.classId)}
+function equipItem(index,silent=false){
+ const item=state.inventory[Number(index)];if(!item)return false;
+ const targetClass=item.classId||state.classId,slot=itemSlot(item);
+ if(item.classId&&item.classId!==state.classId){if(!silent)toast('Esse equipamento pertence a '+className(item.classId)+'. Troque de personagem para usá-lo.');return false}
+ if(isEquippedForState(state,item,targetClass)){
+  const next={...equipmentSlotsFor(state,targetClass),[slot]:null};
+  state.equipmentSets[targetClass]=next;if(targetClass===state.classId)state.equipmentSlots=next;syncEquippedFlags(state);
+  if(!silent)toast('Item removido do slot '+slot+' de '+className(targetClass)+'.');
+ }else{
+  if(!equipItemForState(state,item,targetClass,true))return false;
+  if(!silent)toast('Equipado para '+className(targetClass)+': '+item.name+'.');
+ }
+ if(!silent){render();save()}return true
+}
+function sellItem(index){const item=state.inventory[Number(index)];if(!item)return;if(item.favorite){toast('Este item está protegido. Remova a estrela antes de vender.');return}if(isEquippedAnywhere(item)){toast('Remova este item dos equipamentos de todos os personagens antes de vendê-lo.');return}const value=Math.max(1,Number(item.sell)||4);state.gold+=value;state.inventory.splice(Number(index),1);syncEquippedFlags(state);render();save();toast('Item vendido por '+value+' ouro.')}
 function quickSkillIds(){const sets={blade:['crescent','flash-step','bankai-wave'],kido:['quincy-arrow','reishi-volley','blue-lance'],step:['shunko-strike','thunderclap','raijin-burst']};return sets[state.classId]||sets.blade}
 function renderQuickSkills(){const buttons=[...document.querySelectorAll('[data-skill-quick]')],keys=['Q','W','E'],ids=quickSkillIds();buttons.forEach((btn,i)=>{const sk=SKILLS.find(x=>x.id===ids[i]);if(!sk)return;btn.dataset.skillQuick=sk.id;const icon=btn.querySelector('span'),small=btn.querySelector('small');if(icon)icon.innerHTML=skillArtHTML(sk.id);if(small)small.textContent=keys[i]+' · NV. '+sk.level;btn.disabled=state.level<sk.level;btn.classList.toggle('is-selected',activeSkill().id===sk.id);btn.setAttribute('aria-pressed',String(activeSkill().id===sk.id));btn.setAttribute('aria-label','Selecionar '+sk.name+(state.level<sk.level?' (desbloqueia no nível '+sk.level+')':''));btn.title=sk.name+' · '+sk.desc})}
 function renderSkillLoadout(){
@@ -3357,6 +3372,7 @@ function render(){
  renderDailyReward();renderPrestige();renderStarterGuide();renderTalentTree();renderBestiary();renderOfflineReport();updateCombatHUD();
 }
 
+function safeRenderAndHUD(context){try{render();return true}catch(error){console.error('Falha ao renderizar '+(context||'a interface')+'; mantendo combate ativo.',error);try{updateCombatHUD()}catch(hudError){console.error('Falha ao atualizar HUD após erro de renderização.',hudError)}return false}}
 async function loadLeaderboard(){
  const list=document.querySelector('#leaderboardList');if(!list)return;
  const status=document.querySelector('#leaderboardStatus');const refresh=document.querySelector('#refreshLeaderboardBtn');
@@ -3495,8 +3511,7 @@ document.querySelector('#settingDamage').addEventListener('change',ev=>{state.se
 document.querySelector('#settingMotion').addEventListener('change',ev=>{state.settings.reducedMotion=!!ev.target.checked;render();save()});
 document.querySelector('#settingCompact').addEventListener('change',ev=>{state.settings.compactLog=!!ev.target.checked;const feed=document.querySelector('#combatLog');if(feed){const limit=state.settings.compactLog?16:48;while(feed.children.length>limit)feed.lastElementChild.remove()}render();save()});
 document.querySelector('#settingAutoEquip').addEventListener('change',ev=>{state.settings.autoEquip=!!ev.target.checked;render();save()});
-render();
-loadPremiumIchigoArt();
+safeRenderAndHUD('a inicialização'); loadPremiumIchigoArt();
 if(offlineSummary){const mins=Math.floor(offlineSummary.seconds/60);toast('Enquanto você esteve fora: '+offlineSummary.kills+' derrotas, +'+offlineSummary.xp+' EXP e +'+offlineSummary.gold+' ouro.');log('🌙 <strong>Resumo da caçada offline:</strong> '+offlineSummary.kills+' derrotas em '+mins+' min · +'+offlineSummary.xp+' EXP · +'+offlineSummary.gold+' ouro.');offlineSummary=null;save()}
 function updateCombatHUD(){
  const e=enemy(),zone=currentZone(),cls=archetype(),enemyMax=enemyMaxHp(),hpPct=Math.max(0,Math.min(100,state.enemyHp/enemyMax*100)),xpPct=Math.min(100,state.xp/maxXp()*100),elapsed=Math.max(1,(Date.now()-sessionStartedAt)/1000);
@@ -3567,7 +3582,7 @@ function idleTick(){
   advanceEnemyCombat(750);
  }
  const majorChange=before.kills!==state.kills||before.level!==state.level||before.stage!==state.stage||before.huntWave!==state.huntWave||before.gold!==state.gold||before.xp!==state.xp||before.inventory!==state.inventory.length||before.bossKills!==state.bossKills||before.prestige!==state.prestige||before.classId!==state.classId||before.playerHp!==state.playerHp||before.playerDownUntil!==state.playerDownUntil;
- if(majorChange)render();else updateCombatHUD();
+ if(majorChange)safeRenderAndHUD('a batalha');else updateCombatHUD();
 }
 setInterval(idleTick,750);setInterval(()=>{if(document.querySelector('#skillBtn'))updateCombatHUD()},1000);setInterval(save,10000);window.addEventListener('pagehide',save);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden'){save();if(currentUser&&accountHydrated){clearTimeout(remoteSaveTimer);void saveRemote()}}});
 </script>
